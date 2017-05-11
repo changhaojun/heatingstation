@@ -11,9 +11,9 @@ var {width, height} = Dimensions.get('window');
 //
 // import Test from '../tab_pages/test.ios';
 
-import TotalEnergyChart from '../component/total_energy_chart.ios';
-import Company from '../component/company.ios';
-import HeatMap from '../component/heat_map.ios';
+import TotalEnergyChart from './total_energy_chart.ios';
+import Company from './company.ios';
+import HeatMap from './heat_map.ios';
 
 
 export default class Home extends React.Component {
@@ -38,11 +38,8 @@ export default class Home extends React.Component {
     //     }
     // }
 
-    goToHeatMap(){
-        const navigator = this.props.navigator;
-        this.props.navigator.push({
-            component: HeatMap,
-        })
+    back(){
+        this.props.navigator.pop();
     }
 
     render() {
@@ -58,12 +55,12 @@ export default class Home extends React.Component {
                     showHideTransition='slide' //显隐时的动画效果.默认fade
                 />
                 <View style={styles.navView}>
-                    <TouchableOpacity onPress={this.goToHeatMap.bind(this)}>
-                        <Image style={{ width: 30, height: 30, marginLeft:10,marginTop: 10, }} source={require('../icons/map_icon.png')}/>
+                    <TouchableOpacity onPress={this.back.bind(this)}>
+                        <Image style={{ width: 25, height: 25, marginLeft:10,marginTop: 10, }} source={require('../icons/nav_back_icon@2x.png')}/>
                     </TouchableOpacity>
                     <Text style={styles.topNameText}>运行质量</Text>
                     {/*<TouchableOpacity style={styles.topImage} onPress={this.toNotice.bind(this)}>*/}
-                    <Image style={{ width: 18, height: 20, marginRight:10,marginTop: 10, }} source={require('../icons/nav_flag.png')} />
+                    <Image style={{ width: 25, height: 25, marginRight:10,marginTop: 10, }} source={require('../icons/nav_flag.png')} />
                     {/*</TouchableOpacity>*/}
                 </View>
                 {/*<WebViewBridge*/}
@@ -99,7 +96,7 @@ export default class Home extends React.Component {
 const styles = StyleSheet.create({
     all: {
         flex: 1,
-        backgroundColor: "#ffffff",
+        // backgroundColor: "#ffffff",
         // marginTop: 64,
     },
     company:{

@@ -13,7 +13,7 @@ import {
   NavigatorIOS,
 } from 'react-native';
 
-import Login from './rn.ios/login.ios.js';
+import Login from './rn.js/login.ios.js';
 import Orientation from 'react-native-orientation';
 export default class WisdomHeating extends Component {
 

@@ -8,7 +8,7 @@
 import React from 'react';
 import {View, Text, Image, TextInput, StyleSheet, TouchableHighlight, StatusBar, NavigatorIOS,} from 'react-native';
 import Warn from '../component/warn.ios';
-import Runquality from './runquality.ios';
+import Runquality from '../component/runquality.ios';
 import HeatMap from '../component/heat_map.ios'
 export default class RunqualityNav extends React.Component {
 

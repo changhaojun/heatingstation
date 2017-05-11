@@ -1,15 +1,21 @@
 /**
- * Created by Vector on 17/4/20.
+ * Created by Vector on 17/4/24.
  */
 import React from 'react';
 import {View, Text, TouchableOpacity, Image, TextInput, NavigatorIOS, StyleSheet, TouchableHighlight, StatusBar, ListView} from 'react-native';
 
 import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
+
+import Scada from '../component/scada.ios';
+import Orientation from 'react-native-orientation';
 export default class HeatStation extends React.Component {
 
-    state: {dataSource: any};
+    // state: {dataSource: any};
 
+    componentWillMount() {
+            Orientation.lockToPortrait();
+    }
 
     constructor(props) {
         super(props);
@@ -126,12 +132,19 @@ export default class HeatStation extends React.Component {
         this.props.navigator.pop();
     }
 
+    openScada(){
+        const navigator = this.props.navigator;
+        navigator.push({
+            component: Scada,
+        })
+    }
+
     render() {
         return (
             <View style={styles.all}>
                 {/*状态栏*/}
                 <StatusBar
-                    hidden={false}  //status显示与隐藏
+                    hidden={true}  //status显示与隐藏
                     backgroundColor='red'  //status栏背景色,仅支持安卓
                     translucent={true} //设置status栏是否透明效果,仅支持安卓
                     barStyle='light-content' //设置状态栏文字效果,仅支持iOS,枚举类型:default黑light-content白
@@ -141,11 +154,11 @@ export default class HeatStation extends React.Component {
 
                 <View style={styles.navView}>
                     <TouchableOpacity onPress={this.back.bind(this)}>
-                    <Image style={{ width: 25, height: 25, marginLeft:10,marginTop: 10, }} source={require('../icons/nav_back_icon.png')}/>
+                        <Image style={{ width: 25, height: 25, marginLeft:10,marginTop: 10, }} source={require('../icons/nav_back_icon.png')}/>
                     </TouchableOpacity>
                     <Text style={styles.topNameText}>换热站运行情况</Text>
                     {/*<TouchableOpacity style={styles.topImage} onPress={this.toNotice.bind(this)}>*/}
-                    <Image style={{ width: 18, height: 20, marginRight:10,marginTop: 10, }} source={require('../icons/nav_flag.png')} />
+                    <Image style={{ width: 25, height: 25, marginRight:10,marginTop: 10, }} source={require('../icons/nav_flag.png')} />
                     {/*</TouchableOpacity>*/}
                 </View>
                 <View style={styles.topView}>
@@ -193,6 +206,8 @@ export default class HeatStation extends React.Component {
                         <View style={styles.listItem}>
                             <Text style={styles.sectionText}>{rowData.groupName}</Text>
                         </View>
+
+                        <TouchableHighlight underlayColor="#f2d6b8" onPress={this.openScada.bind(this)}>
                         <ListView
                             enableEmptySections={true}
                             dataSource={rowData.device}
@@ -222,24 +237,25 @@ export default class HeatStation extends React.Component {
                                     )
                                 }}
                             />
+                        </TouchableHighlight>
                     </View>
                     )
                 }}
                     />
                     {/*<ListView*/}
-                        {/*//style={styles.rightView}*/}
-                        {/*enableEmptySections={true}*/}
-                        {/*dataSource={this.state.dataSource1}*/}
-                        {/*initialListSize={26}//右边的一次加载完成*/}
-                        {/*renderRow={(rowData) => {*/}
-                {/*return(*/}
-                     {/*<TouchableHighlight onPress={() =>{if(rowData.hight>=0){_listView.scrollTo({ x: 0,y: rowData.hight, animated: true})}}}>*/}
+                    {/*//style={styles.rightView}*/}
+                    {/*enableEmptySections={true}*/}
+                    {/*dataSource={this.state.dataSource1}*/}
+                    {/*initialListSize={26}//右边的一次加载完成*/}
+                    {/*renderRow={(rowData) => {*/}
+                    {/*return(*/}
+                    {/*<TouchableHighlight onPress={() =>{if(rowData.hight>=0){_listView.scrollTo({ x: 0,y: rowData.hight, animated: true})}}}>*/}
                     {/*<View style={styles.rightView}>*/}
-                        {/*<Text style={styles.rightText}>{rowData.groupName}</Text>*/}
+                    {/*<Text style={styles.rightText}>{rowData.groupName}</Text>*/}
                     {/*</View>*/}
-                     {/*</TouchableHighlight>*/}
+                    {/*</TouchableHighlight>*/}
                     {/*)*/}
-                {/*}}*/}
+                    {/*}}*/}
                     {/*/>*/}
                 </View>
 
@@ -262,6 +278,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#343439',
         justifyContent: 'center',
         alignItems: 'center',
+        // borderBottomWidth: 1,
+        // borderBottomColor: '#C3AB90',
     },
     topNameText: {
         flex: 1,
@@ -273,8 +291,8 @@ const styles = StyleSheet.create({
     searchView:{
         width:width - 40,
         height:38,
-        borderColor:"#ffffff",
-        borderWidth:1,
+        // borderColor:"#f2d6b8",
+        // borderWidth:1,
         // marginTop: 74,
         flexDirection: 'row',
         borderRadius:38,
@@ -284,7 +302,7 @@ const styles = StyleSheet.create({
     textInput:{
         flex:1,
         marginLeft:10,
-        paddingTop: 3,
+        marginTop:3,
     },
     topView:{
         height: height/10,
