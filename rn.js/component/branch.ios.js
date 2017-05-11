@@ -12,7 +12,7 @@ import HeatStation from '../component/heat_station.ios';
 
 export default class Branch extends React.Component {
 
-    state: {dataSource: any};
+    // state: {dataSource: any};
 
 
     constructor(props) {
@@ -244,7 +244,7 @@ export default class Branch extends React.Component {
             <View style={styles.all}>
                 {/*状态栏*/}
                 <StatusBar
-                    hidden={false}  //status显示与隐藏
+                    hidden={true}  //status显示与隐藏
                     backgroundColor='red'  //status栏背景色,仅支持安卓
                     translucent={true} //设置status栏是否透明效果,仅支持安卓
                     barStyle='light-content' //设置状态栏文字效果,仅支持iOS,枚举类型:default黑light-content白

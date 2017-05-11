@@ -9,13 +9,9 @@ import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
 
 import Home from './tab_pages/home.ios.js';
-import RunQuality from './tab_pages/runquality.ios';
+import RunQuality from './tab_pages/runquality_map.ios';
 import Maintenance from './tab_pages/maintenance.ios';
 
-// import HomeNav from './tab_pages/home_nav.ios';
-// import RunqualityNav from './tab_pages/runquality_nav.ios';
-// import MaintenanceNav from './tab_pages/maintenance_nav.ios';
-// var Orientation = require('react-native-orientation');
 
 var Orientation = require('react-native-orientation');
 

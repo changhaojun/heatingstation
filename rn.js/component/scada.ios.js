@@ -62,9 +62,8 @@ export default class Scada extends React.Component {
             value: 0,
 
             access_token: '',
-
-            // uri: "http://192.168.1.110:8080/list/group?station_name=瑾华小区&accessToken=590af43df77ace000593f65d&station_id=58f0844316f12022002098b3",
-           uri: "http://114.215.154.122/reli/com.finfosoft.scada.view.ScadaViewForDevice.d?node_id=3&node_type=2",
+            // uri: "http://121.42.253.149:18816/list/group?station_name=瑾华小区&accessToken=59141b5ef77ace00059f37fb&station_id=58f0844316f12022002098b3",
+            uri: "http://114.215.154.122/reli/com.finfosoft.scada.view.ScadaViewForDevice.d?node_id=3&node_type=2",
         };
 
         this.onBridgeMessage = this.onBridgeMessage.bind(this);
@@ -138,7 +137,7 @@ export default class Scada extends React.Component {
             <View style={styles.all}>
                 {/*状态栏*/}
                 <StatusBar
-                    hidden={false}  //status显示与隐藏
+                    hidden={true}  //status显示与隐藏
                     backgroundColor='red'  //status栏背景色,仅支持安卓
                     translucent={true} //设置status栏是否透明效果,仅支持安卓
                     barStyle='light-content' //设置状态栏文字效果,仅支持iOS,枚举类型:default黑light-content白

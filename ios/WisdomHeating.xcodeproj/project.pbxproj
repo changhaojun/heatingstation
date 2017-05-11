@@ -23,7 +23,7 @@
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
-		D671D3971EC0019800CA6AF5 /* iPhone_736@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = D671D3961EC0019800CA6AF5 /* iPhone_736@3x.png */; };
+		D60922261EC407DC00929F8E /* iPhone_736@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = D60922251EC407DC00929F8E /* iPhone_736@3x.png */; };
 		D6BDE0531EA7490900E27FF4 /* libReact-Native-Webview-Bridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D6BDE0521EA748FD00E27FF4 /* libReact-Native-Webview-Bridge.a */; };
 		D6DABB221EA99F59008E4E1D /* libRCTOrientation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D6DABB0B1EA99DD9008E4E1D /* libRCTOrientation.a */; };
 		6DCBF488D96E41C0A5A4185E /* libRCTJPushModule.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CE107ABC2A46599B3ACFA4 /* libRCTJPushModule.a */; };
@@ -220,7 +220,7 @@
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
-		D671D3961EC0019800CA6AF5 /* iPhone_736@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iPhone_736@3x.png"; path = "../../../../Downloads/app2/iPhone_736@3x.png"; sourceTree = "<group>"; };
+		D60922251EC407DC00929F8E /* iPhone_736@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iPhone_736@3x.png"; path = "WisdomHeating/iPhone_736@3x.png"; sourceTree = "<group>"; };
 		D6BDE04D1EA748FD00E27FF4 /* React-Native-Webview-Bridge.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "React-Native-Webview-Bridge.xcodeproj"; path = "../node_modules/react-native-webview-bridge/ios/React-Native-Webview-Bridge.xcodeproj"; sourceTree = "<group>"; };
 		E7E7388B04B34352B88E68CA /* RCTOrientation.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTOrientation.xcodeproj; path = "../node_modules/react-native-orientation/iOS/RCTOrientation.xcodeproj"; sourceTree = "<group>"; };
 		FBA20C8A585645CF964EDF0D /* RCTJPushModule.xcodeproj */ = {isa = PBXFileReference; name = "RCTJPushModule.xcodeproj"; path = "../node_modules/jpush-react-native/ios/RCTJPushModule/RCTJPushModule.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
@@ -362,7 +362,7 @@
 		13B07FAE1A68108700A75B9A /* WisdomHeating */ = {
 			isa = PBXGroup;
 			children = (
-				D671D3961EC0019800CA6AF5 /* iPhone_736@3x.png */,
+				D60922251EC407DC00929F8E /* iPhone_736@3x.png */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -782,7 +782,7 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
-				D671D3971EC0019800CA6AF5 /* iPhone_736@3x.png in Resources */,
+				D60922261EC407DC00929F8E /* iPhone_736@3x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -902,7 +902,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.finfosoft.wisdomheating;
 				PRODUCT_NAME = WisdomHeating;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -922,7 +922,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.finfosoft.wisdomheating;
 				PRODUCT_NAME = WisdomHeating;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
