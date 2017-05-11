@@ -14,6 +14,8 @@ import com.github.alinz.reactnativewebviewbridge.WebViewBridgePackage;
 import java.util.Arrays;
 import java.util.List;
 
+import cn.jpush.reactnativejpush.JPushPackage;
+
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
@@ -25,8 +27,7 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-              new MainReactPackage(),
-              new WebViewBridgePackage()
+              new MainReactPackage(),new JPushPackage(false,false),new WebViewBridgePackage()
 
       );
     }
