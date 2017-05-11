@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test</title>
+    <script src="/node_modules/react-native-webview-bridge/scripts/webviewbridge.js"></script>
+
+</head>
+<body style="background-color: #2d6987">
+    This is the test html!
+    <button id="sendMessage" onclick="test()">弹窗</button>
+    <!--<button id="layer1" onclick="layer1()">获取数据2</button>-->
+</body>
+</html>
+<script type="text/javascript">
+
+    function test() {
+        WebViewBridge.send("vector");
+    }
+
+</script>

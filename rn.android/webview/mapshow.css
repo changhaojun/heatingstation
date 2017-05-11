@@ -1,0 +1,88 @@
+    html,body,.mapShow{
+        margin:0;
+        padding:0;
+        width:100%;
+        height:100%;
+    }
+    #bgInfo{
+    	width:250px;
+    	height:100%;
+    	position: absolute;
+    	right:0;
+    	background-color:#3d3d3d;
+    	opacity: 0.4;
+    	filter:alpha(opacity=40); 
+    	-moz-opacity:0.4;
+    	-khtml-opacity: 0.4;
+    }
+    .pageTitle{
+    	height:60px;
+        font-size:1.4em;
+        color:white;
+        line-height:60px;
+        word-spacing: 1px;
+        font-family:"微软雅黑";
+        text-align: center;
+    }
+    #iptSearch{
+    	width:170px;
+        height:50px;
+        margin:10px auto;
+        position: relative;
+        margin:0px auto;
+    }
+    #searchFunction{
+        color:black;
+        height:30px;
+        width:170px;
+    	background-color: yellow;
+    	text-indent: 5px;
+    	font-family: "微软雅黑";
+    	border:none;
+    	outline: none;
+    	font-style: bolder;
+    	border-radius:6px;
+    }
+    #searchPicture{
+    	position: absolute;
+    	top:5px;
+    	right:3px;
+    	width:20px;
+    	height: 20px;
+    	z-index:20;
+        cursor:pointer;
+    }
+    .changeIndex{
+        width:80%;
+        color:white;
+        line-height:18px;
+        text-indent: 10px;
+        margin-top:10px;
+        font-family:"微软雅黑";
+        margin:0px auto;
+    }
+    .changeIndex .indexShow{
+        width:100%;
+        height: 30px;
+        overflow: hidden;
+        margin-left:10px;
+       
+    }
+    .changeIndex .indexShow .text{
+    	width:50%;
+    	height:30px;
+    	float: left;
+    	
+    }
+    .changeIndex .indexShow input[type="radio"]{
+    	width:16px;
+    	height: 16px;
+    	float: left;
+    }
+     #map{
+    	/*width:-moz-calc(100% - 250),
+              -webkit-calc(100% - 250),
+              calc(100%-250);*/
+        width:100%;
+        height:100%;  
+    }
