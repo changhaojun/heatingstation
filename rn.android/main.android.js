@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     bottomItemText: {
         alignItems: 'center',
         color: "#AFB0B1",
-        paddingTop: 4,
+        paddingTop: 1,
     },
     bottomItemImage: {
         height: 18,
@@ -207,6 +207,6 @@ const styles = StyleSheet.create({
     bottomItemTextClick: {
         alignItems: 'center',
         color: "#000000",
-        paddingTop: 4,
+        paddingTop: 1,
     },
 });

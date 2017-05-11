@@ -7,7 +7,7 @@ import { View,Text,Image,NavigatorIOS,StyleSheet,TouchableHighlight,ListView,Asy
 import Dimensions from 'Dimensions';
 
 var {width, height} = Dimensions.get('window');
-import Branch from '../component/branch.ios';
+import Branch from './branch.android';
 
 export default class CompanyList extends React.Component {
     constructor(props) {
@@ -137,10 +137,12 @@ const styles = StyleSheet.create({
         fontSize:13,
         textAlign: 'left',
         marginLeft: 5,
-        marginTop: 3,
+        marginTop: 1,
     },
     textInput:{
         flex:1,
         marginLeft:10,
     },
 });
+
+module.exports = CompanyList;

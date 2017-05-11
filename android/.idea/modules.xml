@@ -4,7 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/WisdomHeating.iml" filepath="$PROJECT_DIR$/WisdomHeating.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pulgin/pulgin.iml" filepath="$PROJECT_DIR$/pulgin/pulgin.iml" />
       <module fileurl="file://$PROJECT_DIR$/../node_modules/react-native-orientation/android/react-native-orientation.iml" filepath="$PROJECT_DIR$/../node_modules/react-native-orientation/android/react-native-orientation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../node_modules/react-native-webview-bridge/android/react-native-webview-bridge.iml" filepath="$PROJECT_DIR$/../node_modules/react-native-webview-bridge/android/react-native-webview-bridge.iml" />
     </modules>
   </component>
 </project>

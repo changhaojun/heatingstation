@@ -79,7 +79,7 @@ export default class Login extends React.Component {
                     });
 
                     //跳转
-                    navigator.replace({
+                    navigator.push({
                         name: 'Main',
                         component: Main,
                         params: {
@@ -256,12 +256,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     buttonText:{
+        width: width - 80,
+        height: 48,
         fontSize: 16,
         color: '#000000',
+        textAlign: 'center',
+        marginTop: 14,
     },
     companyInfoText:{
-        fontSize: 16,
+        fontSize: 14,
         color: '#E0960A',
-        marginTop: height/7,
-    }
+        marginTop: height/8,
+    },
 });

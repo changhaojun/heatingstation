@@ -14,25 +14,18 @@ import {
     Animated,
     ListView,
     Image,
+    NativeModules,
 } from 'react-native';
 
 import Dimensions from 'Dimensions';
 import ECharts from 'native-echarts';
-import Orientation from 'react-native-orientation';
+
+// 导入自定义原生模块
+var Orientation = NativeModules.Orientation;
 var {width, height} = Dimensions.get('window');
 
 //  图表模块
-export default class LineChart extends Component {
-
-
-    // componentWillMount() {
-    //     Orientation.lockToLandscape();
-    // }
-    //
-    //
-    // componentWillUnmount() {
-    //    Orientation.lockToPortrait();
-    // }
+export default class HistoryEnergyCharts extends Component {
 
     constructor(props) {
         super(props);
@@ -41,6 +34,9 @@ export default class LineChart extends Component {
             xAxisData:[],
             data:[],
         };
+
+       // Orientation.transverse();
+
         var _this = this;
         //AsyncStorage.getItem("userKey",function(errs,result){
                 //console.info(result);
@@ -70,7 +66,7 @@ export default class LineChart extends Component {
 
 
     back(){
-        Orientation.lockToPortrait();
+        Orientation.vertical();
         this.props.navigator.pop();
     }
 
@@ -156,8 +152,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#f2d6b8',
         justifyContent: 'center',
         alignItems: 'center',
-        borderBottomWidth:0.1,
-        borderColor: '#000000',
+        borderBottomWidth: 1,
+        borderBottomColor: '#C3AB90',
     },
     topNameText: {
         flex: 1,

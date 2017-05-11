@@ -3,11 +3,14 @@
  */
 // 设置页面
 import React from 'react';
-import {View, Text, Image, TextInput, NavigatorIOS, StyleSheet, TouchableHighlight, StatusBar, TouchableOpacity} from 'react-native';
+import {View, Text, Image, TextInput, NavigatorIOS, StyleSheet,
+    NativeModules, TouchableHighlight, StatusBar, TouchableOpacity} from 'react-native';
 
 import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
 
+// 导入自定义原生模块
+var Orientation = NativeModules.Orientation;
 import WeatherChart from './weather_chart.android';
 export default class Weather extends React.Component {
 
@@ -40,6 +43,7 @@ export default class Weather extends React.Component {
 
     gotoWeatherChart(){
         const navigator = this.props.navigator;
+        Orientation.transverse();
         this.props.navigator.push({
             component:WeatherChart,
         })

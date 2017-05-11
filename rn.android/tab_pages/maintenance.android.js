@@ -8,7 +8,7 @@ import {View, Text, TouchableOpacity,
 
 import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
-// import HeatStation from '../component/heat_station_maintenance.ios';
+import HeatStation from '../component/heat_station_maintenance.android';
 
 export default class Maintenance extends React.Component {
 
@@ -55,12 +55,12 @@ export default class Maintenance extends React.Component {
         // });
     }
 
-    // gotoHeatStation(){
-    //     const navigator = this.props.navigator;
-    //     this.props.navigator.push({
-    //         component: HeatStation,
-    //     })
-    // }
+    gotoHeatStation(){
+        const navigator = this.props.navigator;
+        this.props.navigator.push({
+            component: HeatStation,
+        })
+    }
 
     render() {
         return (
@@ -79,51 +79,52 @@ export default class Maintenance extends React.Component {
                     <Image style={{ width: 18, height: 20, marginRight:10,marginTop: 10, }} source={require('../icons/nav_flag.png')} />
                     {/*</TouchableOpacity>*/}
                 </View>
-                {/*<View style={styles.topView}>*/}
-                    {/*<View style={styles.searchView}>*/}
-                        {/*<TextInput*/}
-                            {/*style={styles.textInput}*/}
-                            {/*placeholder={"请输入您要搜索的换热站关键字"}*/}
-                            {/*placeholderTextColor={'#808080'}*/}
-                            {/*onChangeText={(searchValue)=>this.setState({searchValue})}*/}
-                        {/*/>*/}
-                        {/*<TouchableOpacity activeOpacity={0.5}>*/}
-                        {/*<Image style={{width:18, height: 18, marginRight:10,}} source={require('../icons/search_icon.png')} />*/}
-                        {/*</TouchableOpacity>*/}
-                    {/*</View>*/}
-                {/*</View>*/}
-                {/*<ListView*/}
-                    {/*automaticallyAdjustContentInsets={false}*/}
-                    {/*dataSource={this.state.dataSource}*/}
-                    {/*enableEmptySections={true}*/}
-                    {/*renderRow={(rowData) => {*/}
-                {/*return(*/}
+                <View style={styles.topView}>
+                    <View style={styles.searchView}>
+                        <TextInput
+                            underlineColorAndroid="transparent"
+                            style={styles.textInput}
+                            placeholder={"请输入您要搜索的换热站关键字"}
+                            placeholderTextColor={'#808080'}
+                            onChangeText={(searchValue)=>this.setState({searchValue})}
+                        />
+                        <TouchableOpacity activeOpacity={0.5}>
+                        <Image style={{width:18, height: 18, marginRight:10,}} source={require('../icons/search_icon.png')} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <ListView
+                    automaticallyAdjustContentInsets={false}
+                    dataSource={this.state.dataSource}
+                    enableEmptySections={true}
+                    renderRow={(rowData) => {
+                return(
 
-                  {/*<TouchableHighlight underlayColor="#ECEDEE" onPress={this.gotoHeatStation.bind(this)}>*/}
-                    {/*<View style={styles.listItemView}>*/}
-                        {/*<Image style={styles.listItemIconView} source={require('../icons/company_icon.png')}></Image>*/}
-                        {/*<View style={styles.listItemTextView}>*/}
-                            {/*<View>*/}
-                                {/*<Text style={{fontSize:16, color: '#212121'}}>{rowData.company_name}</Text>*/}
-                            {/*</View>*/}
-                            {/*<View style={{backgroundColor: '#f2d6b8',height: 20,marginTop:2,justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center',}}>*/}
-                                {/*<Text style={styles.listItemTextLeft}>换热站能耗</Text>*/}
-                                {/*<Text style={styles.listItemTextRight}>{rowData.data_value}</Text>*/}
-                            {/*</View>*/}
-                            {/*<View style={styles.listItemTextView2}>*/}
-                                {/*<Text style={styles.listItemTextLeft}>换热站数量</Text>*/}
-                                {/*<Text style={styles.listItemTextRight}>{rowData.station_count}</Text>*/}
-                            {/*</View>*/}
-                            {/*<View style={styles.listItemTextView2}>*/}
-                                {/*<Text style={styles.listItemTextLeft}>供热面积</Text>*/}
-                                {/*<Text style={styles.listItemTextRight}>{rowData.heating_area}</Text>*/}
-                            {/*</View>*/}
-                        {/*</View>*/}
-                    {/*</View>*/}
-                  {/*</TouchableHighlight>*/}
-                    {/*)*/}
-                {/*}}*/}
-                {/*/>*/}
+                  <TouchableHighlight underlayColor="#ECEDEE" onPress={this.gotoHeatStation.bind(this)}>
+                    <View style={styles.listItemView}>
+                        <Image style={styles.listItemIconView} source={require('../icons/company_icon.png')}></Image>
+                        <View style={styles.listItemTextView}>
+                            <View>
+                                <Text style={{fontSize:16, color: '#212121'}}>{rowData.company_name}</Text>
+                            </View>
+                            <View style={{backgroundColor: '#f2d6b8',height: 20,marginTop:2,justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center',}}>
+                                <Text style={styles.listItemTextLeft}>换热站能耗</Text>
+                                <Text style={styles.listItemTextRight}>{rowData.data_value}</Text>
+                            </View>
+                            <View style={styles.listItemTextView2}>
+                                <Text style={styles.listItemTextLeft}>换热站数量</Text>
+                                <Text style={styles.listItemTextRight}>{rowData.station_count}</Text>
+                            </View>
+                            <View style={styles.listItemTextView2}>
+                                <Text style={styles.listItemTextLeft}>供热面积</Text>
+                                <Text style={styles.listItemTextRight}>{rowData.heating_area}</Text>
+                            </View>
+                        </View>
+                    </View>
+                  </TouchableHighlight>
+                    )
+                }}
+                />
             </View>
 
         )
@@ -160,7 +161,7 @@ const styles = StyleSheet.create({
         borderWidth:1,
         // marginTop: 74,
         flexDirection: 'row',
-        borderRadius:38,
+        borderRadius:19,
         alignItems: 'center',
         backgroundColor: '#ffffff',
     },

@@ -11,9 +11,9 @@ var {width, height} = Dimensions.get('window');
 //
 // import Test from '../tab_pages/test.ios';
 
-// import TotalEnergyChart from '../component/total_energy_chart.ios';
-// import Company from '../component/company.ios';
-// import HeatMap from '../component/heat_map.ios';
+import TotalEnergyChart from '../component/total_energy_chart.android';
+import Company from '../component/company.android';
+import HeatMap from '../component/heat_map.android';
 
 
 export default class Home extends React.Component {
@@ -38,12 +38,12 @@ export default class Home extends React.Component {
     //     }
     // }
 
-    // goToHeatMap(){
-    //     const navigator = this.props.navigator;
-    //     this.props.navigator.push({
-    //         component: HeatMap,
-    //     })
-    // }
+    goToHeatMap(){
+        const navigator = this.props.navigator;
+        this.props.navigator.push({
+            component: HeatMap,
+        })
+    }
 
     render() {
         return (
@@ -53,9 +53,9 @@ export default class Home extends React.Component {
                     hidden={true}  //status显示与隐藏
                 />
                 <View style={styles.navView}>
-                    {/*<TouchableOpacity onPress={this.goToHeatMap.bind(this)}>*/}
+                    <TouchableOpacity onPress={this.goToHeatMap.bind(this)}>
                         <Image style={{ width: 30, height: 30, marginLeft:10,marginTop: 10, }} source={require('../icons/map_icon.png')}/>
-                    {/*</TouchableOpacity>*/}
+                    </TouchableOpacity>
                     <Text style={styles.topNameText}>运行质量</Text>
                     {/*<TouchableOpacity style={styles.topImage} onPress={this.toNotice.bind(this)}>*/}
                     <Image style={{ width: 18, height: 20, marginRight:10,marginTop: 10, }} source={require('../icons/nav_flag.png')} />
@@ -80,10 +80,10 @@ export default class Home extends React.Component {
                         {/*/!*</TouchableOpacity>*!/*/}
                     {/*</View>*/}
                 {/*</View>*/}
-                {/*<View style={styles.chartView}>*/}
-                {/*<TotalEnergyChart />*/}
-                {/*</View>*/}
-                {/*<Company style={styles.company} navigator={this.props.navigator}/>*/}
+                <View style={styles.chartView}>
+                <TotalEnergyChart />
+                </View>
+                <Company style={styles.company} navigator={this.props.navigator}/>
 
             </View>
         )

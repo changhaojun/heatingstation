@@ -25,18 +25,17 @@ export default class WeatherChart extends Component {
             xAxisData: [],
             data: []
         };
-        Orientation.transverse();
+
         var _this = this;
         AsyncStorage.getItem("userKey", function (errs, result) {
             console.info(result);
             if (!errs) {
-                fetch("http://114.215.154.122/reli/android/androidAction?type=getHourlyWeather&userKey=0db71a843c04420cb16b516fb81c940b" +
-                    "")
+                fetch("http://rapapi.org/mockjsdata/16979/weather/history")
                     .then((response) => response.json())
                     .then((responseJson) => {
                         _this.setState({
-                            xAxisData: responseJson.data.xData,
-                            data: responseJson.data.temperature
+                            xAxisData: responseJson.data.time,
+                            data: responseJson.data.temp
                         });
                     })
                     .catch((error) => {
@@ -49,6 +48,7 @@ export default class WeatherChart extends Component {
     }
 
     back(){
+        Orientation.vertical();
         this.props.navigator.pop();
     }
 

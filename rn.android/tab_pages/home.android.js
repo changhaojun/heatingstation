@@ -6,10 +6,9 @@ var { width, height } = Dimensions.get('window');
 
 import Weather from '../component/weather.android';
 import HeatList from '../component/heat_list.android';
-//
-// // import Home from './home.ios';
-// import Setting from '../component/setting.ios';
-// import Warn from '../component/warn.ios';
+
+import Setting from '../component/setting.android';
+import Warn from '../component/warn.android';
 
 export default class Home extends React.Component {
 
@@ -19,19 +18,19 @@ export default class Home extends React.Component {
         this.state = {};
     }
 
-    // openSetting(){
-    //     const navigator = this.props.navigator;
-    //     this.props.navigator.push({
-    //         component: Setting,
-    //     })
-    // }
-    //
-    // openWarn(){
-    //     const navigator = this.props.navigator;
-    //     this.props.navigator.push({
-    //         component: Warn,
-    //     })
-    // }
+    openSetting(){
+        const navigator = this.props.navigator;
+        this.props.navigator.push({
+            component: Setting,
+        })
+    }
+
+    openWarn(){
+        const navigator = this.props.navigator;
+        this.props.navigator.push({
+            component: Warn,
+        })
+    }
 
     render() {
         return (
@@ -41,13 +40,13 @@ export default class Home extends React.Component {
                     hidden={true}  //status显示与隐藏
                 />
                 <View style={styles.navView}>
-                {/*<TouchableOpacity onPress={this.openSetting.bind(this)}>*/}
+                <TouchableOpacity onPress={this.openSetting.bind(this)}>
                     <Image style={{ width: 35, height: 35, marginLeft:10,marginTop: 10, }} source={require('../icons/tab_home_nav_left.png')}/>
-                {/*</TouchableOpacity>*/}
+                </TouchableOpacity>
                 <Text style={styles.topNameText}>首页</Text>
-                {/*<TouchableOpacity style={styles.topImage} onPress={this.openWarn.bind(this)}>*/}
+                <TouchableOpacity style={styles.topImage} onPress={this.openWarn.bind(this)}>
                     <Image style={{ width: 35, height: 35, marginRight:10,marginTop: 10, }} source={require('../icons/tab_home_nav_right.png')} />
-                {/*</TouchableOpacity>*/}
+                </TouchableOpacity>
                 </View>
 
                 <Weather style={styles.weather} navigator={this.props.navigator}/>

@@ -4,14 +4,16 @@
 
 // 热源厂列表页面
 import React from 'react';
-import { View,Text,Image,NavigatorIOS,StyleSheet,TouchableHighlight,ListView,AsyncStorage, Navigator} from 'react-native';
+import { View,Text,Image,StyleSheet,TouchableHighlight,ListView,AsyncStorage, Navigator, NativeModules} from 'react-native';
 import Dimensions from 'Dimensions';
 
 var {width, height} = Dimensions.get('window');
 
-// import HeatDetail from '../components/heat_detail.ios.js';
-import Orientation from 'react-native-orientation';
 import HistoryEnergyCharts from '../component/history_energy_charts';
+
+// 导入自定义原生模块
+var Orientation = NativeModules.Orientation;
+
 export default class HeatList extends React.Component {
     constructor(props) {
         super(props);
@@ -52,7 +54,8 @@ export default class HeatList extends React.Component {
     // }
 
     gotoHistoryEnergyCharts(){
-        Orientation.lockToLandscape();
+        Orientation.transverse();
+
         const navigator = this.props.navigator;
         navigator.push({
             component: HistoryEnergyCharts,
