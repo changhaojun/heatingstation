@@ -1,11 +1,7 @@
 package com.wisdomheating;
 
-import android.app.Activity;
 import android.app.Application;
-import android.content.Intent;
-import android.util.Log;
 
-import com.example.plugin.OrientationPackage;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -18,6 +14,8 @@ import com.github.alinz.reactnativewebviewbridge.WebViewBridgePackage;
 import java.util.Arrays;
 import java.util.List;
 
+import cn.jpush.reactnativejpush.JPushPackage;
+
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
@@ -29,9 +27,7 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-              new MainReactPackage(),
-              new OrientationPackage(),
-              new WebViewBridgePackage()
+              new MainReactPackage(),new JPushPackage(false,false),new WebViewBridgePackage()
 
       );
     }
