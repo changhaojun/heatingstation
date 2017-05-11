@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -27,6 +26,18 @@
 		D671D3971EC0019800CA6AF5 /* iPhone_736@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = D671D3961EC0019800CA6AF5 /* iPhone_736@3x.png */; };
 		D6BDE0531EA7490900E27FF4 /* libReact-Native-Webview-Bridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D6BDE0521EA748FD00E27FF4 /* libReact-Native-Webview-Bridge.a */; };
 		D6DABB221EA99F59008E4E1D /* libRCTOrientation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D6DABB0B1EA99DD9008E4E1D /* libRCTOrientation.a */; };
+		6DCBF488D96E41C0A5A4185E /* libRCTJPushModule.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CE107ABC2A46599B3ACFA4 /* libRCTJPushModule.a */; };
+		7C729CDD8C0E4D3E99C90EB8 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 458A8CB2A2ED42259428E917 /* libz.tbd */; };
+		6DFE9EA4F89A49458E5BE0F3 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3771465B9B146A0A56A3041 /* UserNotifications.framework */; };
+		1BA9138BA92242FD8147E44F /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D655EED043F494998D0DB49 /* CoreTelephony.framework */; };
+		3320252F8642454D8429C6AC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59C624D519154627BF9A95A5 /* Security.framework */; };
+		EABB64F2FBB04627A0AC2223 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBBC351263E04A5BA09E45C8 /* CFNetwork.framework */; };
+		0C1FF6EA1100488AB5C52641 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9433CD3B7284B089505CC99 /* CoreFoundation.framework */; };
+		BD57C79BF7EF4A0AA55416CC /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBECEA9B5B6E45AAB21E9795 /* SystemConfiguration.framework */; };
+		C28B19F5231E40A39A87E041 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 308CE67722824603AABE829A /* Foundation.framework */; };
+		80B70C95836A4D0183EE4E70 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3DEB85981254D6F8278AF6D /* UIKit.framework */; };
+		568C26FE35834DEC8CD23D1C /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 197679882279494C8EF6CDD3 /* libresolv.tbd */; };
+		1F74E9EA0C6A46FE9F714A0C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D59A03E07344F71B04E99C6 /* CoreGraphics.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -212,6 +223,19 @@
 		D671D3961EC0019800CA6AF5 /* iPhone_736@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iPhone_736@3x.png"; path = "../../../../Downloads/app2/iPhone_736@3x.png"; sourceTree = "<group>"; };
 		D6BDE04D1EA748FD00E27FF4 /* React-Native-Webview-Bridge.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "React-Native-Webview-Bridge.xcodeproj"; path = "../node_modules/react-native-webview-bridge/ios/React-Native-Webview-Bridge.xcodeproj"; sourceTree = "<group>"; };
 		E7E7388B04B34352B88E68CA /* RCTOrientation.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTOrientation.xcodeproj; path = "../node_modules/react-native-orientation/iOS/RCTOrientation.xcodeproj"; sourceTree = "<group>"; };
+		FBA20C8A585645CF964EDF0D /* RCTJPushModule.xcodeproj */ = {isa = PBXFileReference; name = "RCTJPushModule.xcodeproj"; path = "../node_modules/jpush-react-native/ios/RCTJPushModule/RCTJPushModule.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		05CE107ABC2A46599B3ACFA4 /* libRCTJPushModule.a */ = {isa = PBXFileReference; name = "libRCTJPushModule.a"; path = "libRCTJPushModule.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		458A8CB2A2ED42259428E917 /* libz.tbd */ = {isa = PBXFileReference; name = "libz.tbd"; path = "usr/lib/libz.tbd"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = sourcecode.text-based-dylib-definition; explicitFileType = undefined; includeInIndex = 0; };
+		F3771465B9B146A0A56A3041 /* UserNotifications.framework */ = {isa = PBXFileReference; name = "UserNotifications.framework"; path = "System/Library/Frameworks/UserNotifications.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
+		7D655EED043F494998D0DB49 /* CoreTelephony.framework */ = {isa = PBXFileReference; name = "CoreTelephony.framework"; path = "System/Library/Frameworks/CoreTelephony.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
+		59C624D519154627BF9A95A5 /* Security.framework */ = {isa = PBXFileReference; name = "Security.framework"; path = "System/Library/Frameworks/Security.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
+		DBBC351263E04A5BA09E45C8 /* CFNetwork.framework */ = {isa = PBXFileReference; name = "CFNetwork.framework"; path = "System/Library/Frameworks/CFNetwork.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
+		B9433CD3B7284B089505CC99 /* CoreFoundation.framework */ = {isa = PBXFileReference; name = "CoreFoundation.framework"; path = "System/Library/Frameworks/CoreFoundation.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
+		CBECEA9B5B6E45AAB21E9795 /* SystemConfiguration.framework */ = {isa = PBXFileReference; name = "SystemConfiguration.framework"; path = "System/Library/Frameworks/SystemConfiguration.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
+		308CE67722824603AABE829A /* Foundation.framework */ = {isa = PBXFileReference; name = "Foundation.framework"; path = "System/Library/Frameworks/Foundation.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
+		A3DEB85981254D6F8278AF6D /* UIKit.framework */ = {isa = PBXFileReference; name = "UIKit.framework"; path = "System/Library/Frameworks/UIKit.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
+		197679882279494C8EF6CDD3 /* libresolv.tbd */ = {isa = PBXFileReference; name = "libresolv.tbd"; path = "usr/lib/libresolv.tbd"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = sourcecode.text-based-dylib-definition; explicitFileType = undefined; includeInIndex = 0; };
+		5D59A03E07344F71B04E99C6 /* CoreGraphics.framework */ = {isa = PBXFileReference; name = "CoreGraphics.framework"; path = "System/Library/Frameworks/CoreGraphics.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -240,6 +264,18 @@
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
+				6DCBF488D96E41C0A5A4185E /* libRCTJPushModule.a in Frameworks */,
+				7C729CDD8C0E4D3E99C90EB8 /* libz.tbd in Frameworks */,
+				6DFE9EA4F89A49458E5BE0F3 /* UserNotifications.framework in Frameworks */,
+				1BA9138BA92242FD8147E44F /* CoreTelephony.framework in Frameworks */,
+				3320252F8642454D8429C6AC /* Security.framework in Frameworks */,
+				EABB64F2FBB04627A0AC2223 /* CFNetwork.framework in Frameworks */,
+				0C1FF6EA1100488AB5C52641 /* CoreFoundation.framework in Frameworks */,
+				BD57C79BF7EF4A0AA55416CC /* SystemConfiguration.framework in Frameworks */,
+				C28B19F5231E40A39A87E041 /* Foundation.framework in Frameworks */,
+				80B70C95836A4D0183EE4E70 /* UIKit.framework in Frameworks */,
+				568C26FE35834DEC8CD23D1C /* libresolv.tbd in Frameworks */,
+				1F74E9EA0C6A46FE9F714A0C /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -381,6 +417,7 @@
 				00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */,
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
 				E7E7388B04B34352B88E68CA /* RCTOrientation.xcodeproj */,
+				FBA20C8A585645CF964EDF0D /* RCTJPushModule.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -401,6 +438,7 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* WisdomHeatingTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
+				E02C7DACC89A4C4895E09216 /* Frameworks */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -429,6 +467,25 @@
 				D6DABB0B1EA99DD9008E4E1D /* libRCTOrientation.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		E02C7DACC89A4C4895E09216 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				458A8CB2A2ED42259428E917 /* libz.tbd */,
+				F3771465B9B146A0A56A3041 /* UserNotifications.framework */,
+				7D655EED043F494998D0DB49 /* CoreTelephony.framework */,
+				59C624D519154627BF9A95A5 /* Security.framework */,
+				DBBC351263E04A5BA09E45C8 /* CFNetwork.framework */,
+				B9433CD3B7284B089505CC99 /* CoreFoundation.framework */,
+				CBECEA9B5B6E45AAB21E9795 /* SystemConfiguration.framework */,
+				308CE67722824603AABE829A /* Foundation.framework */,
+				A3DEB85981254D6F8278AF6D /* UIKit.framework */,
+				197679882279494C8EF6CDD3 /* libresolv.tbd */,
+				5D59A03E07344F71B04E99C6 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			path = "";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -803,6 +860,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -820,6 +878,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
@@ -909,6 +968,7 @@
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 					"$(SRCROOT)/../node_modules/react-native/ReactCommon/**",
 					"$(SRCROOT)/../node_modules/react-native-orientation/iOS/RCTOrientation/**",
+					"$(SRCROOT)\..\node_modules\jpush-react-native\ios\RCTJPushModule\RCTJPushModule",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -950,6 +1010,7 @@
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 					"$(SRCROOT)/../node_modules/react-native/ReactCommon/**",
 					"$(SRCROOT)/../node_modules/react-native-orientation/iOS/RCTOrientation/**",
+					"$(SRCROOT)\..\node_modules\jpush-react-native\ios\RCTJPushModule\RCTJPushModule",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;

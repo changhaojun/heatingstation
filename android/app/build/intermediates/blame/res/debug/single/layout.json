@@ -44,6 +44,10 @@
         "source": "E:\\Microsoft VS Code\\workspace\\heatingstation\\android\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\layout\\abc_select_dialog_material.xml"
     },
     {
+        "merged": "E:\\Microsoft VS Code\\workspace\\heatingstation\\android\\app\\build\\intermediates\\res\\merged\\debug\\layout\\jpush_popwin_layout.xml",
+        "source": "E:\\Microsoft VS Code\\workspace\\heatingstation\\android\\app\\build\\intermediates\\exploded-aar\\WisdomHeating\\jpush-react-native\\unspecified\\res\\layout\\jpush_popwin_layout.xml"
+    },
+    {
         "merged": "E:\\Microsoft VS Code\\workspace\\heatingstation\\android\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_list_menu_item_layout.xml",
         "source": "E:\\Microsoft VS Code\\workspace\\heatingstation\\android\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\layout\\abc_list_menu_item_layout.xml"
     },
@@ -158,5 +162,9 @@
     {
         "merged": "E:\\Microsoft VS Code\\workspace\\heatingstation\\android\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_action_bar_up_container.xml",
         "source": "E:\\Microsoft VS Code\\workspace\\heatingstation\\android\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\layout\\abc_action_bar_up_container.xml"
+    },
+    {
+        "merged": "E:\\Microsoft VS Code\\workspace\\heatingstation\\android\\app\\build\\intermediates\\res\\merged\\debug\\layout\\jpush_webview_layout.xml",
+        "source": "E:\\Microsoft VS Code\\workspace\\heatingstation\\android\\app\\build\\intermediates\\exploded-aar\\WisdomHeating\\jpush-react-native\\unspecified\\res\\layout\\jpush_webview_layout.xml"
     }
 ]
