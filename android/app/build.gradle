@@ -126,6 +126,7 @@ android {
 }
 
 dependencies {
+    compile project(':jpush-react-native')
     compile project(':react-native-webview-bridge')
     compile project(':react-native-orientation')
     compile fileTree(dir: "libs", include: ["*.jar"])

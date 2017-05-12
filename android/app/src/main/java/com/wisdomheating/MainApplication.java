@@ -3,6 +3,7 @@ package com.wisdomheating;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import cn.jpush.reactnativejpush.JPushPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 
@@ -27,7 +28,8 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-              new MainReactPackage(),new JPushPackage(false,false),new WebViewBridgePackage()
+              new MainReactPackage(),
+            new JPushPackage(),new JPushPackage(false,false),new WebViewBridgePackage()
 
       );
     }
