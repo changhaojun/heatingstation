@@ -19,14 +19,14 @@ import {
 import JPushModule from 'jpush-react-native';
 
 import Login from './rn.js/login.ios';
-var Orientation = NativeModules.Orientation;
+import Orientation from 'react-native-orientation';
 
 
 var _navigator;
 var lastBackPressed;
 BackAndroid.addEventListener('hardwareBackPress', () => {
     if (_navigator && _navigator.getCurrentRoutes().length > 1) {
-        Orientation.vertical();//竖屏
+        Orientation.lockToPortrait();//竖屏
         _navigator.pop();
         return true;
     } else if (lastBackPressed && lastBackPressed + 2000 >= Date.now()) {
@@ -58,7 +58,7 @@ export default class WisdomHeating extends Component {
                 renderScene={(route, navigator) => {
                     let Component = route.component;
                     _navigator = navigator;
-                    return <Component {...route.params} navigator={navigator} />
+                    return <Component {...route.passProps} navigator={navigator} />
                 }
                 }
             />

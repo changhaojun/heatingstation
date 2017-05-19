@@ -15,7 +15,7 @@ export default class BranchChart extends Component {
     // componentWillMount() {
     //     var initial = Orientation.getInitialOrientation();
     //     if (initial === 'PORTRAIT') {
-    //         Orientation.lockToLandscape();
+    //         Orientation.lockToLandscape();//横
     //     } else {}}
     //
     // componentWillUnmount() {

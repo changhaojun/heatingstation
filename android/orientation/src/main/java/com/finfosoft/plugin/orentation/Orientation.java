@@ -28,7 +28,7 @@ public class Orientation extends ReactContextBaseJavaModule {
      * 横屏
      */
     @ReactMethod
-    public void transverse() {
+    public void lockToLandscape() {
         UiThreadUtil.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -51,7 +51,7 @@ public class Orientation extends ReactContextBaseJavaModule {
      * 竖屏
      */
     @ReactMethod
-    public void vertical() {
+    public void lockToPortrait() {
         UiThreadUtil.runOnUiThread(new Runnable() {
             @Override
             public void run() {

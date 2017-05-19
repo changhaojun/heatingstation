@@ -138,15 +138,6 @@
     </item>
     <item
         is-multidex="false"
-        jar="E:\Microsoft VS Code\workspace\heatingstation\android\app\build\intermediates\exploded-aar\WisdomHeating\react-native-orientation\unspecified\jars\classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="23.0.1"
-        sha1="156e5dc9b9b5e316b3bfe55054b8fc704614b1a5">
-        <dex dex="E:\Microsoft VS Code\workspace\heatingstation\android\app\build\intermediates\pre-dexed\debug\WisdomHeating-react-native-orientation-unspecified_3f07c6c8f68dfdd78a112ffcf37b336fde5814be.jar" />
-    </item>
-    <item
-        is-multidex="false"
         jar="E:\Microsoft VS Code\workspace\heatingstation\android\app\build\intermediates\exploded-aar\com.facebook.fresco\fbcore\0.11.0\jars\classes.jar"
         jumboMode="false"
         optimize="true"
@@ -234,6 +225,15 @@
         revision="23.0.1"
         sha1="c7c4f9e35c2fd5900da24f9872e3971801f08ce0">
         <dex dex="E:\Microsoft VS Code\workspace\heatingstation\android\app\build\intermediates\pre-dexed\debug\okhttp-3.4.1_9d48a170875e4d524a0e10058072c1697a5f7a90.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Microsoft VS Code\workspace\heatingstation\android\app\build\intermediates\exploded-aar\WisdomHeating\orientation\unspecified\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="85e1e46d2807ae7202fc6ca78bf7f07f7c746bb7">
+        <dex dex="E:\Microsoft VS Code\workspace\heatingstation\android\app\build\intermediates\pre-dexed\debug\WisdomHeating-orientation-unspecified_f6712e59ac343e82feddfc17ec983f7066abdec6.jar" />
     </item>
     <item
         is-multidex="false"

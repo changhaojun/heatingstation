@@ -9,9 +9,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/orientation" />
             <option value="$PROJECT_DIR$/../node_modules/jcore-react-native/android" />
             <option value="$PROJECT_DIR$/../node_modules/jpush-react-native/android" />
-            <option value="$PROJECT_DIR$/../node_modules/react-native-orientation/android" />
             <option value="$PROJECT_DIR$/../node_modules/react-native-webview-bridge/android" />
           </set>
         </option>
