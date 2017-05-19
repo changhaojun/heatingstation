@@ -4,7 +4,7 @@
 
 // 热源厂列表页面
 import React from 'react';
-import { View,Text,Image,NavigatorIOS,StyleSheet,TouchableHighlight,ListView,AsyncStorage, Navigator} from 'react-native';
+import { View,Text,Image, AlertIOS,NavigatorIOS,StyleSheet,TouchableHighlight,ListView,AsyncStorage, Navigator} from 'react-native';
 import Dimensions from 'Dimensions';
 import Orientation from 'react-native-orientation';
 var {width, height} = Dimensions.get('window');
@@ -24,7 +24,7 @@ export default class HeatList extends React.Component {
             access_token: null,
             company_id: null,
             refresh_token: null,
-            url: "http://121.42.253.149:18816/v1_0_0/list?access_token="
+            url: "http://192.168.1.105/v1_0_0/list?access_token="
         };
 
         var _this = this;
@@ -36,7 +36,7 @@ export default class HeatList extends React.Component {
                 _this.setState({access_token:result});
             }
             _this.setState({
-                url: _this.state.url+_this.state.access_token+"&tag_id=1,2,3,4",
+                url: _this.state.url+_this.state.access_token+"&tag_id=[1,2,3,4]",
             })
             console.log(_this.state.url);
         });
@@ -46,7 +46,7 @@ export default class HeatList extends React.Component {
                 _this.setState({company_id:result});
             }
             _this.setState({
-                url: _this.state.url+"&company_id="+_this.state.company_id+"&isStaticInfomation=true&level=1",
+                url: _this.state.url+"&company_id="+_this.state.company_id+"&isStaticInfomation=false&level=0",
             })
             console.log(_this.state.url);
 
@@ -64,7 +64,10 @@ export default class HeatList extends React.Component {
                         console.log(_this.state.dataSource);
                     })
                     .catch((error) => {
-                        console.error(error);
+                        AlertIOS.alert(
+                            '提示',
+                            '网络连接错误，获取列表数据失败',
+                        );
                     });
             }
         });
@@ -82,11 +85,16 @@ export default class HeatList extends React.Component {
     //     })
     // }
 
-    gotoHistoryEnergyCharts(){
+    gotoHistoryEnergyCharts(name,id){
         const navigator = this.props.navigator;
         Orientation.lockToLandscape();
         navigator.push({
             component: HistoryEnergyCharts,
+            passProps:{
+                company_name: name,
+                company_id: id,
+
+            }
         })
     }
 
@@ -106,7 +114,7 @@ export default class HeatList extends React.Component {
                     renderRow={(rowData) => {
                 return(
 
-                  <TouchableHighlight onPress={this.gotoHistoryEnergyCharts.bind(this)}>
+                  <TouchableHighlight underlayColor="rgba(80,191,255,0.5)" onPress={this.gotoHistoryEnergyCharts.bind(this,rowData.name,rowData.id)}>
                     <View style={styles.listItem}>
                         <View style={styles.listItemTextView}>
                             <Text style={styles.listItemText1}>{rowData.name}</Text>

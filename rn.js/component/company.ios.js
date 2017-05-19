@@ -37,7 +37,7 @@ export default class CompanyList extends React.Component {
             access_token: null,
             company_id: null,
             refresh_token: null,
-            url: "http://121.42.253.149:18816/v1_0_0/list?access_token="
+            url: "http://192.168.1.105/v1_0_0/list?access_token="
         };
         var _this = this;
 
@@ -48,7 +48,7 @@ export default class CompanyList extends React.Component {
                 _this.setState({access_token:result});
             }
             _this.setState({
-                url: _this.state.url+_this.state.access_token+"&tag_id=1,2,3,4",
+                url: _this.state.url+_this.state.access_token+"&tag_id=[1,2,3,4]",
             })
             console.log(_this.state.url);
         });
@@ -58,7 +58,7 @@ export default class CompanyList extends React.Component {
                 _this.setState({company_id:result});
             }
             _this.setState({
-                url: _this.state.url+"&company_id="+_this.state.company_id+"&isStaticInfomation=true&level=1",
+                url: _this.state.url+"&company_id="+_this.state.company_id+"&isStaticInfomation=true&level=0",
             })
             console.log(_this.state.url);
 
@@ -83,10 +83,12 @@ export default class CompanyList extends React.Component {
     }
 
 
-    gotoBranch(){
-        const navigator = this.props.navigator;//上一个页面传过来的值
+    gotoBranch(id){
         this.props.navigator.push({
             component: Branch,
+            passProps:{
+                company_id: id,
+            }
         })
     }
 
@@ -107,7 +109,7 @@ export default class CompanyList extends React.Component {
                     renderRow={(rowData) => {
                 return(
 
-                    <TouchableOpacity activeOpacity={0.5} onPress={this.gotoBranch.bind(this)}>
+                    <TouchableOpacity activeOpacity={0.5} onPress={this.gotoBranch.bind(this,rowData.id)}>
                         <View style={styles.textAll}>
                             <Text style={styles.listItemText1}>{rowData.name}</Text>
                             <Text style={styles.listItemText2}>换热站:{rowData.station_count} 面积:{rowData.heating_area}</Text>

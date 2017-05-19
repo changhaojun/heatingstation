@@ -1,9 +1,11 @@
 /**
  * Created by Vector on 17/4/20.
+ *
+ * 支线列表
  */
 import React from 'react';
 import {View, Text, Image, TextInput, NavigatorIOS, StyleSheet, TouchableHighlight, StatusBar, ListView,
-    TouchableOpacity, Modal, Picker, PickerIOS} from 'react-native';
+    TouchableOpacity, Modal, Picker, AsyncStorage} from 'react-native';
 
 import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
@@ -11,9 +13,6 @@ var { width, height } = Dimensions.get('window');
 import HeatStation from '../component/heat_station.ios';
 
 export default class Branch extends React.Component {
-
-    // state: {dataSource: any};
-
 
     constructor(props) {
         super(props);
@@ -25,61 +24,80 @@ export default class Branch extends React.Component {
             dataSource1:ds.cloneWithRows([]),
 
             data: [],
-            show:false,
+            show: false,
+
             selectedCourse: "",
-            selectedValue: 1,
 
+            // piker滚动时候的值
+            selectedValue: "",
 
+            tag_id: "",
             dataStatus: styles.data_valueText,
+
+            access_token: null,
+            //121.42.253.149:18816
+            url: "http://192.168.1.105/v1_0_0/branchValue?access_token=",
+
+            startUrl: "",
+            select_url: "",
+
         };
+
+        this.setState({
+
+        });
 
         var _this = this;
         var initials=['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',]
         //从AsyncStorage取出userKey
-        // AsyncStorage.getItem("userKey",function(errs,result){
-            // console.info(result);
-            // if (!errs) {
-            //     var url = "";
-            //     switch (_this.props.type) {
-            //         case "group": url = "http://114.215.154.122/reli/android/androidAction?type=getDeviceForGroup&userKey=" + result + "&groupId=" + _this.props.id; break;
-            //         case "search": url = "http://114.215.154.122/reli/android/androidAction?type=getDeviceByName&userKey=" + result + "&deviceName=" + _this.props.id; break;
-            //         case "online": url = "http://114.215.154.122/reli/android/androidAction?type=getDeviceForOnLine&userKey=" + result + "&stateId=" + _this.props.id; break;
-            //         case "warn": url = "http://114.215.154.122/reli/android/androidAction?type=getDeviceForState&userKey=" + result + "&stateId=" + _this.props.id; break;
-            //     }
-        fetch('http://rapapi.org/mockjsdata/16979/v1_0_0/station_tag/tag_id')
-            .then((response)=>response.json())
-            .then((responseJson)=>{
-                // 数组
-                var itemAry = [];
-                for(var i=0;i<responseJson.station_tag_information.length;i++){
-
-                    // 为每个Picker的Item放入数据
-                    itemAry.push(
-                        <PickerIOS.Item
-                            key={i}
-                            value = {responseJson.station_tag_information[i].tag_id}
-                            label = {responseJson.station_tag_information[i].tag_name}
-                        />
-                    );
-                }
+        AsyncStorage.getItem("access_token",function(errs,result){
+            console.info(result);
+            if (!errs) {
+                _this.setState({access_token:result});
                 _this.setState({
-                    selectedValue: responseJson.station_tag_information[0].tag_id,
-                    selectedCourse:responseJson.station_tag_information[0].tag_name,  // 为选择器初始化值
-                    dataSource2:itemAry,
-                    data: responseJson.station_tag_information
-                });
+                    url: _this.state.url+_this.state.access_token,
+                })
+                _this.setState({
+                    startUrl: _this.state.url + "&tag_id=1&company_id="+_this.props.company_id,
+                })
 
-            })
-            .catch((error)=>{
-                console.log(error);
-            });
+                // 获取数据标签
+                fetch("http://192.168.1.105/v1_0_0/tags?access_token=" + _this.state.access_token +"&level=1")
+                    .then((response)=>response.json())
+                    .then((responseJson)=>{
 
-                //从服务器取出数据
-                fetch("http://rapapi.org/mockjsdata/16979/v1_0_0/company/branch_count")
+                    console.log(responseJson);
+                        // 数组
+                        var itemAry = [];
+                        for(var i=0;i<responseJson.station_tag.length;i++){
+
+                            // 为每个Picker的Item放入数据
+                            itemAry.push(
+                                <Picker.Item
+                                    key={i}
+                                    label = {responseJson.station_tag[i].tag_name}
+                                    value = {responseJson.station_tag[i].tag_name}
+                                />
+                            );
+                        }
+                        _this.setState({
+                            selectedValue: responseJson.station_tag[0].tag_name,
+                            // selectedCourse: responseJson.station_tag[0].tag_name,  // 为选择器初始化值
+                            dataSource2: itemAry,
+                            data: responseJson.station_tag
+                        });
+
+                    })
+                    .catch((error)=>{
+                        console.log(error);
+                    });
+
+                // 从服务器取出数据
+                fetch(_this.state.startUrl)
                     .then((response) => response.json())
                     .then((responseJson) => {
 
-                        console.log(responseJson.data);
+                        console.log(responseJson.branch_count);
 
                         if (responseJson.branch_count.length <= 0) {
                             _this.props.navigator.pop();//返回上一个页面
@@ -96,10 +114,11 @@ export default class Branch extends React.Component {
                             for(var i=0;i<responseJson.branch_count.length;i++){
                                 if(initials[j]==responseJson.branch_count[i].Initials){
                                     oneInitials.push({
-                                        data_value: responseJson.branch_count[i].data_value,
+                                        branch_name: responseJson.branch_count[i].branch_name,
+                                        avg_data_value: responseJson.branch_count[i].avg_data_value,
                                         min_data_value: responseJson.branch_count[i].min_data_value,
                                         max_data_value: responseJson.branch_count[i].max_data_value,
-                                        branch_name: responseJson.branch_count[i].branch_name,
+                                        branch_id: responseJson.branch_count[i].branch_id,
                                     })
                                     childHight=childHight+41;
                                 }
@@ -134,9 +153,8 @@ export default class Branch extends React.Component {
                     .catch((error) => {
                         // console.error(error);
                     });
-
-            // }
-        // });
+            }
+        });
     }
 
 
@@ -144,10 +162,15 @@ export default class Branch extends React.Component {
         this.props.navigator.pop();
     }
 
-    gotoHeatStation(){
-        const navigator = this.props.navigator;
+    gotoHeatStation(branch_id){
+
+        console.log(branch_id);
+
         this.props.navigator.push({
             component: HeatStation,
+            passProps:{
+                branch_id:branch_id,
+            }
         })
     }
 
@@ -158,22 +181,26 @@ export default class Branch extends React.Component {
         });
     }
     //选择框
-    _select(selectedCourse,selectedIndex) {
+    _select(selectedValue,selectedPosition) {
 
-        console.log(selectedCourse);
+        console.log(this.state.data[selectedPosition]._id);
+
         this.setState({
-            selectedValue: selectedCourse,
-            selectedCourse: this.state.data[selectedIndex].tag_name,
-        });
+            selectedValue: selectedValue,
+            tag_id: this.state.data[selectedPosition]._id,
+        })
+
+
+        console.log(this.state.url + "&tag_id=" + this.state.data[selectedPosition]._id + "&company_id=" + this.props.company_id,);
         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
        var _this = this;
        var initials=['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',]
-        fetch('http://rapapi.org/mockjsdata/16979/v1_0_0/company/branch_count1?'+selectedCourse)
+
+        fetch(this.state.url + "&tag_id=" + this.state.data[selectedPosition]._id + "&company_id=" + this.props.company_id,)
             .then((response) => response.json())
             .then((responseJson) => {
 
-                console.log(responseJson.branch_count);
 
                 if (responseJson.branch_count.length <= 0) {
                     _this.props.navigator.pop();//返回上一个页面
@@ -190,19 +217,12 @@ export default class Branch extends React.Component {
                     for(var i=0;i<responseJson.branch_count.length;i++){
                         if(initials[j]==responseJson.branch_count[i].Initials){
                             oneInitials.push({
-                                data_value: responseJson.branch_count[i].data_value,
+                                avg_data_value: responseJson.branch_count[i].avg_data_value,
                                 min_data_value: responseJson.branch_count[i].min_data_value,
                                 max_data_value: responseJson.branch_count[i].max_data_value,
                                 branch_name: responseJson.branch_count[i].branch_name,
-
-                                // deviceId:responseJson.data[i].device_id,
-                                // deviceName:responseJson.data[i].device_name,
-                                // runStatus:responseJson.data[i].run_status
+                                branch_id: responseJson.branch_count[i].branch_id,
                             })
-                                // _this.setState({
-                                //     dataStatus: styles.data_valueTextWarn,
-                                // })
-
                             childHight=childHight+41;
                         }
 
@@ -244,7 +264,7 @@ export default class Branch extends React.Component {
             <View style={styles.all}>
                 {/*状态栏*/}
                 <StatusBar
-                    hidden={true}  //status显示与隐藏
+                    hidden={false}  //status显示与隐藏
                     backgroundColor='red'  //status栏背景色,仅支持安卓
                     translucent={true} //设置status栏是否透明效果,仅支持安卓
                     barStyle='light-content' //设置状态栏文字效果,仅支持iOS,枚举类型:default黑light-content白
@@ -274,7 +294,7 @@ export default class Branch extends React.Component {
                 </View>
                 <TouchableOpacity onPress={this._setModalVisible.bind(this)} activeOpacity = {1}>
                 <View style={styles.selectView}>
-                    <Text style={{fontSize:16, color: '#0099FF'}}>当前指标：{this.state.selectedCourse}</Text>
+                    <Text style={{fontSize:16, color: '#0099FF'}}>当前指标：{this.state.selectedValue}</Text>
                     <Image source={require('../icons/down_icon.png')} style={{width:18, height:12,}}></Image>
                 </View>
                 </TouchableOpacity>
@@ -295,13 +315,13 @@ export default class Branch extends React.Component {
                             dataSource={rowData.device}
                             renderRow={(rowData) => {
                                 return(
-                                    <TouchableOpacity activeOpacity={0.5} onPress={this.gotoHeatStation.bind(this)}>
+                                    <TouchableOpacity activeOpacity={0.5} onPress={this.gotoHeatStation.bind(this,rowData.branch_id)}>
                                     <View style={styles.listItemChild}>
                                         <View style={styles.listItemChild1}>
                                             <Text style={styles.listItemText2}>{rowData.branch_name}</Text>
                                         </View>
                                         <View style={styles.listItemChild1}>
-                                            <Text style={rowData.data_value>1?styles.data_valueTextWarn:styles.data_valueText}>{rowData.data_value}</Text>
+                                            <Text style={rowData.avg_data_value>1?styles.data_valueTextWarn:styles.data_valueText}>{rowData.avg_data_value}</Text>
                                         </View>
                                         <View style={styles.listItemChild1}>
                                             <Text style={styles.data_valueText}>{rowData.max_data_value}</Text>
@@ -349,11 +369,13 @@ export default class Branch extends React.Component {
                                 请选择指标
                             </Text>
                             <View>
-                                <PickerIOS
+                                <Picker
+                                    //选中的值
                                     selectedValue={this.state.selectedValue}
-                                    onValueChange={(selectedCourse,selectedIndex)=>this._select(selectedCourse,selectedIndex,this)}>
+                                    onValueChange={(selectedValue, selectedPosition)=>this._select(selectedValue,selectedPosition,this)}>
+
                                     {this.state.dataSource2}
-                                </PickerIOS>
+                                </Picker>
                             </View>
                             <View style={styles.horizontalLine}/>
                             <View style={styles.buttonView}>
@@ -529,7 +551,7 @@ const styles = StyleSheet.create({
     subView:{
         marginLeft:60,
         marginRight:60,
-        backgroundColor:'rgba(255, 255, 255, 0.9)',
+        backgroundColor:'rgba(255, 255, 255, 0.7)',
         alignSelf: 'stretch',
         justifyContent:'center',
         borderRadius: 10,

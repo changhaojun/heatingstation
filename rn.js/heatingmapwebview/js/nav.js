@@ -7,7 +7,7 @@ $(function () {
     $(".up").click(function(){
     	if(onOff==true){
            upNav.css({
-                top: "0px",
+                top: "64px",
                 transition: "top 1s"
             });
             onOff=false;
@@ -26,8 +26,8 @@ $(function () {
     });
     function hideNav() {
         upNav.css({
-            top: "-30.5%",
-            transition: "top .1s"
+            top: "-140px",
+            transition: "top .5s"
         });
         onOff=true;
     }

@@ -2,7 +2,7 @@
  * Created by Vector on 17/4/19.
  */
 import React from 'react';
-import {View, Text, Image, TextInput, NavigatorIOS, StyleSheet, TouchableHighlight, StatusBar,} from 'react-native';
+import {View, Text, Image, TextInput, NavigatorIOS, StyleSheet, TouchableHighlight, StatusBar, AsyncStorage} from 'react-native';
 
 
 import Dimensions from 'Dimensions';
@@ -19,26 +19,66 @@ export default class TotalEnergyChart extends React.Component {
         this.state = {
             xAxisData:[],
             data:[],
+
+            access_token: null,
+            company_id: null,
+
+            url: "http://121.42.253.149:18816/v1_0_0/dayDatas?access_token="
         };
 
+
+        // 从本地存储中将company_id和access_token取出
         var _this = this;
-        fetch("http://rapapi.org/mockjsdata/16979/v1_0_0/chart")
-            .then((response) => response.json())
-            .then((responseJson) => {
-                _this.setState({
-                    xAxisData: responseJson.coordinate[0].xAxisData,
-                    data: responseJson.coordinate[0].yAxisData,
-                });
-                // console.log(_this.state.xAxisData);
-                // console.log(_this.state.data);
+        AsyncStorage.getItem("access_token",function(errs,result){
+            if (!errs) {
+                _this.setState({access_token:result});
+            }
+            _this.setState({
+                url: _this.state.url+_this.state.access_token,
             })
-            .catch((error) => {
-                // console.error(error);
-                // AlertIOS.alert(
-                //     '提示',
-                //     '网络连接失败',
-                // );
-            });
+            console.log(_this.state.url);
+        });
+
+        AsyncStorage.getItem("company_id",function(errs,result){
+            if (!errs) {
+                _this.setState({company_id:result});
+            }
+
+            _this.setState({
+                url: _this.state.url+"&_id="+_this.state.company_id+"&tag_id=2&level=0&start_time=2017$04$20&end_time=2017$04$31",
+            })
+
+            console.log(_this.state.url);
+
+            if (!errs) {
+                fetch(_this.state.url)
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+
+                        console.log(responseJson);
+
+
+                        var arrX = [];
+                        var arrY = [];
+                        for(var i=0; i<responseJson.length-1; i++){
+
+                            arrX.push(responseJson[i].create_date);
+                            arrY.push(responseJson[i].data_value);
+
+                        }
+                        _this.setState({
+                            xAxisData:arrX,
+                            data: arrY,
+                        });
+
+                        console.log(_this.state.xAxisData);
+                        console.log(_this.state.data);
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            }
+        });
     }
 
     render() {
@@ -52,6 +92,7 @@ export default class TotalEnergyChart extends React.Component {
                             color: '#ffffff',
                             fontSize: 16,
 
+
                         },
                         subtextStyle:{
                             fontWeight: '400',
@@ -60,10 +101,10 @@ export default class TotalEnergyChart extends React.Component {
                         },
                         itemGap: 2,
                         left:20,
-                        top:-4,
+                        top:0,
                 },
             grid:{
-                    show: true,
+                    show: false,
                     left:0,
                     right: 0,
                     bottom:0,
@@ -93,15 +134,15 @@ export default class TotalEnergyChart extends React.Component {
                     areaStyle: {
                         normal: {}
                     },
-                    markPoint : {
-                        data : [
-                            {type : 'max', name: '最大值',symbolSize:30},
-                            {type : 'min', name: '最小值',symbolSize:30}
-                        ]
-                    },
+                    // markPoint : {
+                    //     data : [
+                    //         {type : 'max', name: '最大值',symbolSize:30},
+                    //         {type : 'min', name: '最小值',symbolSize:30}
+                    //     ]
+                    // },
                     itemStyle: {
                         normal: {
-                            color: '#E4C095'
+                            color: '#35aeff'
                         }
                     },
                     data: this.state.data

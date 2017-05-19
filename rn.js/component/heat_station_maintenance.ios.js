@@ -2,16 +2,15 @@
  * Created by Vector on 17/4/24.
  */
 import React from 'react';
-import {View, Text, TouchableOpacity, Image, TextInput, NavigatorIOS, StyleSheet, TouchableHighlight, StatusBar, ListView} from 'react-native';
+import {View, Text, TouchableOpacity, Image, TextInput, NavigatorIOS, StyleSheet, TouchableHighlight, StatusBar, ListView,
+    AsyncStorage} from 'react-native';
 
 import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
 
 import Scada from '../component/scada.ios';
 import Orientation from 'react-native-orientation';
-export default class HeatStation extends React.Component {
-
-    // state: {dataSource: any};
+export default class HeatStationMaintenance extends React.Component {
 
     componentWillMount() {
             Orientation.lockToPortrait();
@@ -21,123 +20,80 @@ export default class HeatStation extends React.Component {
         super(props);
         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
-            name:props.name,
             dataSource:ds.cloneWithRows([]),
-            dataSource1:ds.cloneWithRows([]),
+            access_token: null,
+
+            searchValue: "",
+            base_url: "http://192.168.1.105/v1_0_0/appStation?access_token=",
+            start_url: "",
         };
+
+
         var _this = this;
-        var initials=['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',]
-        //从AsyncStorage取出userKey
-        // AsyncStorage.getItem("userKey",function(errs,result){
-        // console.info(result);
-        // if (!errs) {
-        //     var url = "";
-        //     switch (_this.props.type) {
-        //         case "group": url = "http://114.215.154.122/reli/android/androidAction?type=getDeviceForGroup&userKey=" + result + "&groupId=" + _this.props.id; break;
-        //         case "search": url = "http://114.215.154.122/reli/android/androidAction?type=getDeviceByName&userKey=" + result + "&deviceName=" + _this.props.id; break;
-        //         case "online": url = "http://114.215.154.122/reli/android/androidAction?type=getDeviceForOnLine&userKey=" + result + "&stateId=" + _this.props.id; break;
-        //         case "warn": url = "http://114.215.154.122/reli/android/androidAction?type=getDeviceForState&userKey=" + result + "&stateId=" + _this.props.id; break;
-        //     }
-        fetch('http://rapapi.org/mockjsdata/16979/v1_0_0/station_tag/tag_id')
-            .then((response)=>response.json())
-            .then((responseJson)=>{
-                // 数组
-                var itemAry = [];
-                for(var i=0;i<responseJson.station_tag_information.length;i++){
+        AsyncStorage.getItem("access_token",function(errs,result) {
 
-                    // 为每个Picker的Item放入数据
-                    itemAry.push(
-                        <PickerIOS.Item
-                            key={i}
-                            value = {responseJson.station_tag_information[i].tag_id}
-                            label = {responseJson.station_tag_information[i].tag_name}
-                        />
-                    );
-                }
+            if (!errs) {
+                _this.setState({access_token:result});
                 _this.setState({
-                    selectedValue: responseJson.station_tag_information[0].tag_id,
-                    selectedCourse:responseJson.station_tag_information[0].tag_name,  // 为选择器初始化值
-                    dataSource2:itemAry,
-                    data: responseJson.station_tag_information
+                    start_url: _this.state.base_url + _this.state.access_token + "&company_id="+_this.props.childCompany_id+"&name=",
+                });
+                // 从服务器取出数据
+                // "http://121.42.253.149:18816/v1_0_0/appStation?access_token="+_this.state.access_token+"&tag_id=[1,2,3,4,5,6]&company_id="+_this.props.childCompany_id
+                fetch(_this.state.start_url)
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+
+                        console.log(responseJson);
+                        _this.setState({
+                            dataSource: ds.cloneWithRows(responseJson),
+
+                        });
+                    })
+                    .catch((error) => {
+                        // console.error(error);
+                    });
+                }
+            }
+        )}
+
+        back() {
+            this.props.navigator.pop();
+        }
+
+        openScada(name,id){
+            this.props.navigator.push({
+                component: Scada,
+                passProps: {
+                    station_name: name,
+                    station_id: id,
+                }
+            })
+        }
+
+        searchStation(){
+
+            var _this = this;
+            const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+
+
+            console.log(_this.state.start_url+_this.state.searchValue);
+            // 从服务器取出数据
+            fetch(_this.state.start_url+_this.state.searchValue)
+                .then((response) => response.json())
+                .then((responseJson) => {
+
+                    console.log(responseJson);
+
+                    _this.setState({
+                        dataSource: ds.cloneWithRows(responseJson),
+
+                    });
+                })
+                .catch((error) => {
+                    // console.error(error);
                 });
 
-            })
-            .catch((error)=>{
-                console.log(error);
-            });
-
-        //从服务器取出数据
-        fetch("http://rapapi.org/mockjsdata/16979/v1_0_0/company/branch_count")
-            .then((response) => response.json())
-            .then((responseJson) => {
-
-                console.log(responseJson.data);
-
-                if (responseJson.branch_count.length <= 0) {
-                    _this.props.navigator.pop();//返回上一个页面
-                    return;
-                }
-                var allInitials=[];
-                var rightInitials=[];
-                var allHight=0;
-                var childHight=0;
-                //使用for循环整理数据
-                for(var j=0;j<initials.length;j++){
-                    childHight=0;
-                    let oneInitials=[];
-                    for(var i=0;i<responseJson.branch_count.length;i++){
-                        if(initials[j]==responseJson.branch_count[i].Initials){
-                            oneInitials.push({
-                                data_value: responseJson.branch_count[i].data_value,
-                                min_data_value: responseJson.branch_count[i].min_data_value,
-                                max_data_value: responseJson.branch_count[i].max_data_value,
-                                branch_name: responseJson.branch_count[i].branch_name,
-                            })
-                            childHight=childHight+41;
-                        }
-
-                    }
-                    if(oneInitials.length>0){
-                        //向左边队列添加数据
-                        allInitials.push({
-                            groupName:initials[j].toUpperCase(),
-                            device:ds.cloneWithRows(oneInitials),
-                        })
-                        //向右边队列添加数据
-                        rightInitials.push({
-                            groupName:initials[j].toUpperCase(),
-                            hight:allHight
-                        })
-                        allHight=allHight+38;
-                        allHight=allHight+childHight;
-                    }else{
-                        //向右边队列添加数据
-                        rightInitials.push({
-                            groupName:initials[j].toUpperCase(),
-                            hight:-1
-                        })
-                    }
-                }
-                _this.setState({
-                    dataSource:ds.cloneWithRows(allInitials),
-                    dataSource1:ds.cloneWithRows(rightInitials),
-                });
-            })
-            .catch((error) => {
-                // console.error(error);
-            });
-    }
-
-    back() {
-        this.props.navigator.pop();
-    }
-
-    openScada(){
-        const navigator = this.props.navigator;
-        navigator.push({
-            component: Scada,
-        })
-    }
+        }
 
     render() {
         return (
@@ -157,9 +113,7 @@ export default class HeatStation extends React.Component {
                         <Image style={{ width: 25, height: 25, marginLeft:10,marginTop: 10, }} source={require('../icons/nav_back_icon.png')}/>
                     </TouchableOpacity>
                     <Text style={styles.topNameText}>换热站运行情况</Text>
-                    {/*<TouchableOpacity style={styles.topImage} onPress={this.toNotice.bind(this)}>*/}
                     <Image style={{ width: 25, height: 25, marginRight:10,marginTop: 10, }} source={require('../icons/nav_flag.png')} />
-                    {/*</TouchableOpacity>*/}
                 </View>
                 <View style={styles.topView}>
                     <View style={styles.searchView}>
@@ -169,96 +123,67 @@ export default class HeatStation extends React.Component {
                             placeholderTextColor={'#808080'}
                             onChangeText={(searchValue)=>this.setState({searchValue})}
                         />
-                        {/*<TouchableOpacity onPress={this._search.bind(this)}>*/}
-                        <Image style={{width:18, height: 18, marginRight:10,}} source={require('../icons/search_light.png')} />
-                        {/*</TouchableOpacity>*/}
+                        <TouchableOpacity onPress={this.searchStation.bind(this)}>
+                            <Image style={{width:18, height: 18, marginRight:10,}} source={require('../icons/search_light.png')} />
+                        </TouchableOpacity>
                     </View>
                 </View>
-                <View style={styles.selectView}>
+                <View style={styles.titleView}>
                     <View style={styles.selectItemView}>
-                        <Text style={{fontSize:13,color:'#E0960A',textAlign: 'center',paddingTop: 15, }}>换热站</Text>
+                        <Text style={{fontSize:13,color:'#0099ff',textAlign: 'center',paddingTop: 15, }}>换热站</Text>
                     </View>
                     <View style={styles.selectItemView}>
-                        <Text style={styles.selectText}>热网单耗</Text>
+                        <Text style={styles.titleText}>热网单耗</Text>
                     </View>
                     <View style={styles.selectItemView}>
-                        <Text style={styles.selectText}>二网供温</Text>
+                        <Text style={styles.titleText}>二网供温</Text>
                     </View>
                     <View style={styles.selectItemView}>
-                        <Text style={styles.selectText}>一网回温</Text>
+                        <Text style={styles.titleText}>一网回温</Text>
                     </View>
                     <View style={styles.selectItemView}>
-                        <Text style={styles.selectText}>一网温差</Text>
+                        <Text style={styles.titleText}>一网温差</Text>
                     </View>
                     <View style={styles.selectItemView}>
-                        <Text style={styles.selectText}>一网压差</Text>
+                        <Text style={styles.titleText}>一网压差</Text>
                     </View>
                 </View>
                 <View style={styles.bottomView}>
-                    <ListView
-                        enableEmptySections={true}
-                        ref={(listView) => { _listView = listView; }}
-                        dataSource={this.state.dataSource}
-                        automaticallyAdjustContentInsets={false}
-                        renderRow={(rowData) => {
-                return(
-                    <View>
-                        <View style={styles.listItem}>
-                            <Text style={styles.sectionText}>{rowData.groupName}</Text>
-                        </View>
 
-                        <TouchableHighlight underlayColor="#f2d6b8" onPress={this.openScada.bind(this)}>
                         <ListView
+                            automaticallyAdjustContentInsets={false}
+                            contentContainerStyle={{marginTop:15,}}
                             enableEmptySections={true}
-                            dataSource={rowData.device}
+                            dataSource={this.state.dataSource}
                             renderRow={(rowData) => {
                                 return(
-                                        <View style={styles.selectView}>
-                                        <View style={styles.selectItemView}>
-                                            <Text style={{fontSize:13,color:'#E0960A',textAlign: 'center',paddingTop: 15, }}>换热站</Text>
+                                    <TouchableHighlight underlayColor="rgba(77,190,255,0.5)" onPress={this.openScada.bind(this,rowData.name,rowData.id)}>
+                                        <View style={styles.listView}>
+                                            <View style={styles.selectItemView}>
+                                                <Text style={{fontSize:10,color:'#000000',textAlign: 'center',paddingTop: 15, }}>{rowData.name}</Text>
+                                            </View>
+                                            <View style={styles.selectItemView}>
+                                                <Text style={rowData.real_data_status==1?styles.listText:styles.listWarnText}>{rowData.real_data_value}</Text>
+                                            </View>
+                                            <View style={styles.selectItemView}>
+                                                <Text style={rowData.come_temp_status==1?styles.listText:styles.listWarnText}>{rowData.come_temp_value}</Text>
+                                            </View>
+                                            <View style={styles.selectItemView}>
+                                                <Text style={rowData.home_temp_status==1?styles.listText:styles.listWarnText}>{rowData.home_temp_value}</Text>
+                                            </View>
+                                            <View style={styles.selectItemView}>
+                                                <Text style={rowData.ins_flow_status==1?styles.listText:styles.listWarnText}>{rowData.ins_flow_value}</Text>
+                                            </View>
+                                            <View style={styles.selectItemView}>
+                                                <Text style={rowData.diff_Pressure_status==1?styles.listText:styles.listWarnText}>{rowData.diff_Pressure_value}</Text>
+                                            </View>
                                         </View>
-                                        <View style={styles.selectItemView}>
-                                            <Text style={styles.selectText}>热网单耗</Text>
-                                        </View>
-                                        <View style={styles.selectItemView}>
-                                            <Text style={styles.selectText}>二网供温</Text>
-                                        </View>
-                                        <View style={styles.selectItemView}>
-                                            <Text style={styles.selectText}>一网回温</Text>
-                                        </View>
-                                        <View style={styles.selectItemView}>
-                                            <Text style={styles.selectText}>一网温差</Text>
-                                        </View>
-                                        <View style={styles.selectItemView}>
-                                            <Text style={styles.selectText}>一网压差</Text>
-                                        </View>
-                                    </View>
-
+                                    </TouchableHighlight>
                                     )
                                 }}
                             />
-                        </TouchableHighlight>
-                    </View>
-                    )
-                }}
-                    />
-                    {/*<ListView*/}
-                    {/*//style={styles.rightView}*/}
-                    {/*enableEmptySections={true}*/}
-                    {/*dataSource={this.state.dataSource1}*/}
-                    {/*initialListSize={26}//右边的一次加载完成*/}
-                    {/*renderRow={(rowData) => {*/}
-                    {/*return(*/}
-                    {/*<TouchableHighlight onPress={() =>{if(rowData.hight>=0){_listView.scrollTo({ x: 0,y: rowData.hight, animated: true})}}}>*/}
-                    {/*<View style={styles.rightView}>*/}
-                    {/*<Text style={styles.rightText}>{rowData.groupName}</Text>*/}
-                    {/*</View>*/}
-                    {/*</TouchableHighlight>*/}
-                    {/*)*/}
-                    {/*}}*/}
-                    {/*/>*/}
-                </View>
 
+                    </View>
             </View>
 
         )
@@ -291,9 +216,6 @@ const styles = StyleSheet.create({
     searchView:{
         width:width - 40,
         height:38,
-        // borderColor:"#f2d6b8",
-        // borderWidth:1,
-        // marginTop: 74,
         flexDirection: 'row',
         borderRadius:38,
         alignItems: 'center',
@@ -313,23 +235,43 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         alignItems: 'center',
     },
-    selectView:{
+    titleView:{
         width: width,
         height: 40,
         backgroundColor: '#ffffff',
         flexDirection: 'row',
         alignItems: 'center',
-        borderBottomWidth: 0.5,
-        borderColor: "#dedede",
+    },
+    listView:{
+        width: width,
+        height: 40,
+        backgroundColor: '#ffffff',
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderColor: '#e9e9e9',
     },
     selectItemView:{
         width: width/6,
         height: 40,
     },
-    selectText:{
+
+    titleText:{
+        fontSize:13,
+        color:'#0099ff',
+        textAlign: 'center',
+        paddingTop: 15,
+    },
+    listText:{
         fontSize:13,
         color:'#000000',
-        textAlign: 'left',
+        textAlign: 'center',
+        paddingTop: 15,
+    },
+    listWarnText:{
+        fontSize:13,
+        color:'red',
+        textAlign: 'center',
         paddingTop: 15,
     },
     bottomView: {
@@ -371,7 +313,7 @@ const styles = StyleSheet.create({
         paddingTop:13,
         fontSize:16,
         textAlign: 'left',
-        color: '#515151',
+        color: '#0099ff',
         paddingLeft: 20,
     },
     listItemChild1:{

@@ -3,13 +3,12 @@
  */
 import React from 'react';
 import {View, Text, Image, TextInput, Modal, AlertIOS,
-    Slider, Switch, NavigatorIOS, StyleSheet, TouchableHighlight, StatusBar, TouchableOpacity} from 'react-native';
+    Slider, Switch, NavigatorIOS, StyleSheet, TouchableHighlight, StatusBar, TouchableOpacity, AsyncStorage} from 'react-native';
 import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
 
 import Orientation from 'react-native-orientation';
 import WebViewBridge from 'react-native-webview-bridge';
-import Test from './test.ios';
 
 // 获取当期的时间戳
 var now = new Date();
@@ -61,10 +60,25 @@ export default class Scada extends React.Component {
             confirmTime: years+"-"+months+"-"+days+" "+hours+":"+minutes+":"+seconds,
             value: 0,
 
-            access_token: '',
-            // uri: "http://121.42.253.149:18816/list/group?station_name=瑾华小区&accessToken=59141b5ef77ace00059f37fb&station_id=58f0844316f12022002098b3",
-            uri: "http://114.215.154.122/reli/com.finfosoft.scada.view.ScadaViewForDevice.d?node_id=3&node_type=2",
+            access_token: null,
+            base_url: "http://121.42.253.149:18815/list/group?accessToken=",
+            start_url: "",
+            // uri: "http://192.168.1.106:8080/list/group?station_name=瑾华小区&accessToken=59141b5ef77ace00059f37fb&station_id=58f0844316f12022002098b3",
+            // uri: "http://114.215.154.122/reli/com.finfosoft.scada.view.ScadaViewForDevice.d?node_id=3&node_type=2",
         };
+
+        // 从本地存储中将company_id和access_token取出
+        var _this = this;
+        AsyncStorage.getItem("access_token",function(errs,result){
+            if (!errs) {
+                _this.setState({access_token:result});
+            }
+            _this.setState({
+                start_url: _this.state.base_url + _this.state.access_token + "&station_name=" + _this.props.station_name + "&station_id=" + _this.props.station_id,
+            })
+
+            console.log(_this.state.start_url);
+        });
 
         this.onBridgeMessage = this.onBridgeMessage.bind(this);
     }
@@ -119,7 +133,7 @@ export default class Scada extends React.Component {
             remember: checked,
         })
         if(!this.state.remember){
-            console.log("开关");
+            console.log("打开");
         }
     }
 
@@ -133,6 +147,7 @@ export default class Scada extends React.Component {
 
 
     render() {
+        var _this = this;
         return (
             <View style={styles.all}>
                 {/*状态栏*/}
@@ -155,14 +170,12 @@ export default class Scada extends React.Component {
                 <WebViewBridge
                     ref="webviewbridge"
                     onBridgeMessage={this.onBridgeMessage}
+                    scrollEnabled={false}
                     javaScriptEnabled={true}
-                    source={{uri:this.state.uri}}
+                    source={{uri: this.state.start_url}}
                     scalesPageToFit={true}
                     automaticallyAdjustContentInsets={false}
-                    style={{
-                         backgroundColor: "#f2d6b8",
-                    }
-                    }
+                    style={{ backgroundColor: "#f2d6b8",}}
                 />
 
 

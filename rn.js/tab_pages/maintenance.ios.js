@@ -1,7 +1,8 @@
 /**
  * Created by Vector on 17/4/17.
+ * 运行维护页面
  */
-// 运行维护页面
+
 import React from 'react';
 import {View, Text, TouchableOpacity,
     Image, TextInput, NavigatorIOS, StyleSheet, TouchableHighlight, StatusBar, ListView, AsyncStorage} from 'react-native';
@@ -16,30 +17,14 @@ export default class Maintenance extends React.Component {
         super(props);
         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
-            dataSource:ds.cloneWithRows([{
-                companyName: '西安雁塔公司',
-                heatStation: '23',
-                heatArea: '10000',
-                heatEnergy: '111111',
-            },
-                {
-                    companyName: '西安雁塔公司',
-                    heatStation: '23',
-                    heatArea: '10000',
-                    heatEnergy: '111111',
-                },
-                {
-                    companyName: '西安雁塔公司',
-                    heatStation: '23',
-                    heatArea: '10000',
-                    heatEnergy: '111111',
-                }
+            dataSource:ds.cloneWithRows([
+
             ]),
 
             access_token: null,
             company_id: null,
             refresh_token: null,
-            url: "http://121.42.253.149:18816/v1_0_0/list?access_token="
+            url: "http://192.168.1.105/v1_0_0/list?access_token="
         };
 
         var _this = this;
@@ -51,7 +36,7 @@ export default class Maintenance extends React.Component {
                 _this.setState({access_token:result});
             }
             _this.setState({
-                url: _this.state.url+_this.state.access_token+"&tag_id=1,2,3,4",
+                url: _this.state.url+_this.state.access_token+"&tag_id=[1,2,3,4]",
             })
             console.log(_this.state.url);
         });
@@ -61,7 +46,7 @@ export default class Maintenance extends React.Component {
                 _this.setState({company_id:result});
             }
             _this.setState({
-                url: _this.state.url+"&company_id="+_this.state.company_id+"&isStaticInfomation=true&level=1",
+                url: _this.state.url+"&company_id="+_this.state.company_id+"&isStaticInfomation=false&level=0",
             })
             console.log(_this.state.url);
 
@@ -85,10 +70,12 @@ export default class Maintenance extends React.Component {
         });
     }
 
-    gotoHeatStation(){
-        const navigator = this.props.navigator;
+    gotoHeatStation(id){
         this.props.navigator.push({
             component: HeatStation,
+            passProps:{
+                childCompany_id: id,
+            }
         })
     }
 
@@ -134,7 +121,7 @@ export default class Maintenance extends React.Component {
                     renderRow={(rowData) => {
                 return(
 
-                  <TouchableHighlight underlayColor="#ECEDEE" onPress={this.gotoHeatStation.bind(this)}>
+                  <TouchableHighlight underlayColor="#ECEDEE" onPress={this.gotoHeatStation.bind(this,rowData.id)}>
                     <View style={styles.listItemView}>
                         <Image style={styles.listItemIconView} source={require('../icons/company_icon.png')}></Image>
                         <View style={styles.listItemTextView}>

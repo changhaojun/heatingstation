@@ -1,99 +1,57 @@
 /**
- * Created by Vector on 17/4/24.
+ * Created by Vector on 17/5/16.
+ *
+ * 地图页面总公司的能耗图表
  */
 import React, { Component } from 'react';
-import {
-    AppRegistry,
-    StyleSheet,
-    Text,
-    View,
-    AsyncStorage,
-    AlertIOS,
-    TouchableOpacity,
-    Navigator,
-    Animated,
-    ListView,
-    Image,
-    StatusBar,
-} from 'react-native';
-
-import Dimensions from 'Dimensions';
-import ECharts from 'native-echarts';
-import Orientation from 'react-native-orientation';
+import { StyleSheet, Text, AlertIOS,View, AsyncStorage, StatusBar, NativeModules, TouchableOpacity, Image, Dimensions } from 'react-native';
+import Echarts from 'native-echarts';
 var {width, height} = Dimensions.get('window');
+import Orientation from 'react-native-orientation';
 
-//  图表模块
-export default class LineChart extends Component {
+export default class CompanyChart extends Component {
 
-
-    // componentWillMount() {
-    //     Orientation.lockToLandscape();
-    // }
-    //
+    componentWillMount() {
+            Orientation.lockToLandscape();
+        }
     //
     // componentWillUnmount() {
-    //    Orientation.lockToPortrait();
-    // }
+    //     var initial = Orientation.getInitialOrientation();
+    //     if (initial === 'PORTRAIT') {
+    //         Orientation.lockToPortrait();
+    //     } else {}}
 
     constructor(props) {
         super(props);
         this.state = {
-            // 默认属性及数量
-            xAxisData:[],
-            data:[],
-            data_unit:'',
-
-            companyName: '城北分公司',
-
-            // 121.42.253.149:18816
-
-            url: "http://192.168.1.105/v1_0_0/hourDatas?access_token="
+            xAxisData: [],
+            data: []
         };
-
         var _this = this;
-
-        // 从本地存储中将company_id和access_token取出
-
-        AsyncStorage.getItem("access_token",function(errs,result){
-            if (!errs) {
-                _this.setState({access_token:result});
-            }
-            _this.setState({
-                url: _this.state.url+_this.state.access_token+"&_id="+_this.props.company_id+"&tag_id=2&level=1&start_time=2017$04$26$13:31:54&end_time=2017$04$26$20:31:54",
+        // AsyncStorage.getItem("userKey", function (errs, result) {
+        //     console.info(result);
+        //     if (!errs) {
+        fetch("http://rapapi.org/mockjsdata/16979/weather/history")
+            .then((response) => response.json())
+            .then((responseJson) => {
+                _this.setState({
+                    xAxisData: responseJson.data.time,
+                    data: responseJson.data.temp,
+                });
             })
+            .catch((error) => {
+                // console.error(error);
+                AlertIOS.alert(
+                    '提示',
+                    '获取天气历史数据失败',
+                );
 
-            if (!errs) {
-                fetch(_this.state.url)
-                    .then((response) => response.json())
-                    .then((responseJson) => {
+            });
 
-                        //输出获取到的数据
-                        console.log(responseJson);
+        // }
+        // });
 
-
-                        var arrX = [];
-                        var arrY = [];
-                        for(var i=0; i<responseJson.length-1; i++){
-
-                            arrX.push(responseJson[i].create_date);
-                            arrY.push(responseJson[i].data_value);
-
-                        }
-                        _this.setState({
-                            xAxisData:arrX,
-                            data: arrY,
-                            // data_unit: responseJson[0].data_unit,
-                        });
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                    });
-            }
-
-            console.log(_this.state.url);
-        });
     }
-
 
     back(){
         Orientation.lockToPortrait();
@@ -110,7 +68,7 @@ export default class LineChart extends Component {
             },
             grid:{
                 // show: true,
-                left:40,
+                left:30,
                 // right:30,
                 top:50,
                 bottom:80,
@@ -127,9 +85,9 @@ export default class LineChart extends Component {
             yAxis: {
                 type: 'value',
                 axisLabel: {
-                    formatter: '{value}'
+                    formatter: '{value} °C'
                 },
-                name:"能耗单位：GJ",
+                name:"温度",
                 splitLine:{
                     show:true
                 },
@@ -169,9 +127,8 @@ export default class LineChart extends Component {
                 }
             }]
         }
-
         return (
-            <View style={styles.container}>
+            <View style={styles.all}>
                 <StatusBar
                     hidden={true}  //status显示与隐藏
                     backgroundColor='red'  //status栏背景色,仅支持安卓
@@ -182,22 +139,22 @@ export default class LineChart extends Component {
                 />
                 <View style={styles.navView}>
                     <TouchableOpacity onPress={this.back.bind(this)}>
-                        <Image style={{ width: 20, height: 20, marginLeft:10,marginTop: 10, }} source={require('../icons/nav_back_icon.png')}/>
+                        <Image style={{ width: 20, height: 20, marginLeft:10,marginTop: 10, }} source={require('../../icons/nav_back_icon@2x.png')}/>
                     </TouchableOpacity>
-                    <Text style={styles.topNameText}>历史能耗曲线</Text>
-                    <Image style={{ width: 20, height: 20, marginRight:10,marginTop: 10, }} source={require('../icons/nav_flag.png')}/>
+                    <Text style={styles.topNameText}>今日天气趋势</Text>
+                    <Image style={{ width: 20, height: 20, marginRight:10,marginTop: 10, }} source={require('../../icons/nav_flag.png')}/>
                 </View>
                 <View style={styles.companyNameView}>
-                    <Text style={styles.companyNameText}>{this.props.company_name}</Text>
+                    <Text style={styles.companyNameText}>西安</Text>
                 </View>
-                <ECharts option={option} height={width-44}/>
+                <Echarts option={option} height={width-44} />
             </View>
         );
     }
 }
-
+// 样式
 const styles = StyleSheet.create({
-    container: {
+    all: {
         flex: 1,
     },
     navView: {
@@ -230,4 +187,3 @@ const styles = StyleSheet.create({
         marginLeft: 15,
     }
 });
-

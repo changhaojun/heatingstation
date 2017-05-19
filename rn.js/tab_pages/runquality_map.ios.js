@@ -18,6 +18,7 @@ import Orientation from 'react-native-orientation';
 import WebViewBridge from 'react-native-webview-bridge';
 
 import Runquality from '../component/runquality.ios';
+import CompanyChart from '../component/charts/company_chart';
 
 export default class RunqualityMap extends React.Component {
 
@@ -46,10 +47,17 @@ export default class RunqualityMap extends React.Component {
     onBridgeMessage(message){
         const { webviewbridge } = this.refs;
         webviewbridge.sendToBridge(this.state.access_token);
-        console.log(message);
+
+
+        if(message !== "null"){
+            this.props.navigator.push({
+                component: CompanyChart,
+                passProps: {
+                    message:message,
+                }
+            })
+        }
     }
-
-
 
     openRunquality(){
         this.props.navigator.push({
@@ -82,9 +90,11 @@ export default class RunqualityMap extends React.Component {
                 <WebViewBridge
                     ref="webviewbridge"
                     onBridgeMessage={this.onBridgeMessage.bind(this)}
+                    scrollEnabled={false}
+                    startInLoadingState={false}
                     automaticallyAdjustContentInsets={false}
                     source={require('../heatingmapwebview/mapshow.html')}
-                    style={{height: height, width:width, backgroundColor: "#f2d6b8",}}
+                    style={{backgroundColor: "rgb(244,243,239)",}}
                 />
             </View>
 
