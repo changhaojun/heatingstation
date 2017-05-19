@@ -52,10 +52,7 @@ export default class Scada extends React.Component {
             show: false,
             remember: false,
             batch: false,
-
             appear: false,
-
-            sliderValue: 0,
             minValue: 0,
             maxValue: 100,
 
@@ -66,8 +63,6 @@ export default class Scada extends React.Component {
             access_token: null,
             base_url: "http://121.42.253.149:18815/list/group?accessToken=",
             start_url: "",
-            // uri: "http://192.168.1.106:8080/list/group?station_name=瑾华小区&accessToken=59141b5ef77ace00059f37fb&station_id=58f0844316f12022002098b3",
-            // uri: "http://114.215.154.122/reli/com.finfosoft.scada.view.ScadaViewForDevice.d?node_id=3&node_type=2",
         };
 
         // 从本地存储中将company_id和access_token取出
@@ -140,14 +135,6 @@ export default class Scada extends React.Component {
         }
     }
 
-    confirm() {
-        AlertIOS.alert(
-            '提示',
-            '下发成功',
-            //this.state.sliderValue.toString(),
-        );
-    }
-
     switchTab(batch) {
         let isShow = this.state.show;
         this.setState({
@@ -212,7 +199,7 @@ export default class Scada extends React.Component {
                                 </TouchableOpacity>
                             </View>
 
-                            <Gateway station_id={this.props.station_id} tag_id={1} batch={this.state.batch} />
+                            <Gateway station_id={this.props.station_id} tag_id={2} batch={this.state.batch} close={()=>this._setConfirmtModalVisible()} />
 
 
 
