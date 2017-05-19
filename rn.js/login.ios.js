@@ -94,10 +94,6 @@ export default class Login extends React.Component {
                     navigator.push({
                         name: 'Main',
                         component: Main,
-                        params: {
-                            scada_auth: responseJson.scada_auth,
-                            user_key: responseJson.user_key
-                        }
                     })
                 } else {
                     AlertIOS.alert(
@@ -107,7 +103,6 @@ export default class Login extends React.Component {
                 }
             })
             .catch((error) => {
-                // console.error(error);
                 AlertIOS.alert(
                     '提示',
                     '网络连接失败',
@@ -121,8 +116,7 @@ export default class Login extends React.Component {
             <View style={styles.all}>
                 {/*状态栏*/}
                 <StatusBar
-                    hidden={false}  //status显示与隐藏
-                    backgroundColor='red'  //status栏背景色,仅支持安卓
+                    hidden={true}  //status显示与隐藏
                     translucent={true} //设置status栏是否透明效果,仅支持安卓
                     barStyle='default' //设置状态栏文字效果,仅支持iOS,枚举类型:default黑light-content白
                     networkActivityIndicatorVisible={true} //设置状态栏上面的网络进度菊花,仅支持iOS
