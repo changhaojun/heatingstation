@@ -1,9 +1,11 @@
 // 主页
 import React from 'react';
-import {View, Text, Image, TextInput, NavigatorIOS, StyleSheet, TouchableOpacity, StatusBar, Switch, AsyncStorage,
-    AlertIOS} from 'react-native';
+import {
+    View, Text, Image, TextInput, NavigatorIOS, StyleSheet, Platform, TouchableOpacity, StatusBar, Switch, AsyncStorage,
+    AlertIOS
+} from 'react-native';
 import Dimensions from 'Dimensions';
-var {width, height} = Dimensions.get('window');
+var { width, height } = Dimensions.get('window');
 
 import Main from './main.ios';
 export default class Login extends React.Component {
@@ -12,8 +14,8 @@ export default class Login extends React.Component {
         super(props);
         this.state = {
             userName: null,
-            passWord:null,
-            remember:false,
+            passWord: null,
+            remember: false,
 
             company_id: null,
             access_token: null,
@@ -21,34 +23,34 @@ export default class Login extends React.Component {
         };
         var _this = this;
         // 将用户名、密码从本地存储中提取出来，并更新状态机
-        AsyncStorage.getItem("userName",function(errs,result){
+        AsyncStorage.getItem("userName", function (errs, result) {
             if (!errs) {
 
-                _this.setState({userName:result});
+                _this.setState({ userName: result });
                 console.log(_this.state.userName);
             }
         });
-        AsyncStorage.getItem("passWord",function(errs,result){
+        AsyncStorage.getItem("passWord", function (errs, result) {
             if (!errs) {
-                _this.setState({passWord:result});
+                _this.setState({ passWord: result });
 
                 console.log(_this.state.passWord);
-                if(_this.state.userName!=null&&_this.state.passWord!=null){
-                    _this.setState({remember:true});
+                if (_this.state.userName != null && _this.state.passWord != null) {
+                    _this.setState({ remember: true });
                 }
             }
         });
     }
     //登录按钮事件
-    login(){
+    login() {
         const navigator = this.props.navigator;//上一个页面传过来的值
         fetch("http://121.42.253.149:18816/authorize/authorize?client_id=admin&client_secret=admin&username=" + this.state.userName + "&password=" + this.state.passWord)
             .then((response) => response.json())
             .then((responseJson) => {
-                if(navigator&&responseJson.code==200){
-                    if(this.state.remember){
+                if (navigator && responseJson.code == 200) {
+                    if (this.state.remember) {
                         //存储账号密码
-                        AsyncStorage.setItem("userName", this.state.userName,function(errs){
+                        AsyncStorage.setItem("userName", this.state.userName, function (errs) {
                             if (errs) {
                                 AlertIOS.alert(
                                     '提示',
@@ -56,7 +58,7 @@ export default class Login extends React.Component {
                                 );
                             }
                         });
-                        AsyncStorage.setItem("passWord", this.state.passWord,function(errs){
+                        AsyncStorage.setItem("passWord", this.state.passWord, function (errs) {
                             if (errs) {
                                 AlertIOS.alert(
                                     '提示',
@@ -64,28 +66,28 @@ export default class Login extends React.Component {
                                 );
                             }
                         });
+                    }
+
+                    AsyncStorage.setItem("access_token", responseJson.access_token, function (errs) {
+                        if (errs) {
+                            AlertIOS.alert(
+                                '提示',
+                                '存储access_token错误',
+                            );
                         }
+                        console.log(responseJson.access_token);
 
-                        AsyncStorage.setItem("access_token", responseJson.access_token,function(errs){
-                            if (errs) {
-                                AlertIOS.alert(
-                                    '提示',
-                                    '存储access_token错误',
-                                );
-                            }
-                            console.log(responseJson.access_token);
+                    });
 
-                        });
-
-                        AsyncStorage.setItem("company_id", responseJson.company_id,function(errs){
-                            if (errs) {
-                                AlertIOS.alert(
-                                    '提示',
-                                    '存储company_id错误',
-                                );
-                            }
-                            console.log(responseJson.company_id);
-                        });
+                    AsyncStorage.setItem("company_id", responseJson.company_id, function (errs) {
+                        if (errs) {
+                            AlertIOS.alert(
+                                '提示',
+                                '存储company_id错误',
+                            );
+                        }
+                        console.log(responseJson.company_id);
+                    });
 
 
                     //跳转
@@ -93,11 +95,11 @@ export default class Login extends React.Component {
                         name: 'Main',
                         component: Main,
                         params: {
-                            scada_auth:responseJson.scada_auth,
-                            user_key:responseJson.user_key
+                            scada_auth: responseJson.scada_auth,
+                            user_key: responseJson.user_key
                         }
                     })
-                }else{
+                } else {
                     AlertIOS.alert(
                         '有问题',
                         '帐号或密码错误',
@@ -140,10 +142,11 @@ export default class Login extends React.Component {
                         <View style={styles.formArea}>
                             <Text style={styles.formText}>账号</Text>
                             <TextInput style={styles.formInputText}
-                                       placeholder={"请输入您的账号"}
-                                       placeholderTextColor={'#808080'}
-                                       onChangeText={(userName)=>this.setState({userName})}
-                                       defaultValue={this.state.userName}>
+                                placeholder={"请输入您的账号"}
+                                placeholderTextColor={'#808080'}
+                                underlineColorAndroid={'transparent'}
+                                onChangeText={(userName) => this.setState({ userName })}
+                                defaultValue={this.state.userName}>
                             </TextInput>
                         </View>
                         <View style={styles.underline}></View>
@@ -153,11 +156,12 @@ export default class Login extends React.Component {
                         <View style={styles.formArea}>
                             <Text style={styles.formText}>密码</Text>
                             <TextInput style={styles.formInputText}
-                                       placeholder={"请输入您的密码"}
-                                       placeholderTextColor={'#808080'}
-                                       onChangeText={(passWord)=>this.setState({passWord})}
-                                       secureTextEntry ={true}
-                                       defaultValue={this.state.passWord}>
+                                placeholder={"请输入您的密码"}
+                                placeholderTextColor={'#808080'}
+                                onChangeText={(passWord) => this.setState({ passWord })}
+                                secureTextEntry={true}
+                                underlineColorAndroid={'transparent'}
+                                defaultValue={this.state.passWord}>
                             </TextInput>
                         </View>
                         <View style={styles.underline}></View>
@@ -166,7 +170,7 @@ export default class Login extends React.Component {
                         <Switch
                             value={this.state.remember}
                             onTintColor={"#0099FF"}
-                            onValueChange={(checked) => this.setState({remember:checked})}>
+                            onValueChange={(checked) => this.setState({ remember: checked })}>
                         </Switch>
                         <Text style={styles.rememberText}>记住密码</Text>
                     </View>
@@ -174,10 +178,8 @@ export default class Login extends React.Component {
 
                 {/*底部是放置登录按钮和公司信息的View*/}
                 <View style={styles.bottomView}>
-                    <TouchableOpacity activeOpacity={ 0.7 } onPress={this.login.bind(this)}>
-                    <View style={styles.buttonView}>
-                        <Text style={styles.buttonText}>登录</Text>
-                    </View>
+                    <TouchableOpacity activeOpacity={0.7} onPress={this.login.bind(this)} style={styles.buttonView}>
+                            <Text style={styles.buttonText}>登录</Text>
                     </TouchableOpacity>
                     <Text style={styles.companyInfoText}>北京智信远景软件技术有限公司</Text>
                 </View>
@@ -199,7 +201,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     middleView: {
-        flex: 0.2,
+        flex: 0.25,
         flexDirection: "column",
     },
     bottomView: {
@@ -221,9 +223,16 @@ const styles = StyleSheet.create({
     },
     inputView: {
         flexDirection: 'column',
-        marginLeft:30,
-        marginTop:20,
+        marginLeft: 30,
         width: width - 60,
+        ...Platform.select({
+            ios: {
+                marginTop: 20,
+            },
+            android: {
+                height: 70,
+            },
+        }),
     },
     formArea: {
         flexDirection: 'row',
@@ -231,33 +240,44 @@ const styles = StyleSheet.create({
     formText: {
         fontSize: 16,
         color: "#575859",
+        ...Platform.select({
+            android: {
+                marginTop: 17,
+            },
+        }),
     },
     formInputText: {
         marginLeft: 10,
         width: 250,
         fontSize: 16,
         color: '#000000',
+        ...Platform.select({
+            android: {
+                marginTop: 10,
+                height:40,
+            },
+        }),
         // borderWidth: 2,
     },
-    underline:{
+    underline: {
         width: width - 60,
         height: 1,
         backgroundColor: "#A5A6A7",
-        marginTop:4,
+        marginTop: 4,
     },
-    switchView:{
-        marginLeft:30,
-        flexDirection:'row',
+    switchView: {
+        marginLeft: 30,
+        flexDirection: 'row',
         alignItems: "center",
-        marginTop:20,
+        marginTop: 20,
     },
-    rememberText:{
+    rememberText: {
         fontSize: 16,
         fontWeight: "200",
         marginLeft: 10,
         color: '#000000',
     },
-    buttonView:{
+    buttonView: {
         width: width - 80,
         height: 48,
         backgroundColor: '#0099FF',
@@ -267,14 +287,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    buttonText:{
+    buttonText: {
         fontSize: 16,
         color: '#ffffff',
     },
-    companyInfoText:{
+    companyInfoText: {
         fontSize: 16,
         color: '#0099FF',
-        marginTop: height/6,
+        marginTop: height / 6,
     }
 });
 module.exports = Login;

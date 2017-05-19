@@ -48,6 +48,15 @@
     </item>
     <item
         is-multidex="false"
+        jar="E:\Microsoft VS Code\workspace\heatingstation\android\app\build\intermediates\exploded-aar\WisdomHeating\jcore-react-native\unspecified\jars\libs\jcore-android_v1.1.3.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="ee334519daa13abede937cbde9241095deea7d69">
+        <dex dex="E:\Microsoft VS Code\workspace\heatingstation\android\app\build\intermediates\pre-dexed\debug\jcore-android_v1.1.3_380283d63d1f2194e1276e589f68361f270ea271.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="E:\Microsoft VS Code\workspace\heatingstation\android\app\build\intermediates\exploded-aar\WisdomHeating\react-native-webview-bridge\unspecified\jars\classes.jar"
         jumboMode="false"
         optimize="true"
@@ -81,6 +90,15 @@
         revision="23.0.1"
         sha1="3be474b1b21b31cf2fa93fe6bd641ae108d96452">
         <dex dex="E:\Microsoft VS Code\workspace\heatingstation\android\app\build\intermediates\pre-dexed\debug\com.android.support-support-v4-23.2.1_10d82899a514700166f3978a4238fef3175ac2dd.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Microsoft VS Code\workspace\heatingstation\android\app\build\intermediates\exploded-aar\WisdomHeating\jpush-react-native\unspecified\jars\libs\jpush-android_v3.0.6.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="aca8cc2d77d7cfd6ac0b0bd0c5a41ffc6646e6b6">
+        <dex dex="E:\Microsoft VS Code\workspace\heatingstation\android\app\build\intermediates\pre-dexed\debug\jpush-android_v3.0.6_7f9b3227e11c8d18b1805c2b65e0d8836279e552.jar" />
     </item>
     <item
         is-multidex="false"
@@ -156,6 +174,15 @@
     </item>
     <item
         is-multidex="false"
+        jar="E:\Microsoft VS Code\workspace\heatingstation\android\app\build\intermediates\exploded-aar\WisdomHeating\jcore-react-native\unspecified\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="98e7b1d6061b35a14c0306fcbd1362436201ab86">
+        <dex dex="E:\Microsoft VS Code\workspace\heatingstation\android\app\build\intermediates\pre-dexed\debug\WisdomHeating-jcore-react-native-unspecified_22458a98fddca0b70492e0f26520ded0b54d0390.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="E:\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.2.1\support-annotations-23.2.1.jar"
         jumboMode="false"
         optimize="true"
@@ -180,6 +207,15 @@
         revision="23.0.1"
         sha1="d86429b0f0b3f3cafbeb78dda1b9d89119ccb05d">
         <dex dex="E:\Microsoft VS Code\workspace\heatingstation\android\app\build\intermediates\pre-dexed\debug\com.android.support-appcompat-v7-23.0.1_34262aee77450142ad12dd4e0417f3b869b24232.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Microsoft VS Code\workspace\heatingstation\android\app\build\intermediates\exploded-aar\WisdomHeating\jpush-react-native\unspecified\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.1"
+        sha1="93198aab441d21accb054ea41457ae6998d2e521">
+        <dex dex="E:\Microsoft VS Code\workspace\heatingstation\android\app\build\intermediates\pre-dexed\debug\WisdomHeating-jpush-react-native-unspecified_af9497bf7c49070ce6a9324fd0e7f02ec4ced7f3.jar" />
     </item>
     <item
         is-multidex="false"

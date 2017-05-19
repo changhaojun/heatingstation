@@ -18,7 +18,7 @@ import {
 
 import JPushModule from 'jpush-react-native';
 
-import Login from './rn.android/login.android';
+import Login from './rn.js/login.ios';
 var Orientation = NativeModules.Orientation;
 
 
