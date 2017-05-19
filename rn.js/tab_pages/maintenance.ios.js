@@ -46,7 +46,7 @@ export default class Maintenance extends React.Component {
                 _this.setState({company_id:result});
             }
             _this.setState({
-                url: _this.state.url+"&company_id="+_this.state.company_id+"&isStaticInfomation=false&level=0",
+                url: _this.state.url+"&company_id="+_this.state.company_id+"&isStaticInfomation=true&level=0",
             })
             console.log(_this.state.url);
 

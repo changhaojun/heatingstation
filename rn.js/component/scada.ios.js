@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     modalTitleView: {
-        height: 40,
+        height: 39,
         backgroundColor: '#35aeff',
         flexDirection: 'row',
         alignItems: 'center',
