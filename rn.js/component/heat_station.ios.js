@@ -30,7 +30,7 @@ export default class HeatStation extends React.Component {
             dixianValue: "我是有底线的，别扯了",
 
             //121.42.253.149:18816
-            base_url: "http://192.168.1.105/v1_0_0/list?access_token=",
+            base_url: "http://121.42.253.149:18816/v1_0_0/list?access_token=",
             start_url: "",
         };
 

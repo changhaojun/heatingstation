@@ -47,7 +47,7 @@ export default class LineChart extends Component {
 
             // 121.42.253.149:18816
 
-            url: "http://192.168.1.105/v1_0_0/hourDatas?access_token="
+            url: "http://121.42.253.149:18816/v1_0_0/hourDatas?access_token="
         };
 
         var _this = this;

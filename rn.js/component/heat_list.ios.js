@@ -24,7 +24,7 @@ export default class HeatList extends React.Component {
             access_token: null,
             company_id: null,
             refresh_token: null,
-            url: "http://192.168.1.105/v1_0_0/list?access_token="
+            url: "http://121.42.253.149:18816/v1_0_0/list?access_token="
         };
 
         var _this = this;

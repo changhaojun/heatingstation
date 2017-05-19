@@ -2,10 +2,13 @@
  * Created by Vector on 17/4/24.
  */
 import React from 'react';
-import {View, Text, Image, TextInput, Modal, AlertIOS,
-    Slider, Switch, NavigatorIOS, StyleSheet, TouchableHighlight, StatusBar, TouchableOpacity, AsyncStorage} from 'react-native';
+import {
+    View, Text, Image, TextInput, Modal, AlertIOS,
+    Slider, Switch, NavigatorIOS, StyleSheet, TouchableHighlight, StatusBar, TouchableOpacity, AsyncStorage
+} from 'react-native';
 import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
+import Gateway from './gateway';
 
 import Orientation from 'react-native-orientation';
 import WebViewBridge from 'react-native-webview-bridge';
@@ -46,18 +49,18 @@ export default class Scada extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            show:false,
-            remember:false,
+            show: false,
+            remember: false,
+            batch: false,
 
+            appear: false,
 
-            appear:false,
-
-            sliderValue:0,
+            sliderValue: 0,
             minValue: 0,
             maxValue: 100,
 
             confirm: '下发',
-            confirmTime: years+"-"+months+"-"+days+" "+hours+":"+minutes+":"+seconds,
+            confirmTime: years + "-" + months + "-" + days + " " + hours + ":" + minutes + ":" + seconds,
             value: 0,
 
             access_token: null,
@@ -69,9 +72,9 @@ export default class Scada extends React.Component {
 
         // 从本地存储中将company_id和access_token取出
         var _this = this;
-        AsyncStorage.getItem("access_token",function(errs,result){
+        AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
-                _this.setState({access_token:result});
+                _this.setState({ access_token: result });
             }
             _this.setState({
                 start_url: _this.state.base_url + _this.state.access_token + "&station_name=" + _this.props.station_name + "&station_id=" + _this.props.station_id,
@@ -83,9 +86,9 @@ export default class Scada extends React.Component {
         this.onBridgeMessage = this.onBridgeMessage.bind(this);
     }
 
-    onBridgeMessage(message){
+    onBridgeMessage(message) {
         // console.log('wk8--------onBridgeMessage'+message);
-        switch(message){
+        switch (message) {
             case "1":
                 //_setConfirmtModalVisible();
                 this._setSwitchModalVisible();
@@ -106,11 +109,11 @@ export default class Scada extends React.Component {
 
     _setConfirmtModalVisible() {
         this.setState({
-            value:  this.state.sliderValue,
+            value: this.state.sliderValue,
         });
         let isShow = this.state.show;
         this.setState({
-            show:!isShow,
+            show: !isShow,
         });
     }
 
@@ -118,31 +121,45 @@ export default class Scada extends React.Component {
     _setSwitchModalVisible() {
         let isAppear = this.state.appear;
         this.setState({
-            appear:!isAppear,
+            appear: !isAppear,
         });
     }
 
 
-    back(){
+    back() {
         Orientation.lockToPortrait();
         this.props.navigator.pop();
     }
 
-    switch(checked){
+    switch(checked) {
         this.setState({
             remember: checked,
         })
-        if(!this.state.remember){
+        if (!this.state.remember) {
             console.log("打开");
         }
     }
 
-    confirm(){
+    confirm() {
         AlertIOS.alert(
             '提示',
             '下发成功',
             //this.state.sliderValue.toString(),
         );
+    }
+
+    switchTab(batch) {
+        let isShow = this.state.show;
+        this.setState({
+            batch: batch,
+            show: !isShow,
+        });
+        setTimeout(() => {
+            this.setState({
+                show: isShow,
+            });
+        }, 10);
+
     }
 
 
@@ -161,10 +178,10 @@ export default class Scada extends React.Component {
                 />
                 <View style={styles.navView}>
                     <TouchableOpacity onPress={this.back.bind(this)}>
-                        <Image style={{ width: 25, height: 25, marginLeft:10,marginTop: 20, }} source={require('../icons/nav_back_icon.png')}/>
+                        <Image style={{ width: 25, height: 25, marginLeft: 10, marginTop: 20, }} source={require('../icons/nav_back_icon.png')} />
                     </TouchableOpacity>
                     <Text style={styles.topNameText}>组态</Text>
-                    <Image style={{ width: 25, height: 25, marginRight:10,marginTop: 20, }} source={require('../icons/nav_flag.png')}/>
+                    <Image style={{ width: 25, height: 25, marginRight: 10, marginTop: 20, }} source={require('../icons/nav_flag.png')} />
                 </View>
 
                 <WebViewBridge
@@ -172,10 +189,10 @@ export default class Scada extends React.Component {
                     onBridgeMessage={this.onBridgeMessage}
                     scrollEnabled={false}
                     javaScriptEnabled={true}
-                    source={{uri: this.state.start_url}}
+                    source={{ uri: this.state.start_url }}
                     scalesPageToFit={true}
                     automaticallyAdjustContentInsets={false}
-                    style={{ backgroundColor: "#f2d6b8",}}
+                    style={{ backgroundColor: "#f2d6b8", }}
                 />
 
 
@@ -183,37 +200,24 @@ export default class Scada extends React.Component {
                     animationType='slide'
                     transparent={true}
                     visible={this.state.show}
-                    onShow={() => {}}
-                    onRequestClose={() => {}} >
+                    onShow={() => { }}
+                    onRequestClose={() => { }} >
                     <View style={styles.modalStyle}>
                         <View style={styles.subView}>
                             <View style={styles.modalTitleView}>
-                                <Text style={styles.titleText}>
-                                    设置阀门开度
-                                </Text>
-                                <TouchableOpacity activeOpacity={ 0.5 } onPress={this._setConfirmtModalVisible.bind(this)}>
+                                <Text style={[styles.tabText,{backgroundColor: this.state.batch?'#35aeff':"#ffffff"}]} onPress={this.switchTab.bind(this,false)} >阀门</Text>
+                                <Text style={[styles.tabText,{backgroundColor: this.state.batch?'#ffffff':"#35aeff"}]} onPress={this.switchTab.bind(this,true)} >批量下发</Text>
+                                <View style={{ flex: 1 }}></View>
+                                <TouchableOpacity activeOpacity={0.5} onPress={this._setConfirmtModalVisible.bind(this)}>
                                     <Image source={require('../icons/cancel_icon@2x.png')} style={styles.modalTitleViewImage} />
                                 </TouchableOpacity>
                             </View>
-                            <View style={styles.sliderView}>
-                                <Text style={{fontSize:30, color:'#E0960A',marginTop: 20,}}>{parseInt((this.state.sliderValue)*100)}</Text>
-                            </View>
-                            <View style={styles.sliderView}>
-                                <Text style={{}}> {this.state.minValue} </Text>
-                                <Slider  style={{flex:0.8}}
-                                         value={this.state.value}
-                                         onSlidingComplete={()=>console.log('当前的值为'+this.state.sliderValue)}
-                                         onValueChange={(sliderValue)=>this.setState({sliderValue:sliderValue})}/>
-                                <Text style={{}}> {this.state.maxValue} </Text>
-                            </View>
-                            <View style={styles.confirmView}>
-                                <TouchableOpacity activeOpacity={ 0.5 } onPress={this.confirm.bind(this)}>
-                                    <View style={{backgroundColor: '#E0960A',height:30,width:100,borderRadius:50,flexDirection: 'row', justifyContent: 'center', alignItems:'center',}}>
-                                        <Text style={{fontSize:14, color: '#ffffff'}}>{this.state.confirm}</Text>
-                                    </View>
-                                </TouchableOpacity>
-                                <Text style={{marginTop:10,color:'#939495' }}>{this.state.confirmTime}</Text>
-                            </View>
+
+                            <Gateway station_id={this.props.station_id} tag_id={1} batch={this.state.batch} />
+
+
+
+
                         </View>
                     </View>
                 </Modal>
@@ -221,8 +225,8 @@ export default class Scada extends React.Component {
                     animationType='slide'
                     transparent={true}
                     visible={this.state.appear}
-                    onShow={() => {}}
-                    onRequestClose={() => {}} >
+                    onShow={() => { }}
+                    onRequestClose={() => { }} >
                     <View style={styles.modalStyle}>
                         <View style={styles.subView}>
                             <View style={styles.modalTitleView}>
@@ -235,7 +239,7 @@ export default class Scada extends React.Component {
                             </View>
                             <View style={styles.switchView}>
                                 <View style={styles.switch}>
-                                    <Text style={{marginRight:10, color:'#9D9E9F'}}>关闭</Text>
+                                    <Text style={{ marginRight: 10, color: '#9D9E9F' }}>关闭</Text>
                                     <Switch
                                         value={this.state.remember}
                                         onTintColor={"#f2d6b8"}
@@ -243,9 +247,9 @@ export default class Scada extends React.Component {
                                         onValueChange={(checked) => this.switch(checked)}
                                     />
 
-                                    <Text style={{marginLeft:10, color:'#E0960A'}}>打开</Text>
+                                    <Text style={{ marginLeft: 10, color: '#E0960A' }}>打开</Text>
                                 </View>
-                                <Text style={{marginTop: 50}}>2017-02-06 12:45:36</Text>
+                                <Text style={{ marginTop: 50 }}>2017-02-06 12:45:36</Text>
                             </View>
                         </View>
                     </View>
@@ -284,81 +288,87 @@ const styles = StyleSheet.create({
     modalStyle: {
         // backgroundColor:'#ccc',
         alignItems: 'center',
-        justifyContent:'center',
-        flex:1,
+        justifyContent: 'center',
+        flex: 1,
     },
     // modal上子View的样式
-    subView:{
-        marginLeft:60,
-        marginRight:60,
-        backgroundColor:'#ffffff',
+    subView: {
+        marginLeft: 30,
+        marginRight: 30,
+        maxHeight: 400,
+        backgroundColor: '#ffffff',
         alignSelf: 'stretch',
-        justifyContent:'center',
-        borderColor:'#ccc',
+        justifyContent: 'center',
+        borderColor: '#ccc',
     },
     // 标题
-    titleText:{
-        marginLeft:10,
-        fontSize:14,
-        textAlign:'left',
+    titleText: {
+        marginLeft: 10,
+        fontSize: 14,
+        textAlign: 'left',
     },
     // 按钮
-    buttonView:{
+    buttonView: {
         marginTop: -5,
         flexDirection: 'row',
         alignItems: 'center',
     },
-    buttonStyle:{
-        flex:1,
-        height:50,
+    buttonStyle: {
+        flex: 1,
+        height: 50,
         alignItems: 'center',
-        justifyContent:'center',
+        justifyContent: 'center',
     },
-    buttonText:{
-        fontSize:16,
-        color:'#3393F2',
-        textAlign:'center',
+    buttonText: {
+        fontSize: 16,
+        color: '#3393F2',
+        textAlign: 'center',
     },
-    modalTitleView:{
-        height: 30,
-        backgroundColor: '#f2d6b8',
+    modalTitleView: {
+        height: 40,
+        backgroundColor: '#35aeff',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        //justifyContent: 'space-between',
     },
-    modalTitleViewImage:{
+    modalTitleViewImage: {
         width: 20,
         height: 20,
         marginRight: 10,
     },
-    switchView:{
+    switchView: {
         height: 160,
         backgroundColor: '#ffffff',
         flexDirection: 'column',
         alignItems: "center",
     },
-    switch:{
+    switch: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 50,
     },
-    sliderView:{
+    sliderView: {
         height: 30,
         backgroundColor: 'red',
         flexDirection: 'row',
         alignItems: 'center',
     },
-    sliderView:{
+    sliderView: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
     },
-    confirmView:{
-        height:80,
+    confirmView: {
+        height: 80,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 20,
-    }
+    },
+
+   
+    tabText: {
+        padding: 12,
+    },
 });

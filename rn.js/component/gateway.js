@@ -27,26 +27,29 @@ export default class Gateway extends React.Component {
             dataSource: ds.cloneWithRows([]),
         };
         var _this = this;
-        fetch("http://121.42.253.149:18816/v1_0_0/homesSataionData?station_id=58f0844316f12022002098bb&access_token=591d486f624d470005616b3f&tag_id=1")
-            .then((response) => response.json())
-            .then((responseJson) => {
-                data = responseJson.issued;
-                for (var i = 0; i < data.length; i++) {
-                    data[i].check = 1;
-                }
-                _this.setState({
-                    dataSource: ds.cloneWithRows(data),
-                    sliderValue: responseJson.issued[1].data_value / 100,
-                });
+        if (props.batch){
+            fetch("http://121.42.253.149:18816/v1_0_0/homesSataionData?station_id=" + props.station_id + "&access_token=591d486f624d470005616b3f&tag_id=" + props.tag_id + "")
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    data = responseJson.issued;
+                    for (var i = 0; i < data.length; i++) {
+                        data[i].check = 1;
+                    }
+                    _this.setState({
+                        dataSource: ds.cloneWithRows(data),
+                        sliderValue: responseJson.issued[0].data_value / 100,
+                    });
 
-            })
-            .catch((error) => {
-                console.error(error);
-                AlertIOS.alert(
-                    '提示',
-                    '网络连接失败',
-                );
-            });
+                })
+                .catch((error) => {
+                    console.error(error);
+                    AlertIOS.alert(
+                        '提示',
+                        '网络连接失败',
+                    );
+                });
+        }
+
     }
 
 
@@ -70,8 +73,6 @@ export default class Gateway extends React.Component {
     render() {
         return (
             <View style={styles.all}>
-                <View style={styles.modalStyle}>
-                    <View style={styles.subView}>
                         <View style={styles.sliderView}>
                             <Text style={{ fontSize: 30, color: '#E0960A', marginTop: 20, }}>{parseInt((this.state.sliderValue) * 100)}</Text>
                         </View>
@@ -112,9 +113,6 @@ export default class Gateway extends React.Component {
                                 )
                             }}
                         />
-                    </View>
-                </View>
-
             </View>
         )
     }
@@ -123,7 +121,8 @@ export default class Gateway extends React.Component {
 // 样式
 const styles = StyleSheet.create({
     all: {
-        flex: 1,
+        minHeight:150,
+        maxHeight:400,
         backgroundColor: "#ffffff",
         // marginTop: 20,
     },
@@ -225,6 +224,6 @@ const styles = StyleSheet.create({
     time: {
         fontSize: 8,
         color: "#ffffff",
-        textAlign:"center"
+        textAlign: "center"
     }
 });

@@ -36,7 +36,7 @@ export default class Branch extends React.Component {
 
             access_token: null,
             //121.42.253.149:18816
-            url: "http://192.168.1.105/v1_0_0/branchValue?access_token=",
+            url: "http://121.42.253.149:18816/v1_0_0/branchValue?access_token=",
 
             startUrl: "",
             select_url: "",
@@ -62,7 +62,7 @@ export default class Branch extends React.Component {
                 })
 
                 // 获取数据标签
-                fetch("http://192.168.1.105/v1_0_0/tags?access_token=" + _this.state.access_token +"&level=1")
+                fetch("http://121.42.253.149:18816/v1_0_0/tags?access_token=" + _this.state.access_token +"&level=1")
                     .then((response)=>response.json())
                     .then((responseJson)=>{
 

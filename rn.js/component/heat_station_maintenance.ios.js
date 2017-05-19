@@ -13,7 +13,7 @@ import Orientation from 'react-native-orientation';
 export default class HeatStationMaintenance extends React.Component {
 
     componentWillMount() {
-            Orientation.lockToPortrait();
+            //Orientation.lockToPortrait();
     }
 
     constructor(props) {
@@ -24,7 +24,7 @@ export default class HeatStationMaintenance extends React.Component {
             access_token: null,
 
             searchValue: "",
-            base_url: "http://192.168.1.105/v1_0_0/appStation?access_token=",
+            base_url: "http://121.42.253.149:18816/v1_0_0/appStation?access_token=",
             start_url: "",
         };
 
