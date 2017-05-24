@@ -8,9 +8,9 @@ import {View, Text, Image, TextInput, NavigatorIOS, StyleSheet, TouchableHighlig
 import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
 
-import Home from './tab_pages/home.ios.js';
-import RunQuality from './tab_pages/runquality_map.ios';
-import Maintenance from './tab_pages/maintenance.ios';
+import Home from './tab_pages/home.js';
+import RunQuality from './tab_pages/runquality_map';
+import Maintenance from './tab_pages/maintenance';
 
 
 var Orientation = require('react-native-orientation');

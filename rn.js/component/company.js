@@ -7,7 +7,7 @@ import { View,Text,Image,NavigatorIOS,StyleSheet,TouchableHighlight,ListView,Asy
 import Dimensions from 'Dimensions';
 
 var {width, height} = Dimensions.get('window');
-import Branch from '../component/branch.ios';
+import Branch from './branch';
 
 export default class CompanyList extends React.Component {
     constructor(props) {

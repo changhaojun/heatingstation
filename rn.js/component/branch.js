@@ -10,7 +10,7 @@ import {View, Text, Image, TextInput, NavigatorIOS, StyleSheet, TouchableHighlig
 import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
 
-import HeatStation from '../component/heat_station.ios';
+import HeatStation from './heat_station';
 
 export default class Branch extends React.Component {
 

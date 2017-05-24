@@ -17,8 +17,11 @@ var { width, height } = Dimensions.get('window');
 import Orientation from 'react-native-orientation';
 import WebViewBridge from 'react-native-webview-bridge';
 
-import Runquality from '../component/runquality.ios';
+import Runquality from '../component/runquality';
 import CompanyChart from '../component/charts/company_chart';
+import ChildCompanyChart from '../component/charts/child_company_chart';
+import BranchChart from '../component/charts/branch_chart';
+import StationChart from '../component/charts/station_chart';
 
 export default class RunqualityMap extends React.Component {
 
@@ -45,17 +48,74 @@ export default class RunqualityMap extends React.Component {
 
 
     onBridgeMessage(message){
+
+        var resource = message.split(",");
+
+        var station_id = resource[0];
+        var station_name = resource[1];
+        var num = resource[2];
+        var tagLevel = resource[3];
+
+        console.log(station_id);
+        console.log(station_name);
+        console.log(num);
+        console.log(tagLevel);
+
+
         const { webviewbridge } = this.refs;
         webviewbridge.sendToBridge(this.state.access_token);
 
 
         if(message !== "null"){
-            this.props.navigator.push({
-                component: CompanyChart,
-                passProps: {
-                    message:message,
-                }
-            })
+
+            if(tagLevel==0){
+                this.props.navigator.push({
+                    component: CompanyChart,
+                    passProps: {
+                        station_id:station_id,
+                        station_name:station_name,
+                        num:num,
+                        tagLevel:tagLevel,
+
+                    }
+                })
+            }
+
+            if(tagLevel==1){
+                this.props.navigator.push({
+                    component: ChildCompanyChart,
+                    passProps: {
+                        station_id:station_id,
+                        station_name:station_name,
+                        num:num,
+                        tagLevel:tagLevel,
+                    }
+                })
+            }
+
+            if(tagLevel==2){
+                this.props.navigator.push({
+                    component: BranchChart,
+                    passProps: {
+                        station_id:station_id,
+                        station_name:station_name,
+                        num:num,
+                        tagLevel:tagLevel,
+                    }
+                })
+            }
+
+            if(tagLevel==3){
+                this.props.navigator.push({
+                    component: StationChart,
+                    passProps: {
+                        station_id:station_id,
+                        station_name:station_name,
+                        num:num,
+                        tagLevel:tagLevel,
+                    }
+                })
+            }
         }
     }
 

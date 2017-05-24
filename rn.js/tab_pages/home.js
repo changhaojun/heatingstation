@@ -4,12 +4,12 @@ import {View, Text, Image, TextInput, NavigatorIOS, StyleSheet, TouchableHighlig
 import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
 
-import Weather from '../component/weather.ios';
-import HeatList from '../component/heat_list.ios';
+import Weather from '../component/weather';
+import HeatList from '../component/heat_list';
 
 // import Home from './home.ios';
-import Setting from '../component/setting.ios';
-import Warn from '../component/warn.ios';
+import Setting from '../component/setting';
+import Warn from '../component/warn';
 
 export default class Home extends React.Component {
 

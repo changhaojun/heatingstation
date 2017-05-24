@@ -1,9 +1,8 @@
 /**
  * Created by Vector on 17/5/16.
  *
- * 地图页面换热赞的能耗图表
+ * 地图页面总公司的能耗图表
  */
-
 import React, { Component } from 'react';
 import { StyleSheet, Text, AlertIOS,View, AsyncStorage, StatusBar, NativeModules, TouchableOpacity, Image, Dimensions } from 'react-native';
 import Echarts from 'native-echarts';
@@ -12,17 +11,9 @@ import Orientation from 'react-native-orientation';
 
 export default class StationChart extends Component {
 
-    // componentWillMount() {
-    //     var initial = Orientation.getInitialOrientation();
-    //     if (initial === 'PORTRAIT') {
-    //         Orientation.lockToLandscape();
-    //     } else {}}
-    //
-    // componentWillUnmount() {
-    //     var initial = Orientation.getInitialOrientation();
-    //     if (initial === 'PORTRAIT') {
-    //         Orientation.lockToPortrait();
-    //     } else {}}
+    componentWillMount() {
+        Orientation.lockToLandscape();
+    }
 
     constructor(props) {
         super(props);
@@ -43,10 +34,9 @@ export default class StationChart extends Component {
                 });
             })
             .catch((error) => {
-                // console.error(error);
                 AlertIOS.alert(
                     '提示',
-                    '获取天气历史数据失败',
+                    '获取历史能耗数据失败',
                 );
 
             });
@@ -70,29 +60,31 @@ export default class StationChart extends Component {
                 show: false
             },
             grid:{
-                // show: true,
+                show: true,
                 left:30,
                 // right:30,
-                top:50,
+                top:30,
                 bottom:80,
                 containLabel: true,
             },
             xAxis: {
+                show: true,
                 data: this.state.xAxisData,
                 name:"时间",
                 boundaryGap: false,
-                // splitLine:{                  //设置折线图竖直线
-                //     show:true,
-                // },
+                splitLine:{                  //设置折线图竖直线
+                    show:false,
+                },
             },
             yAxis: {
+                show: true,
                 type: 'value',
                 axisLabel: {
-                    formatter: '{value} °C'
+                    formatter: '{value} GJ'
                 },
-                name:"温度",
+                name:"能耗",
                 splitLine:{
-                    show:true
+                    show:false,
                 },
             },
             dataZoom: [
@@ -142,13 +134,18 @@ export default class StationChart extends Component {
                 />
                 <View style={styles.navView}>
                     <TouchableOpacity onPress={this.back.bind(this)}>
-                        <Image style={{ width: 20, height: 20, marginLeft:10,marginTop: 10, }} source={require('../icons/nav_back_icon.png')}/>
+                        <Image style={{ width: 20, height: 20, marginLeft:10,marginTop: 10, }} source={require('../../icons/nav_back_icon@2x.png')}/>
                     </TouchableOpacity>
-                    <Text style={styles.topNameText}>今日天气趋势</Text>
-                    <Image style={{ width: 20, height: 20, marginRight:10,marginTop: 10, }} source={require('../icons/nav_flag.png')}/>
+                    <Text style={styles.topNameText}>历史能耗图表</Text>
+                    <Image style={{ width: 20, height: 20, marginRight:10,marginTop: 10, }} source={require('../../icons/nav_flag.png')}/>
                 </View>
                 <View style={styles.companyNameView}>
-                    <Text style={styles.companyNameText}>西安</Text>
+                    <Text style={styles.companyNameText}>{this.props.station_name}</Text>
+                </View>
+                <View style={styles.selectView}>
+                    <Text style={styles.selectText}>指标</Text>
+                    <Image source={require('../../icons/real_energy_icon.png')} style={styles.indicatorsImage}></Image>
+                    <Text style={styles.changeText}>一网供温</Text>
                 </View>
                 <Echarts option={option} height={width-44} />
             </View>
@@ -188,5 +185,27 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#000000',
         marginLeft: 15,
+    },
+    selectView:{
+        height: 24,
+        width: height,
+        backgroundColor: "#ffffff",
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    selectText:{
+        fontSize: 16,
+        color: '#000000',
+        marginLeft: 15,
+    },
+    indicatorsImage:{
+        width:16,
+        height:16,
+        marginLeft:10,
+    },
+    changeText:{
+        fontSize: 16,
+        color: '#000000',
+        marginLeft: 6,
     }
 });

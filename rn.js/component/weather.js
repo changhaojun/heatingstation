@@ -9,7 +9,7 @@ import Dimensions from 'Dimensions';
 import Orientation from 'react-native-orientation';
 var { width, height } = Dimensions.get('window');
 
-import WeatherChart from '../component/weather_chart.ios';
+import WeatherChart from './weather_chart';
 export default class Weather extends React.Component {
 
 
@@ -47,6 +47,10 @@ export default class Weather extends React.Component {
         })
     }
 
+    longPress(){
+        console.log("LongPress");
+    }
+
 
 
     render() {
@@ -54,7 +58,7 @@ export default class Weather extends React.Component {
             <View style={styles.all}>
                 <Image source={require('../images/water@2x.png')} style={styles.Image}>
                 <View style={styles.weatherBackground}>
-                    <TouchableOpacity activeOpacity={0.5} onPress={this.gotoWeatherChart.bind(this)}>
+                    <TouchableOpacity activeOpacity={0.5} onPress={this.gotoWeatherChart.bind(this)} onLongPress={this.longPress.bind(this)}>
                     <View style={styles.weather}>
                         <View style={styles.weatherTop}>
                             <Text style={{marginLeft:10, color:"#212121"}}>C | F</Text>
