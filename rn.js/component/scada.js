@@ -150,6 +150,7 @@ export default class Scada extends React.Component {
     }
 
 
+
     render() {
         var _this = this;
         return (
@@ -172,11 +173,12 @@ export default class Scada extends React.Component {
 
                 <WebViewBridge
                     ref="webviewbridge"
+                    startInLoadingState={true}
                     onBridgeMessage={this.onBridgeMessage}
-                    scrollEnabled={false}
-                    javaScriptEnabled={true}
+                    scrollEnabled={true}
+                    //javaScriptEnabled={true}
                     source={{ uri: this.state.start_url }}
-                    scalesPageToFit={true}
+                    scalesPageToFit={false}
                     automaticallyAdjustContentInsets={false}
                     style={{ backgroundColor: "#f2d6b8", }}
                 />

@@ -15,7 +15,7 @@ var { width, height } = Dimensions.get('window');
 
 import Orientation from 'react-native-orientation';
 import WebViewBridge from 'react-native-webview-bridge';
-import Test from './test.ios';
+import Test from './test';
 
 var data = [];
 export default class Gateway extends React.Component {
@@ -62,9 +62,13 @@ export default class Gateway extends React.Component {
 
 
     confirm() {
+
         var _this = this;
         var station_id = '';
-        _this.props.close();
+
+
+        //_this.props.close();
+
         if (data.length) {
             for (var i = 0; i < data.length; i++) {
                 if (data[i].check) {
@@ -74,18 +78,30 @@ export default class Gateway extends React.Component {
         } else {
             station_id = _this.props.station_id;
         }
+
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
+
+                //_this.props.close();
+
                 var url="http://121.42.253.149:18816/v1_0_0/gateway?station_id=" + station_id + "&access_token=" + result + "&tag_id=" + _this.props.tag_id + "&data_value=" + _this.state.sliderValue.toFixed(2) * 100;
                 console.log(url);
                
                 fetch(url,{method: 'POST'})
                     .then((response) => response.json())
                     .then((responseJson) => {
+                    if(responseJson.issued.result == 1){
                         AlertIOS.alert(
                             '提示',
                             '下发成功',
                         );
+                    }else{
+                        AlertIOS.alert(
+                            '提示',
+                            '下发失败',
+                        );
+                    }
+
                     })
                     .catch((error) => {
                         console.error(error);

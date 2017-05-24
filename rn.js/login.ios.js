@@ -116,7 +116,7 @@ export default class Login extends React.Component {
             <View style={styles.all}>
                 {/*状态栏*/}
                 <StatusBar
-                    hidden={true}  //status显示与隐藏
+                    hidden={false}  //status显示与隐藏
                     translucent={true} //设置status栏是否透明效果,仅支持安卓
                     barStyle='default' //设置状态栏文字效果,仅支持iOS,枚举类型:default黑light-content白
                     networkActivityIndicatorVisible={true} //设置状态栏上面的网络进度菊花,仅支持iOS

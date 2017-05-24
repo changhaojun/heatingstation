@@ -8,7 +8,7 @@ import {View, Text, TouchableOpacity, Image, TextInput, NavigatorIOS, StyleSheet
 import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
 
-import Scada from '../component/scada.ios';
+import Scada from './scada';
 import Orientation from 'react-native-orientation';
 export default class HeatStationMaintenance extends React.Component {
 

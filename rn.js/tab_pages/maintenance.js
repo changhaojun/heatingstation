@@ -9,7 +9,7 @@ import {View, Text, TouchableOpacity,
 
 import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
-import HeatStation from '../component/heat_station_maintenance.ios';
+import HeatStation from '../component/heat_station_maintenance';
 
 export default class Maintenance extends React.Component {
 

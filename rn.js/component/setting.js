@@ -9,8 +9,8 @@ import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
 
 
-import AboutUS from './about_us.ios';
-import Message from './message.ios';
+import AboutUS from './about_us';
+import Message from './message';
 
 export default class Setting extends React.Component {
 

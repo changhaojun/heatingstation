@@ -11,9 +11,9 @@ var {width, height} = Dimensions.get('window');
 //
 // import Test from '../tab_pages/test.ios';
 
-import TotalEnergyChart from './total_energy_chart.ios';
-import Company from './company.ios';
-import HeatMap from './heat_map.ios';
+import TotalEnergyChart from './total_energy_chart';
+import Company from './company';
+import HeatMap from './heat_map';
 
 
 export default class Home extends React.Component {

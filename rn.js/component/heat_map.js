@@ -9,7 +9,7 @@ var { width, height } = Dimensions.get('window');
 
 import Orientation from 'react-native-orientation';
 import WebViewBridge from 'react-native-webview-bridge';
-import Scada from './scada.ios';
+import Scada from './scada';
 
 // 获取当期的时间戳
 var now = new Date();
@@ -86,6 +86,7 @@ export default class Message extends React.Component {
 
 
     onBridgeMessage(message){
+        console.log(message);
         const { webviewbridge } = this.refs;
         webviewbridge.sendToBridge(this.state.access_token);
         if(message !== "null"){
@@ -169,23 +170,13 @@ export default class Message extends React.Component {
                     <Image style={{ width: 18, height: 20, marginRight:10,marginTop: 20, }} source={require('../icons/nav_flag.png')}/>
                 </View>
 
-                {/*<WebViewBridge*/}
-                    {/*ref="webviewbridge"*/}
-                    {/*onBridgeMessage={this.onBridgeMessage.bind(this)}*/}
-                    {/*javaScriptEnabled={true}*/}
-                    {/*scrollEnabled={false}*/}
-                    {/*source={require('../test.html')}*/}
-                    {/*style={{*/}
-                         {/*backgroundColor: "#f2d6b8",*/}
-                    {/*}*/}
-                    {/*}*/}
-                {/*/>*/}
 
                 <WebViewBridge
                     ref="webviewbridge"
+                    startInLoadingState={true}
+                    scalesPageToFit={true}
                     onBridgeMessage={this.onBridgeMessage.bind(this)}
                     automaticallyAdjustContentInsets={false}
-                    //injectedJavaScript={injectScript}
                     source={require('../webview/heatmap.html')}
                     style={{height: height, width:width, backgroundColor: "#f2d6b8",}}
                 />
