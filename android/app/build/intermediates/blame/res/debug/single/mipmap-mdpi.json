@@ -1,6 +1,6 @@
 [
     {
-        "merged": "E:\\Microsoft VS Code\\workspace\\heatingstation\\android\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-mdpi\\ic_launcher.png",
-        "source": "E:\\Microsoft VS Code\\workspace\\heatingstation\\android\\app\\src\\main\\res\\mipmap-mdpi\\ic_launcher.png"
+        "merged": "/Users/finfosoft/heatingstation/android/app/build/intermediates/res/merged/debug/mipmap-mdpi/ic_launcher.png",
+        "source": "/Users/finfosoft/heatingstation/android/app/src/main/res/mipmap-mdpi/ic_launcher.png"
     }
 ]

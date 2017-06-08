@@ -5,20 +5,11 @@
  */
 
 import React, { Component } from 'react';
-import {
-    AppRegistry,
-    StyleSheet,
-    Text,
-    View,
-    Navigator,
-    BackAndroid,
-    NativeModules,
-    ToastAndroid,
-} from 'react-native';
+import {AppRegistry,StyleSheet,BackAndroid,ToastAndroid,} from 'react-native';
+import { Navigator } from 'react-native-deprecated-custom-components'
 
 import JPushModule from 'jpush-react-native';
-
-import Login from './rn.js/login.ios';
+import Login from './rn.js/login';
 import Orientation from 'react-native-orientation';
 
 

@@ -1,10 +1,10 @@
 [
     {
-        "merged": "E:\\Microsoft VS Code\\workspace\\heatingstation\\android\\app\\build\\intermediates\\res\\merged\\debug\\color-v11\\abc_background_cache_hint_selector_material_dark.xml",
-        "source": "E:\\Microsoft VS Code\\workspace\\heatingstation\\android\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\color-v11\\abc_background_cache_hint_selector_material_dark.xml"
+        "merged": "/Users/finfosoft/heatingstation/android/app/build/intermediates/res/merged/debug/color-v11/abc_background_cache_hint_selector_material_light.xml",
+        "source": "/Users/finfosoft/.android/build-cache/ab3d6cc3f6edd7c1def92f6af524075d9f5a84bb/output/res/color-v11/abc_background_cache_hint_selector_material_light.xml"
     },
     {
-        "merged": "E:\\Microsoft VS Code\\workspace\\heatingstation\\android\\app\\build\\intermediates\\res\\merged\\debug\\color-v11\\abc_background_cache_hint_selector_material_light.xml",
-        "source": "E:\\Microsoft VS Code\\workspace\\heatingstation\\android\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\color-v11\\abc_background_cache_hint_selector_material_light.xml"
+        "merged": "/Users/finfosoft/heatingstation/android/app/build/intermediates/res/merged/debug/color-v11/abc_background_cache_hint_selector_material_dark.xml",
+        "source": "/Users/finfosoft/.android/build-cache/ab3d6cc3f6edd7c1def92f6af524075d9f5a84bb/output/res/color-v11/abc_background_cache_hint_selector_material_dark.xml"
     }
 ]

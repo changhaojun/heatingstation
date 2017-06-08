@@ -10,7 +10,6 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.finfosoft.plugin.orentation.OrientationPackage;
-import com.github.alinz.reactnativewebviewbridge.WebViewBridgePackage;
 
 
 import java.util.Arrays;
@@ -22,7 +21,7 @@ public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
-    protected boolean getUseDeveloperSupport() {
+    public boolean getUseDeveloperSupport() {
       return BuildConfig.DEBUG;
     }
 
@@ -30,7 +29,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
               new MainReactPackage(),
-            new JPushPackage(false,false),new WebViewBridgePackage(),
+            new JPushPackage(false,false),
               new OrientationPackage()
 
       );
