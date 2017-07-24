@@ -5,7 +5,7 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, AsyncStorage } from 'react-native';
 import Dimensions from 'Dimensions';
 import OpenStrategy from './open_strategy';
-
+import Constants from './../../../constants';
 var { width, height } = Dimensions.get('window');
 export default class Strategy extends React.Component {
     constructor(props) {
@@ -28,7 +28,7 @@ export default class Strategy extends React.Component {
         console.log(props.station_id);
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
-                fetch("http://121.42.253.149:18816/v1_0_0/station_control_strategy?station_id=" + props.station_id + "&access_token=" + result)
+                fetch(Constants.serverSite+ "/v1_0_0/stationControlStrategy?station_id=" + props.station_id + "&access_token=" + result)
                     .then((response) => response.json())
                     .then((responseJson) => {
                         console.log(responseJson);

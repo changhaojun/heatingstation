@@ -1,0 +1,210 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>智慧供热系统</title>
+    <link rel="stylesheet" type="text/css" href="css/mapshow.css" />
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=zdgd4171rI06zLQBNad9vKGCn6fcTsIm"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"></script>
+</head>
+
+<body>
+    <div class="mapShow">
+        <div id="map"></div>
+    </div>
+
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript">
+        window.onload = function () {
+            var ismarker = false;//这里默认不能设为0，因为设为0无法触发缩放事件
+            var searchName = "";
+            var allData = [];//存储数据列表
+            var searchData = [];  //存储搜索筛选的数据
+            var color = ["#05ba74", "#64d102", "#a4df06", "#d2df06", "#ffd800", "#ffc600", "#ffa200", "#ff8400", "#d94e1d", "#ca1414"];
+
+            //初始化地图   
+            var map = new BMap.Map("map", { enableMapClick: false, minZoom: 9, });
+
+            map.enableScrollWheelZoom();
+            map.enableAutoResize();
+            map.centerAndZoom("西安", 12);
+            var styleJson = [
+                {
+                    "featureType": "building",
+                    "elementType": "alls",
+                    "stylers": {
+                        "hue": "#f3f3f3",
+                        "visibility": "on",
+                    }
+                },
+                {
+                    "featureType": "poi",
+                    "elementType": "labels",
+                    "stylers": {
+                        "visibility": "off",
+                    }
+                },
+                {
+                    "featureType": "road",
+                    "elementType": "all",
+                    "stylers": {
+                        "visibility": "on",
+                    }
+                },
+                {
+                    "featureType": "highway",
+                    "elementType": "all",
+                    "stylers": {
+                        "visibility": "off",
+                    }
+                },
+
+            ]
+            map.setMapStyle({ styleJson: styleJson });
+            //地图缩放事件
+            map.addEventListener("zoomend", function () {
+                loadmap();
+            });
+            //拖拽地图
+            map.addEventListener("dragend", function () {
+                var mapLevel = map.getZoom();
+                if (searchName || mapLevel > 16) {
+                    map.clearOverlays();
+                    loadMarker();
+                }
+            });
+            //加载地图数据
+            function loadmap() {
+                var mapLevel = map.getZoom();
+                if (!searchName && ismarker && mapLevel <= 16) {
+                    map.clearOverlays();
+                    addheatmap();
+                } else if (searchName || mapLevel > 16) {
+                    map.clearOverlays();
+                    loadMarker();
+                }
+            }
+            //过滤搜索内容
+            function filter() {
+                searchData = [];
+                if (searchName) {
+                    for (var i = 0; i < allData.length; i++) {
+                        if (allData[i].station_name.match(searchName)) {
+                            searchData.push(allData[i]);
+                        }
+                    }
+                }
+                loadmap();
+            }
+
+            //加载热力图
+            function addheatmap() {
+                ismarker = false;
+                heatmapOverlay = new BMapLib.HeatmapOverlay({ "radius": 20 });
+                //heatmapOverlay.disableMassClear()
+                map.addOverlay(heatmapOverlay);
+                heatmapOverlay.setDataSet({ data: allData, max: 100 });
+            }
+
+            //加载marker
+            function loadMarker() {
+                var markerSum = 0;
+                ismarker = true;
+                var bound = map.getBounds();
+                var data = searchName ? searchData : allData;
+                var onWinData = [];
+                for (var i = 0; i < data.length; i++) {
+                    var point = new BMap.Point(data[i].lng, data[i].lat);
+                    if (bound.containsPoint(point)) {
+                        addMarker(point, data[i].count,data[i].unit, data[i].station_name, markerSum++);
+                        onWinData.push(data[i]);
+                    }
+                }
+                window.postMessage("{type:'data',data:" + JSON.stringify(onWinData) + "}");
+
+            }
+
+
+            //set marker type 初始化marker类型
+            function addMarker(point, value,unit, name, markerNum) {
+                var colorid = 0;
+                if (value > 10 && value < 100) {
+                    colorid = parseInt(value / 10);
+                } else if (value >= 100) {
+                    colorid = 9;
+                }
+                var marker = new BMap.Marker(point, {
+                    icon: new BMap.Symbol(BMap_Symbol_SHAPE_CIRCLE, {
+                        scale: markerNum>=8?3:13,//图标缩放大小
+                        fillColor: color[colorid],//填充颜色
+                        fillOpacity: 1,//填充透明度
+                        strokeColor: color[colorid]
+                    })
+                })
+                if (markerNum < 8) {
+                    var label = new BMap.Label(value+unit);
+                    label.setStyle({
+                        fontSize: "13px",
+                        color: "#fff",
+                        border: "none",
+                        backgroundColor: "none",
+                        lineHeight: "38px",
+                        textAlign: "center",
+                        height: "38px",
+                        width: "38px",
+                    })
+                    marker.setLabel(label);
+                    //名字label
+                    var opts = {
+                        position: point,    // 指定文本标注所在的地理位置
+                        offset: new BMap.Size(-25, 22)    //设置文本偏移量
+                    }
+                    var label2 = new BMap.Label(name.substring(0, 4), opts);
+                    label2.setStyle({
+                        color: "#fff",
+                        fontSize: "10px",
+                        borderRadius: "10px",
+                        backgroundColor: color[colorid],
+                        padding: "3px",
+                        border: "none",
+                        width: "45px",
+                        textAlign: "center",
+                    })
+                    map.addOverlay(label2);
+                }
+
+                map.addOverlay(marker);              // 将标注添加到地图中
+
+            }
+
+
+            //marker点击事件 event.target相当于marker对象
+            function clickMarker(event) {
+                map.setCenter(new BMap.Point(allData[event.target.index].location.split(",")[0], allData[event.target.index].location.split(",")[1]));
+                window.postMessage("{type:'click',index:" + event.target.index + ",level:" + (level - 1 < 0 ? 0 : level - 1) + ",tag:" + tagValue + "}");
+                //alert(event.target.index);
+            }
+
+            //接受来自native的消息
+            document.addEventListener("message", function (e) {
+                var data = eval("(" + e.data + ")");
+                switch (data.type) {
+                    case "search": {//搜索
+                        searchName = data.value;
+                        filter();
+                        break;
+                    }
+                    case "data": {//保存数据
+                        allData = data.value;
+                        addheatmap(); //第一次加载数据的时候需要直接加载热力图
+                        break;
+                    }
+                }
+
+            })
+
+        }
+    </script>
+</body>
+
+</html>

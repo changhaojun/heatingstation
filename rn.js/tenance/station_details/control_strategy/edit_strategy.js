@@ -5,6 +5,7 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ListView, Modal, TextInput, AsyncStorage, Platform } from 'react-native';
 import Dimensions from 'Dimensions';
 import Swipeout from 'react-native-swipeout';
+import Constants from './../../../constants';
 var Alert = Platform.select({
     ios: () => require('AlertIOS'),
     android: () => require('Alert'),
@@ -99,13 +100,14 @@ export default class EditStrategy extends React.Component {
         var _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
-                fetch("http://121.42.253.149:18816/v1_0_0/station_control_strategy?access_token=" + result + "&data=" + JSON.stringify(_this.props.data),{method: 'PUT'})
+console.log(Constants.serverSite+"/v1_0_0/stationControlStrategy?access_token=" + result + "&data=" + JSON.stringify(_this.props.data));
+                fetch(Constants.serverSite+ "/v1_0_0/stationControlStrategy?access_token=" + result + "&data=" + JSON.stringify(_this.props.data),{method: 'PUT'})
                     .then((response) => response.json())
                     .then((responseJson) => {
                         console.log(responseJson);
                     })
                     .catch((error) => {
-                        // console.error(error);
+                        console.error(error);
                     });
             }
         }

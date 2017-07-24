@@ -10,6 +10,7 @@ var AlertIOS = Platform.select({
     ios: () => require('AlertIOS'),
     android: () => require('Alert'),
 })();
+import Constants from './../../../constants';
 import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
 
@@ -27,7 +28,7 @@ export default class Gateway extends React.Component {
         var _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
-                fetch("http://121.42.253.149:18816/v1_0_0/homesSataionData?station_id=" + props.station_id + "&access_token=" + result + "&tag_id=" + props.tag_id + "")
+                fetch(Constants.serverSite+ "/v1_0_0/homesSataionData?station_id=" + props.station_id + "&access_token=" + result + "&tag_id=" + props.tag_id + "")
                     .then((response) => response.json())
                     .then((responseJson) => {
                         data=[];
@@ -82,7 +83,7 @@ export default class Gateway extends React.Component {
 
                 //_this.props.close();
 
-                var url="http://121.42.253.149:18816/v1_0_0/gateway?station_id=" + station_id + "&access_token=" + result + "&tag_id=" + _this.props.tag_id + "&data_value=" + _this.state.sliderValue.toFixed(2) * 100;
+                var url=Constants.serverSite+"/v1_0_0/gateway?station_id=" + station_id + "&access_token=" + result + "&tag_id=" + _this.props.tag_id + "&data_value=" + _this.state.sliderValue.toFixed(2) * 100;
                 console.log(url);
                
                 fetch(url,{method: 'POST'})

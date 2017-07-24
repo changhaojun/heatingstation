@@ -9,7 +9,7 @@ import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
 
 import Home from './home/home.js';
-import RunQuality from './map/runquality_map';
+import RunQuality from './temperatmap/runquality_map';
 import Maintenance from './tenance/maintenance';
 
 

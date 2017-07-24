@@ -4,7 +4,7 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ListView,AsyncStorage } from 'react-native';
 import Dimensions from 'Dimensions';
-
+import Constants from './../../../constants';
 var { width, height } = Dimensions.get('window');
 export default class LogList extends React.Component {
     constructor(props) {
@@ -16,7 +16,8 @@ export default class LogList extends React.Component {
         var _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
-                fetch("http://121.42.253.149:18816/v1_0_0/operLog?access_token="+result+"&log_type="+props.isDirect+"&station_id="+ props.station_id)
+                console.log(Constants.serverSite+ "/v1_0_0/operLog?access_token="+result+"&log_type="+props.isDirect+"&station_id="+ props.station_id);
+                fetch(Constants.serverSite+ "/v1_0_0/operLog?access_token="+result+"&log_type="+props.isDirect+"&station_id="+ props.station_id)
                     .then((response) => response.json())
                     .then((responseJson) => {
                         console.log(responseJson);
@@ -25,7 +26,7 @@ export default class LogList extends React.Component {
                         })
                     })
                     .catch((error) => {
-                        // console.error(error);
+                        console.error(error);
                     });
             }
         }
@@ -36,7 +37,7 @@ export default class LogList extends React.Component {
         return (
             <View style={styles.all}>
                 <View style={styles.topRow}>
-                    <TouchableOpacity ><Image style={styles.topSides} source={require('../../../icons/nav_back_icon@2x.png')} /></TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.props.navigator.pop()}><Image style={styles.topSides} source={require('../../../icons/nav_back_icon@2x.png')} /></TouchableOpacity>
                     <Text style={[styles.topText, styles.all]}>{this.props.isDirect?"策略下发记录":'直接下发记录'}</Text>
                     <View style={styles.topSides}  />
                 </View>

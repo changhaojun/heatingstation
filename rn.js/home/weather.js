@@ -3,81 +3,91 @@
  */
 // 设置页面
 import React from 'react';
-import {View, Text, Image, TextInput, NavigatorIOS, StyleSheet, TouchableHighlight, StatusBar, TouchableOpacity} from 'react-native';
+import {
+    View,
+    Text,
+    Image,
+    TextInput,
+    ListView,
+    StyleSheet,
+    TouchableHighlight,
+    StatusBar,
+    AsyncStorage,
+    TouchableOpacity
+} from 'react-native';
 
 import Dimensions from 'Dimensions';
 import Orientation from 'react-native-orientation';
 var { width, height } = Dimensions.get('window');
 
 import WeatherChart from './weather_chart';
+
+var on = 0;
+var oldx = 0;
 export default class Weather extends React.Component {
-
-
     constructor(props) {
         super(props);
+        const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
-            todayTemp:"-30℃～50℃",
-            realTimeTemp: "25℃",
-            weatherTypes: "晴",
+            x: 0,
+            dataSource: ds.cloneWithRows([])
         };
-
         var _this = this;
-
-        fetch("http://rapapi.org/mockjs/16979/v1_0_0/weather")
-            .then((response) => response.json())
-            .then((responseJson) => {
-                _this.setState({
-                    todayTemp: responseJson.today_temp,
-                    realTimeTemp: responseJson.real_time_temp,
-                    weatherTypes: responseJson.weather_types,
-                });
-            })
-            .catch((error) => {
-                console.error(error);
-                // ToastAndroid.show("网络或服务器异常", ToastAndroid.SHORT);
-            });
+        AsyncStorage.getItem("access_token", function (errs, result) {
+            if (!errs) {
+                fetch("http://121.42.253.149:18825/v1/weathers?city_id=310")
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+                        console.log(responseJson);
+                        _this.setState({ dataSource: ds.cloneWithRows(responseJson.daily) })
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            }
+        }
+        )
     }
+    //滑动结束后调用
+    onScroll(x) {
+        if (this.state.x < x && x % (width - 76)) {
+            this.listView.scrollTo({ x: (parseInt(x / (width - 76)) + 1) * (width - 76), y: 0, animated: true })
+        }
+        if (this.state.x > x && x % (width - 76)) {
+            this.listView.scrollTo({ x: parseInt(x / (width - 76)) * (width - 76), y: 0, animated: true })
+        }
 
 
-    gotoWeatherChart(){
-        const navigator = this.props.navigator;
-        Orientation.lockToLandscape();
-        navigator.push({
-            component:WeatherChart,
-        })
     }
-
-    longPress(){
-        console.log("LongPress");
-    }
-
-
-
     render() {
         return (
             <View style={styles.all}>
-                <Image source={require('../images/water@2x.png')} style={styles.Image}>
-                <View style={styles.weatherBackground}>
-                    <TouchableOpacity activeOpacity={0.5} onPress={this.gotoWeatherChart.bind(this)} onLongPress={this.longPress.bind(this)}>
-                    <View style={styles.weather}>
-                        <View style={styles.weatherTop}>
-                            <Text style={{marginLeft:10, color:"#212121"}}>C | F</Text>
-                            <Text style={{marginLeft:25, textAlign:'left', color:"#212121"}}>今日温度:{this.state.todayTemp}</Text>
-                        </View>
-                        <View style={styles.weatherLine}>
-                        </View>
-                        <View style={styles.weatherMiddle}>
-                            <Text style={{fontSize: 18, color: '#5e5e5e'}}>实时温度</Text>
-                            <Text style={{fontSize: 40, color: '#212121'}}>{this.state.realTimeTemp}</Text>
-                            <Text style={{fontSize: 25, color: '#5e5e5e'}}>{this.state.weatherTypes}</Text>
-                        </View>
-                        <View style={styles.weatherBottom}>
-                            <Image source={require('../images/wea.png')} style={{width:width*(3/5)-10, height:80}}></Image>
-                        </View>
-                    </View>
-                    </TouchableOpacity>
-                </View>
-                </Image>
+                <ListView
+                    dataSource={this.state.dataSource}
+                    showsHorizontalScrollIndicator={false}
+                    ref={listView => this.listView = listView}
+                    style={styles.list}
+                    enableEmptySections={true}
+                    contentContainerStyle={styles.contentContainerStyle}
+                    horizontal={true}
+                    onScrollBeginDrag={(evt) => this.setState({ x: evt.nativeEvent.contentOffset.x })}
+                    onScrollEndDrag={(evt) => this.onScroll(evt.nativeEvent.contentOffset.x)}
+                    renderRow={(rowData) => {
+                        return (
+                                <Image source={require('../images/weatherbg.png')} style={styles.image1}>
+                                    <View style={styles.topView}>
+                                        <View style={styles.leftView}>
+                                            <Text style={{ fontSize: 25, color: "#FFF" }}>{rowData.night.templow}~{rowData.day.temphigh}℃</Text>
+                                            <Text style={{ fontSize: 17, color: "#FFF" }}>{rowData.day.weather}</Text>
+                                            <Text style={{ fontSize: 12, color: "#FFF",marginTop:3 }}>{rowData.date} {rowData.week}</Text>
+                                        </View>
+                                        <Image source={{uri:"http://www.moji.com/templets/mojichina/images/weather/weather/w"+rowData.day.img+".png"}} style={styles.weatherimage} />
+                                    </View>
+                                    
+                                </Image>
+                        )
+                    }}
+                />
             </View>
         )
     }
@@ -85,71 +95,39 @@ export default class Weather extends React.Component {
 
 // 样式
 const styles = StyleSheet.create({
-    all:{
-        // flex:1,
-        // marginTop:64,
-        // width: width,
-        // height: height*(5/13),
-        backgroundColor: '#ffffff',
-        // flexDirection: 'row',
-        // justifyContent: 'center',
-        // alignItems: 'center',
+    all: {
+        flex: 1,
+        backgroundColor: '#ffffff'
     },
-    Image:{
+    list: {
         width: width,
-        height: height*(5/13),
-        backgroundColor: '#ffffff',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    weatherBackground:{
-        width: width-80,
-        height: height*(5/14),
-        backgroundColor:'rgba(255, 255, 255, 0.8)',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    weather:{
-        width: width*(3/5),
-        height: width*(3/5),
-        backgroundColor: '#ffffff',
-        flexDirection: 'column',
-        shadowColor:'#c2c2c2',
-        shadowOffset:{h:5},
-        shadowRadius:3,
-        shadowOpacity:0.5,
-    },
-    weatherTop:{
-        width: width*(3/5),
-        height: width*(3/5)*(1/5),
-        // backgroundColor: 'red',
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    weatherLine:{
-        width: width*(3/5) - 16,
-        height: 1,
-        backgroundColor: '#e6e6e6',
-        marginLeft: 8,
-    },
-    weatherMiddle:{
-        width: width*(3/5),
-        height: width*(3/5)*(1/5),
-        marginTop:30,
-        flexDirection: 'row',
-        alignItems:'center',
-        justifyContent: 'space-around',
-        // backgroundColor: 'green',
-    },
-    weatherBottom:{
-        marginTop:20,
-        width: width*(3/5),
-        height: width*(3/5)*(2/5),
-        // backgroundColor: 'yellow',
-        flexDirection: 'row',
-        alignItems: 'center',
+        height: 140,
     },
 
+
+    image1:{
+        width: width - 90,
+        height: 120,
+        margin: 8,
+        borderRadius: 5,
+        //borderWidth:1,
+        borderColor:"#fff000"
+    },
+    contentContainerStyle: {
+        paddingHorizontal: 38,
+        borderRadius: 5,
+    },
+    weatherimage: {
+        margin: 30,
+        width: 50,
+        height: 50,
+    },
+    topView: {
+        flexDirection: 'row',
+        flex: 1,
+    },
+    leftView: {
+        flex: 1,
+        margin: 15,
+    },
 });

@@ -4,7 +4,7 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity,AsyncStorage } from 'react-native';
 import Dimensions from 'Dimensions';
-
+import Constants from './../../../constants';
 
 var { width, height } = Dimensions.get('window');
 
@@ -17,11 +17,11 @@ export default class ArchivesParam  extends React.Component {
         var _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
-                fetch("http://121.42.253.149:18816/v1_0_0/heating_station_params?station_id="+props.station_id+"&access_token=" + result)
+                fetch(Constants.serverSite+"/v1_0_0/station/"+props.station_id+"/params?access_token=" + result)
                     .then((response) => response.json())
                     .then((responseJson) => {
                         console.log(responseJson);
-                        _this.setState({ data: responseJson[1] })
+                        _this.setState({ data: responseJson.params[0] })
                     })
                     .catch((error) => {
                          console.error(error);
@@ -43,20 +43,20 @@ export default class ArchivesParam  extends React.Component {
                     <View style={styles.topSides}  />
                 </View>
                 <View style={styles.lineView}>
-                    <Text style={styles.nameText}>供热用途</Text>
-                    <Text style={styles.right}>{this.state.data.for_purpose==1?"采暖":"生活热水"}</Text>
+                    <Text style={styles.nameText}>一网管径</Text>
+                    <Text style={styles.right}>{this.state.data.network_path}</Text>
                 </View>
                 <View style={styles.lineView}>
-                    <Text style={styles.nameText}>供热范围</Text>
-                    <Text style={styles.right}>{this.state.data.for_scope}</Text>
+                    <Text style={styles.nameText}>二网管径</Text>
+                    <Text style={styles.right}>{this.state.data.two_network_path}</Text>
                 </View>
                 <View style={styles.lineView}>
-                    <Text style={styles.nameText}>供热面积</Text>
-                    <Text style={styles.right}>{this.state.data.heat_area}</Text>
+                    <Text style={styles.nameText}>计划热指标</Text>
+                    <Text style={styles.right}>{this.state.data.plan_heating_index}</Text>
                 </View>
                 <View style={styles.lineView}>
-                    <Text style={styles.nameText}>旁通管径</Text>
-                    <Text style={styles.right}>{this.state.data.pipe_bypass_size}</Text>
+                    <Text style={styles.nameText}>理论热负荷</Text>
+                    <Text style={styles.right}>{this.state.data.theory_heat_load}</Text>
                 </View>
                 <View style={styles.lineView}>
                     <Text style={styles.nameText}>板换换热面积</Text>
@@ -76,7 +76,11 @@ export default class ArchivesParam  extends React.Component {
                 </View>
                 <View style={styles.lineView}>
                     <Text style={styles.nameText}>循环泵功率</Text>
-                    <Text style={styles.right}>{this.state.data.ecycle_pump_power}</Text>
+                    <Text style={styles.right}>{this.state.data.recycle_pump_power}</Text>
+                </View> 
+                 <View style={styles.lineView}>
+                    <Text style={styles.nameText}>循环泵流量</Text>
+                    <Text style={styles.right}>{this.state.data.recycle_pump_flow}</Text>
                 </View>
                 <View style={styles.lineView}>
                     <Text style={styles.nameText}>补水泵扬程</Text>
@@ -85,6 +89,10 @@ export default class ArchivesParam  extends React.Component {
                 <View style={styles.lineView}>
                     <Text style={styles.nameText}>补水泵功率</Text>
                     <Text style={styles.right}>{this.state.data.supply_pump_power}</Text>
+                </View>
+                 <View style={styles.lineView}>
+                    <Text style={styles.nameText}>补水泵流量</Text>
+                    <Text style={styles.right}>{this.state.data.supply_pump_flow}</Text>
                 </View>
             </View>
         )

@@ -5,7 +5,7 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity,AsyncStorage } from 'react-native';
 import Dimensions from 'Dimensions';
 import ArchivesParam from './archives_param';
-
+import Constants from './../../../constants';
 
 var { width, height } = Dimensions.get('window');
 
@@ -18,7 +18,7 @@ export default class ArchivesInfo  extends React.Component {
         var _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
-                fetch("http://121.42.253.149:18816/v1_0_0/heating_station_file?station_id="+props.station_id+"&access_token=" + result)
+                fetch(Constants.serverSite+"/v1_0_0/station/"+props.station_id+"/files?access_token=" + result)
                     .then((response) => response.json())
                     .then((responseJson) => {
                         console.log(responseJson);
@@ -52,47 +52,39 @@ export default class ArchivesInfo  extends React.Component {
                 </View>
                 <View style={styles.lineView}>
                     <Text style={styles.nameText}>名称</Text>
-                    <Text style={styles.right}>{this.state.data.heating_station_name}</Text>
+                    <Text style={styles.right}>{this.state.data.station_name}</Text>
                 </View>
                 <View style={styles.lineView}>
                     <Text style={styles.nameText}>换热站厂家</Text>
                     <Text style={styles.right}>{this.state.data.create_company}</Text>
                 </View>
                 <View style={styles.lineView}>
+                    <Text style={styles.nameText}>建成时间</Text>
+                    <Text style={styles.right}>{this.state.data.create_date}</Text>
+                </View>
+                <View style={styles.lineView}>
                     <Text style={styles.nameText}>换热类型</Text>
                     <Text style={styles.right}>{this.state.data.exchange_type==1?"水水换热":"汽水换热"}</Text>
                 </View>
-                <TouchableOpacity style={styles.lineView} onPress={()=>this.toParam()}>
-                    <Text style={styles.nameText}>系统数</Text>
-                    <Text style={styles.right}>{this.state.data.system_num}</Text>
-                </TouchableOpacity>
+                <View style={styles.lineView}>
+                    <Text style={styles.nameText}>供热用途</Text>
+                    <Text style={styles.right}>{this.state.data.exchange_type==1?"采暖":"生活热水"}</Text>
+                </View>
+                <View style={styles.lineView}>
+                    <Text style={styles.nameText}>散热类型</Text>
+                    <Text style={styles.right}>{this.state.data.exchange_type==1?"地暖":"散热器"}</Text>
+                </View>
                 <View style={styles.lineView}>
                     <Text style={styles.nameText}>供热面积</Text>
                     <Text style={styles.right}>{this.state.data.total_area}</Text>
                 </View>
                 <View style={styles.lineView}>
                     <Text style={styles.nameText}>地理坐标</Text>
-                    <Text style={styles.right}>{this.state.data.location}</Text>
-                </View>
-                <View style={styles.lineView}>
-                    <Text style={styles.nameText}>一网总管径</Text>
-                    <Text style={styles.right}>{this.state.data.pipe_main_size}</Text>
-                </View>
-                <View style={styles.lineView}>
-                    <Text style={styles.nameText}>二网总管径</Text>
-                    <Text style={styles.right}>{this.state.data.pipe_branch_size}</Text>
+                    <Text style={styles.right}>{this.state.data.lng},{this.state.data.lat}</Text>
                 </View>
                 <View style={styles.lineView}>
                     <Text style={styles.nameText}>地势标高</Text>
                     <Text style={styles.right}>{this.state.data.station_elevation}</Text>
-                </View>
-                <View style={styles.lineView}>
-                    <Text style={styles.nameText}>录入人</Text>
-                    <Text style={styles.right}>{this.state.data.input_user}</Text>
-                </View>
-                <View style={styles.lineView}>
-                    <Text style={styles.nameText}>录入时间</Text>
-                    <Text style={styles.right}>{this.state.data.input_time}</Text>
                 </View>
                 <View style={styles.lineView}>
                     <Text style={styles.nameText}>备注</Text>

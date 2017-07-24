@@ -6,6 +6,7 @@ var Alert = Platform.select({
     android: () => require('Alert'),
 })();
 import Dimensions from 'Dimensions';
+import Constants from './constants';
 var { width, height } = Dimensions.get('window');
 
 import Main from './main';
@@ -45,7 +46,8 @@ export default class Login extends React.Component {
     //登录按钮事件
     login() {
         const navigator = this.props.navigator;//上一个页面传过来的值
-        fetch("http://121.42.253.149:18816/authorize/authorize?client_id=admin&client_secret=admin&username=" + this.state.userName + "&password=" + this.state.passWord)
+        console.log(Constants.serverSite+"/authorize/authorize?client_id=heat&client_secret=heat&username=" + this.state.userName + "&password=" + this.state.passWord)
+        fetch(Constants.serverSite+"/authorize/authorize?client_id=heat&client_secret=heat&username=" + this.state.userName + "&password=" + this.state.passWord)
             .then((response) => response.json())
             .then((responseJson) => {
                 if (navigator && responseJson.code == 200) {
@@ -89,6 +91,15 @@ export default class Login extends React.Component {
                         }
                         console.log(responseJson.company_id);
                     });
+                    AsyncStorage.setItem("company_code", responseJson.company_code, function (errs) {
+                        if (errs) {
+                            Alert.alert(
+                                '提示',
+                                '存储company_code错误',
+                            );
+                        }
+                        console.log(responseJson.company_code);
+                    });
 
 
                     //跳转
@@ -104,6 +115,7 @@ export default class Login extends React.Component {
                 }
             })
             .catch((error) => {
+                console.log(error)
                 Alert.alert(
                     '提示',
                     '网络连接失败',

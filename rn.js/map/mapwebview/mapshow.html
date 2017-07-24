@@ -240,7 +240,7 @@
             //marker点击事件 event.target相当于marker对象
             function clickMarker(event) {
                 map.setCenter(new BMap.Point(allData[event.target.index].location.split(",")[0], allData[event.target.index].location.split(",")[1]));
-                window.postMessage("{type:'click',index:" + event.target.index + "}");
+                window.postMessage("{type:'click',index:" + event.target.index + ",level:"+(level-1<0?0:level-1)+",tag:"+tagValue+"}");
                 //alert(event.target.index);
             }
             //接受来自native的消息

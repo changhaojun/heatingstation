@@ -18,7 +18,7 @@ import Orientation from 'react-native-orientation';
 import CompanyChart from './map_chart/company_chart';
 import ChildCompanyChart from './map_chart/child_company_chart';
 import BranchChart from './map_chart/branch_chart';
-import StationChart from './map_chart/station_chart';
+import MapChart from './waterchart';
 
 export default class RunqualityMap extends React.Component {
 
@@ -48,79 +48,6 @@ export default class RunqualityMap extends React.Component {
     }
 
 
-    // onBridgeMessage(message){
-
-    //     var resource = message.split(",");
-
-    //     var station_id = resource[0];
-    //     var station_name = resource[1];
-    //     var num = resource[2];
-    //     var tagLevel = resource[3];
-
-    //     console.log(station_id);
-    //     console.log(station_name);
-    //     console.log(num);
-    //     console.log(tagLevel);
-
-
-    //     const { webviewbridge } = this.refs;
-    //     webviewbridge.sendToBridge(this.state.access_token);
-
-
-    //     if(message !== "null"){
-
-    //         if(tagLevel==0){
-    //             this.props.navigator.push({
-    //                 component: CompanyChart,
-    //                 passProps: {
-    //                     station_id:station_id,
-    //                     station_name:station_name,
-    //                     num:num,
-    //                     tagLevel:tagLevel,
-
-    //                 }
-    //             })
-    //         }
-
-    //         if(tagLevel==1){
-    //             this.props.navigator.push({
-    //                 component: ChildCompanyChart,
-    //                 passProps: {
-    //                     station_id:station_id,
-    //                     station_name:station_name,
-    //                     num:num,
-    //                     tagLevel:tagLevel,
-    //                 }
-    //             })
-    //         }
-
-    //         if(tagLevel==2){
-    //             this.props.navigator.push({
-    //                 component: BranchChart,
-    //                 passProps: {
-    //                     station_id:station_id,
-    //                     station_name:station_name,
-    //                     num:num,
-    //                     tagLevel:tagLevel,
-    //                 }
-    //             })
-    //         }
-
-    //         if(tagLevel==3){
-    //             this.props.navigator.push({
-    //                 component: StationChart,
-    //                 passProps: {
-    //                     station_id:station_id,
-    //                     station_name:station_name,
-    //                     num:num,
-    //                     tagLevel:tagLevel,
-    //                 }
-    //             })
-    //         }
-    //     }
-    // }
-
-
     searchSubmit() {
         this.webview.postMessage("{type:'search',value:'" + this.state.text + "'}");
     }
@@ -135,8 +62,8 @@ export default class RunqualityMap extends React.Component {
 
     onBridgeMessage(message) {
         var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-        var data = eval("(" + message.nativeEvent.data + ")");
         console.log(message.nativeEvent.data);
+        var data = eval("(" + message.nativeEvent.data + ")");
         switch (data.type) {
             case "data": {
                 this.setState({
@@ -154,7 +81,15 @@ export default class RunqualityMap extends React.Component {
                 break;
             }
             case "click": {
-
+                var _id=this.state.dataList[data.index].heating_station_id?this.state.dataList[data.index].heating_station_id:this.state.dataList[data.index].branch_id?this.state.dataList[data.index].branch_id:this.state.dataList[data.index].company_id;
+                this.props.navigator.push({
+                    component: MapChart,
+                    passProps: {
+                        _id:_id,
+                        tag:data.tag,
+                        level:data.level,
+                    }
+                })
                 break;
             }
         }
