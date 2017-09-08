@@ -23,6 +23,8 @@ import ChildCompanyChart from './map_chart/child_company_chart';
 import BranchChart from './map_chart/branch_chart';
 import MapChart from './waterchart';
 import Constants from './../constants';
+import Scada from "./../tenance/station_details/scada/scada";
+import WaterChart from './waterchart';
 
 export default class RunqualityMap extends React.Component {
 
@@ -34,34 +36,32 @@ export default class RunqualityMap extends React.Component {
             access_token: '',
             text: "",
             showanimating: true,
-            tag_id: 14,
+            type: 1,   //1:供热  2：能耗  3：水压  
             dataList: [],
             tagListShow: false,
             dataListShow: false,
             tagListSource: ds.cloneWithRows([]),
             dataListSource: ds.cloneWithRows([]),
+            station_id: "",
+            scadaShow: false,
+            waterShow:false,
+            responseJson: [],
         };
-        this.getData();
-
-    }
-    getData() {
         var _this = this;
         _this.setState({ showanimating: true });
+        AsyncStorage.getItem("company_code", function (errs, result) {
+            _this.setState({ company_code: result })
+        });
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
                 _this.setState({ access_token: result });
-                fetch(Constants.serverSite + "/v1_0_0/stationAllDatas?access_token=" + result + "&company_code=000005&tag_id=" + _this.state.tag_id)
+                console.log(Constants.serverSite + "/v1_0_0/stationAllDatas?access_token=" + result + "&company_code=" + _this.state.company_code)
+                fetch(Constants.serverSite + "/v1_0_0/stationAllDatas?access_token=" + result + "&company_code=" + _this.state.company_code)
                     .then((response) => response.json())
                     .then((responseJson) => {
                         console.log(responseJson);
-                        for (var i = 0; i < responseJson.length; i++) {
-                            responseJson[i].count = responseJson[i].value[0] ? responseJson[i].value[0].data_value : 0;
-                            if (_this.state.tag_id = 14) {
-                                responseJson[i].unit = "℃"
-                            }
-                        }
-                        _this.webview.postMessage("{type:'data',value:" + JSON.stringify(responseJson) + "}");
-                        _this.setState({ showanimating: false });
+                        _this.setState({ showanimating: false, responseJson: responseJson });
+                        _this.setData();
                     })
                     .catch((error) => {
                         console.log(error);
@@ -70,8 +70,29 @@ export default class RunqualityMap extends React.Component {
             }
         });
 
-
     }
+
+    setData() {
+        var responseJson = this.state.responseJson;
+        for (var i = 0; i < responseJson.length; i++) {
+
+            if (this.state.type == 1) {
+                responseJson[i].unit = "℃"
+                responseJson[i].count = responseJson[i].data ? responseJson[i].data["2gw"] : 0;
+            }
+            if (this.state.type == 2) {
+                responseJson[i].count = responseJson[i].data ? responseJson[i].data["1sr"] : 0;
+                responseJson[i].unit = "KJ/㎡"
+            }
+            if (this.state.type == 3) {
+                responseJson[i].count = responseJson[i].data ? responseJson[i].data["1gy"] : 0;
+                responseJson[i].unit = "Kpa"
+            }
+            responseJson[i].color = this.getColor(parseFloat(responseJson[i].count));
+        }
+        this.webview.postMessage("{type:'data',value:" + JSON.stringify(responseJson) + "}");
+    }
+
     searchSubmit() {
         this.webview.postMessage("{type:'search',value:'" + this.state.text + "'}");
     }
@@ -87,15 +108,11 @@ export default class RunqualityMap extends React.Component {
         var data = eval("(" + message.nativeEvent.data + ")");
         switch (data.type) {
             case "click": {
-                var _id = this.state.dataList[data.index].heating_station_id ? this.state.dataList[data.index].heating_station_id : this.state.dataList[data.index].branch_id ? this.state.dataList[data.index].branch_id : this.state.dataList[data.index].company_id;
-                this.props.navigator.push({
-                    component: MapChart,
-                    passProps: {
-                        _id: _id,
-                        tag: data.tag,
-                        level: data.level,
-                    }
-                })
+                //Alert.alert("d",data.id);
+                
+                this.setState({ station_id: data.id, scadaShow: true })
+                
+                
                 break;
 
             }
@@ -119,13 +136,26 @@ export default class RunqualityMap extends React.Component {
 
     getColor(value) {
         var colorid = 0;
-        if (value > 10 && value < 100) {
-            colorid = parseInt(value / 10);
-        } else if (value >= 100) {
+        max = 100;
+        if (this.state.type == 2) {
+            max = 1000;
+        }
+        if (this.state.type == 3) {
+            max = 1;
+        }
+        if (value > max / 10 && value < max) {
+            colorid = parseInt(value * 10 / max);
+        } else if (value >= max) {
             colorid = 9;
         }
         var color = ["#05ba74", "#64d102", "#a4df06", "#d2df06", "#ffd800", "#ffc600", "#ffa200", "#ff8400", "#d94e1d", "#ca1414"];
         return color[colorid];
+    }
+
+    selectTag(type) {
+        this.setState({ type: type });
+        this.webview.postMessage("{type:'type',value:" + type + "}");
+        this.setData();
     }
 
 
@@ -134,16 +164,6 @@ export default class RunqualityMap extends React.Component {
         var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         return (
             <View style={styles.all}>
-                {/*状态栏*/}
-                <StatusBar
-                    hidden={false}  //status显示与隐藏
-                    backgroundColor='#343439'  //status栏背景色,仅支持安卓
-                    translucent={true} //设置status栏是否透明效果,仅支持安卓
-                    barStyle='light-content' //设置状态栏文字效果,仅支持iOS,枚举类型:default黑light-content白
-                    networkActivityIndicatorVisible={true} //设置状态栏上面的网络进度菊花,仅支持iOS
-                    showHideTransition='slide' //显隐时的动画效果.默认fade
-                />
-
                 <View style={styles.navView}>
                     <TouchableOpacity onPress={() => { this.setState({ dataListShow: true }) }}>
                         <Image style={styles.topImage} source={require('../icons/map_list.png')} />
@@ -167,20 +187,20 @@ export default class RunqualityMap extends React.Component {
                     ref={webview => this.webview = webview}
                     onMessage={this.onBridgeMessage.bind(this)}
                     //injectedJavaScript={"window.access_token='" + this.state.access_token + "';"}
-                    source={require('./mapwebview/mapshow.html')}
+                    source={Platform.OS === 'ios' ? require('./mapwebview/mapshow.html') : { uri: 'file:///android_asset/mapwebview/mapshow.html' }}
                 />
                 <View style={styles.switchView}>
-                    <TouchableOpacity style={styles.switchItem} onPress={() => { this.setState({ tag_id: 14 }); this.getData(); }}>
-                        <Image style={styles.switchImage} resizeMode="contain" source={require('../icons/mapswitch1.png')} />
-                        <Text style={styles.switchText}>供热</Text>
+                    <TouchableOpacity style={[styles.switchItem]} onPress={() => { this.selectTag(1) }}>
+                        <Image style={styles.switchImage} resizeMode="contain" source={this.state.type==1? require('../icons/mapswitch1_s.png'): require('../icons/mapswitch1.png')} />
+                        {/* <Text style={styles.switchText}>供热</Text> */}
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.switchItem} onPress={() => { this.setState({ tag_id: 7 }); this.getData(); }}>
-                        <Image style={styles.switchImage} resizeMode="contain" source={require('../icons/mapswitch2.png')} />
-                        <Text style={styles.switchText}>能耗</Text>
+                    <TouchableOpacity style={styles.switchItem} onPress={() => { this.selectTag(2) }}>
+                        <Image style={styles.switchImage} resizeMode="contain" source={this.state.type==2? require('../icons/mapswitch2_s.png'):require('../icons/mapswitch2.png')} />
+                        {/* <Text style={styles.switchText}>能耗</Text> */}
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.switchItem} onPress={() => { this.setState({ tag_id: 12 }); this.getData(); }}>
-                        <Image style={styles.switchImage} resizeMode="contain" source={require('../icons/mapswitch3.png')} />
-                        <Text style={styles.switchText}>水压</Text>
+                    <TouchableOpacity style={styles.switchItem} onPress={() => { this.selectTag(3) }}>
+                        <Image style={styles.switchImage} resizeMode="contain" source={this.state.type==3? require('../icons/mapswitch3_s.png'):require('../icons/mapswitch3.png')} />
+                        {/* <Text style={styles.switchText}>水压</Text> */}
                     </TouchableOpacity>
                 </View>
                 <Modal
@@ -217,6 +237,26 @@ export default class RunqualityMap extends React.Component {
                         />
                     </TouchableOpacity>
                 </Modal>
+                <Modal
+                    animationType={"none"}
+                    transparent={true}
+                    visible={this.state.scadaShow}
+                    onRequestClose={() => { }}>
+                    <View style={{ flex: 1 }}>
+                        <Scada style={{ flex: 1 }} station_id={this.state.station_id} />
+                        <Text style={{ textAlign: "right", fontSize: 50, color: "#fff", marginTop: 0, marginLeft: width - 40, position: "absolute" }} onPress={() => this.setState({ scadaShow: false })}>×</Text>
+                    </View>
+                </Modal>
+                <Modal
+                    animationType={"none"}
+                    transparent={true}
+                    visible={this.state.waterShow}
+                    onRequestClose={() => { }}>
+                    <View style={{ flex: 1 }}>
+                        <WaterChart style={{ flex: 1 }} _id={this.state.station_id} />
+                        <Text style={{ textAlign: "right", fontSize: 50, color: "#fff", marginTop: 0, marginLeft: width - 40, position: "absolute" }} onPress={() => this.setState({ waterShow: false })}>×</Text>
+                    </View>
+                </Modal>
             </View>
 
         )
@@ -234,8 +274,8 @@ const styles = StyleSheet.create({
     navView: {
         flexDirection: 'row',
         width: width,
-        height: 74,
-        backgroundColor: '#343439',
+        height: 45,
+        backgroundColor: '#434b59',
         justifyContent: 'center',
         alignItems: 'center',
         // borderBottomWidth: 1,
@@ -244,9 +284,9 @@ const styles = StyleSheet.create({
     searchImageView: {
         height: 28,
         width: 28,
-        borderTopLeftRadius: 10,
-        borderBottomLeftRadius: 10,
-        marginTop: 20,
+        borderTopLeftRadius: 20,
+        borderBottomLeftRadius: 20,
+        //marginTop: 20,
         backgroundColor: "#ffffff",
     },
     searchImage: {
@@ -256,19 +296,19 @@ const styles = StyleSheet.create({
     },
     topInputText: {
         flex: 1,
-        marginTop: 30,
+        //marginTop: 30,
         padding: 0,
-        marginBottom: 10,
+        //marginBottom: 10,
         color: "#000",
         fontSize: 15,
-        borderTopRightRadius: 10,
-        borderBottomRightRadius: 10,
+        borderTopRightRadius: 20,
+        borderBottomRightRadius: 20,
         backgroundColor: "#ffffff",
     },
     topImage: {
         width: 20,
         height: 20,
-        marginTop: 20,
+        //marginTop: 20,
         marginLeft: 10,
         marginRight: 10,
     },
@@ -315,7 +355,7 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontSize: 15,
         margin: 5,
-        paddingTop: 15,
+        //paddingTop: 15,
     },
     listItem: {
         marginTop: 3,
@@ -335,16 +375,16 @@ const styles = StyleSheet.create({
         //backgroundColor: "#fff"
     },
     switchItem: {
-        width: 37,
-        height: 35,
-        margin: 5,
-        backgroundColor: "#fff",
-        marginTop: 3,
-        alignItems: 'center',
+        width: 40,
+        height: 40,
+        //margin: 5,
+        //backgroundColor: "#fff",
+        marginTop: 10,
+        //alignItems: 'center',
     },
     switchImage: {
-        width: 20,
-        height: 20,
+        width: 40,
+        height: 40,
     },
     switchText: {
         fontSize: 12,

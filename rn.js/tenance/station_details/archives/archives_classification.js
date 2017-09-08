@@ -31,8 +31,16 @@ export default class ArchivesClassification extends React.Component {
     render() {
         return (
             <View style={styles.all}>
-                <TouchableOpacity style={styles.lineView} onPress={()=>this.toInfo()}><Text style={styles.nameText}>换热站信息</Text><Text style={styles.right}>›</Text></TouchableOpacity>
-                <TouchableOpacity style={styles.lineView} onPress={()=>this.toParam()}><Text style={styles.nameText}>换热站参数</Text><Text style={styles.right}>›</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.lineView} onPress={()=>this.toInfo()}>
+                <Image style={styles.img} source={require('../../../icons/station_info.png')} />
+                    <Text style={styles.nameText}>换热站信息</Text>
+                    <Text style={styles.right}>›</Text>
+                    </TouchableOpacity>
+                <TouchableOpacity style={styles.lineView} onPress={()=>this.toParam()}>
+                <Image style={styles.img} source={require('../../../icons/station_param.png')} />
+                    <Text style={styles.nameText}>换热站参数</Text>
+                    <Text style={styles.right}>›</Text>
+                    </TouchableOpacity>
             </View>
         )
     }
@@ -56,15 +64,20 @@ const styles = StyleSheet.create({
     },
 
     nameText: {
-        color: "#9f9f9f",
+        color: "#333333",
         fontSize: 17,
-        marginLeft: 30,
+        marginLeft: 5,
     },
     right: {
         flex:1,
         color: "#9f9f9f",
         fontSize: 35,
-        marginRight: 30,
+        marginRight: 10,
         textAlign: 'right',
     },
+    img:{
+        width: 20, 
+        height: 20, 
+        marginLeft: 17, 
+   }
 });

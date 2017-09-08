@@ -2,7 +2,7 @@
  * 换热站tab框架页面
  */
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ListView, Modal, TextInput, AsyncStorage, Platform } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity,TouchableWithoutFeedback, ListView, Modal, TextInput, AsyncStorage, Platform } from 'react-native';
 import Dimensions from 'Dimensions';
 import Swipeout from 'react-native-swipeout';
 import Constants from './../../../constants';
@@ -12,6 +12,7 @@ var Alert = Platform.select({
 })();
 
 var { width, height } = Dimensions.get('window');
+var aa = (!(~+[]) + {})[--[~+""][+[]] * [~+[]] + ~~!+[]] + ({} + [])[[~!+[]] * ~+[]]
 export default class EditStrategy extends React.Component {
     constructor(props) {
         super(props);
@@ -53,17 +54,21 @@ export default class EditStrategy extends React.Component {
         }
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         if (this.state.edit >= 0) {
-            this.state.data[this.state.edit] = { min_value: this.state.min_value, max_value: this.state.max_value, goal_value: this.state.goal_value }
-        } else {
+            var data = this.state.data;
+            data[this.state.edit] = { min_value: this.state.min_value, max_value: this.state.max_value, goal_value: this.state.goal_value }
             this.setState({
-                data: this.state.data.concat({ min_value: this.state.min_value, max_value: this.state.max_value, goal_value: this.state.goal_value })
+                data: data,
+                dataSource: ds.cloneWithRows(data),
+                modalShow: false,
+            })
+        } else {
+            var data = this.state.data.concat({ min_value: this.state.min_value, max_value: this.state.max_value, goal_value: this.state.goal_value });
+            this.setState({
+                data: data,
+                dataSource: ds.cloneWithRows(data),
+                modalShow: false,
             })
         }
-
-        this.setState({
-            dataSource: ds.cloneWithRows(this.state.data),
-            modalShow: false,
-        })
         this.saveData();
     }
     //打开modal
@@ -100,8 +105,8 @@ export default class EditStrategy extends React.Component {
         var _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
-console.log(Constants.serverSite+"/v1_0_0/stationControlStrategy?access_token=" + result + "&data=" + JSON.stringify(_this.props.data));
-                fetch(Constants.serverSite+ "/v1_0_0/stationControlStrategy?access_token=" + result + "&data=" + JSON.stringify(_this.props.data),{method: 'PUT'})
+                console.log(Constants.serverSite + "/v1_0_0/stationControlStrategy?access_token=" + result + "&data=" + JSON.stringify(_this.props.data));
+                fetch(Constants.serverSite + "/v1_0_0/stationControlStrategy?access_token=" + result + "&data=" + JSON.stringify(_this.props.data), { method: 'PUT' })
                     .then((response) => response.json())
                     .then((responseJson) => {
                         console.log(responseJson);
@@ -118,12 +123,12 @@ console.log(Constants.serverSite+"/v1_0_0/stationControlStrategy?access_token=" 
         return (
             <View style={styles.all}>
                 <View style={styles.topRow}>
-                    <TouchableOpacity onPress={() => this.props.navigator.pop()}><Image style={styles.topSides} source={require('../../../icons/nav_back_icon@2x.png')} /></TouchableOpacity>
-                    <Text style={[styles.topText, styles.all]}>室外温度控制策略</Text>
+                    <TouchableOpacity onPress={() => this.props.navigator.pop()}><Image style={styles.topSides} resizeMode="contain" source={require('../../../icons/nav_back_icon.png')} /></TouchableOpacity>
+                    <Text style={[styles.topText, styles.all]}>{this.props.i?"回水温度控制策略":"室外温度控制策略"}</Text>
                     <TouchableOpacity onPress={this.open.bind(this, -1)}><Image style={styles.topSides} source={require('../../../icons/btn_add.png')} /></TouchableOpacity>
                 </View>
                 <View style={styles.rowFront}>
-                    <Text style={[styles.listText, styles.all]}>室外温度</Text>
+                    <Text style={[styles.listText, styles.all]}>温度</Text>
                     <Text style={styles.listText}>阀门开度</Text>
                 </View>
 
@@ -148,6 +153,7 @@ console.log(Constants.serverSite+"/v1_0_0/stationControlStrategy?access_token=" 
                     visible={this.state.modalShow}
                     onRequestClose={() => { }}>
                     <TouchableOpacity style={styles.modalAll} onPress={() => this.setState({ modalShow: false })}>
+                        <TouchableWithoutFeedback>
                         <View style={styles.modal}>
                             <View style={styles.nameView}><Text style={styles.modalNameText}>新增规则</Text></View>
                             <View style={styles.modalLine}>
@@ -160,9 +166,12 @@ console.log(Constants.serverSite+"/v1_0_0/stationControlStrategy?access_token=" 
                                 <Text style={styles.lineText}>阀门开度</Text>
                                 <TextInput style={styles.lineTextInput} onChangeText={(text) => this.setState({ goal_value: Number(text) + "" })} keyboardType="numeric">{this.state.goal_value}</TextInput>
                                 <Text style={styles.lineText}>%</Text></View>
-                            <View style={styles.saveView}><Text style={styles.saveText} onPress={this.addData.bind(this)}>保存</Text></View>
+                            <View style={styles.saveView}>
+                                <Text style={[styles.saveText,{color:"#a2a2a2"}]} onPress={() => this.setState({ modalShow: false })}>取消</Text>
+                                <Text style={styles.saveText} onPress={() => this.addData()}>保存</Text>
+                            </View>
                         </View>
-                        <Text style={styles.close} onPress={() => this.setState({ modalShow: false })}>×</Text>
+                        </TouchableWithoutFeedback>
                     </TouchableOpacity>
                 </Modal>
             </View>
@@ -247,12 +256,12 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: "#ffffff88"
+        backgroundColor: "#00000044"
     },
     modal: {
         width: 250,
-        height: 230,
-        backgroundColor: "#ffffff"
+        height: 200,
+        backgroundColor: "#ffffff",
     },
     nameView: {
         width: 250,
@@ -283,18 +292,19 @@ const styles = StyleSheet.create({
     },
     saveView: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'flex-end',
         alignItems: 'center',
+        flexDirection:"row"
     },
     saveText: {
-        fontSize: 18,
-        paddingLeft: 30,
-        paddingRight: 30,
-        paddingTop: 10,
-        paddingBottom: 10,
-        backgroundColor: "#00b1fb",
-        borderRadius: 25,
-        color: "#fff"
+        fontSize: 15,
+        paddingLeft: 10,
+        paddingRight: 20,
+        //paddingTop: 10,
+        //paddingBottom: 10,
+        //backgroundColor: "#00b1fb",
+        
+        color: "#00b1fb"
     },
     close: {
         height: 60,

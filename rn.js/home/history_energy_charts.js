@@ -172,13 +172,6 @@ export default class LineChart extends Component {
 
         return (
             <View style={styles.container}>
-                <StatusBar
-                    hidden={true}  //status显示与隐藏
-                    translucent={true} //设置status栏是否透明效果,仅支持安卓
-                    barStyle='default' //设置状态栏文字效果,仅支持iOS,枚举类型:default黑light-content白
-                    networkActivityIndicatorVisible={true} //设置状态栏上面的网络进度菊花,仅支持iOS
-                    showHideTransition='slide' //显隐时的动画效果.默认fade
-                />
                 <View style={styles.navView}>
                     <TouchableOpacity onPress={this.back.bind(this)}>
                         <Image style={{ width: 20, height: 20, marginLeft:10,marginTop: 10, }} source={require('../icons/nav_back_icon.png')}/>

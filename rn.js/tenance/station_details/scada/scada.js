@@ -4,11 +4,11 @@
 import React from 'react';
 import {
     View, Text, Image, TextInput, Modal, AlertIOS,
-    Slider, Switch, NavigatorIOS, StyleSheet, TouchableHighlight, StatusBar, TouchableOpacity, AsyncStorage,WebView
+    Slider, Switch, NavigatorIOS, Platform, StyleSheet, TouchableHighlight, StatusBar, TouchableOpacity, AsyncStorage, WebView
 } from 'react-native';
 import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
-
+import Constants from '../../../constants';
 import Gateway from './gateway';
 import Orientation from 'react-native-orientation';
 
@@ -32,82 +32,55 @@ export default class Scada extends React.Component {
         super(props);
         this.state = {
             show: false,
-            remember: false,
             batch: false,
-            appear: false,
-            minValue: 0,
-            maxValue: 100,
-
-            confirm: '下发',
-            confirmTime: years + "-" + months + "-" + days + " " + hours + ":" + minutes + ":" + seconds,
-            value: 0,
-
+            tag:0,
             access_token: null,
-            base_url: "http://121.42.253.149:18815/list/group?accessToken=",
-            start_url: "",
         };
+    }
+    componentDidMount() {
+        this._initialScrollIndexTimeout = setTimeout(
+            () => {// 从本地存储中将access_token取出
+                var _this = this;
+                AsyncStorage.getItem("access_token", function (errs, result) {
+                    if (!errs) {
+                        _this.setState({ access_token: result });
+                        _this.webview.postMessage("{type:'token',value:'" + result + "'}");
+                        _this.updateData();
+                    }
+                });
+            },
+            1000,
+        );
+    }
 
-        // 从本地存储中将company_id和access_token取出
+    updateData() {
         var _this = this;
-        AsyncStorage.getItem("access_token", function (errs, result) {
-            if (!errs) {
-                _this.setState({ access_token: result });
+        setInterval(() => {
+            if (_this.webview) {
+                fetch(Constants.serverSite + "/v1_0_0/station/" + this.props.station_id + "/datas?access_token=" + this.state.access_token)
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+                        console.log(responseJson);
+                        _this.webview.postMessage("{type:'data',value:" + JSON.stringify(responseJson) + "}");
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
             }
-            _this.setState({
-                start_url: _this.state.base_url + _this.state.access_token + "&station_name=" + _this.props.station_name + "&station_id=" + _this.props.station_id,
-            })
 
-            console.log(_this.state.start_url);
-        });
+        }, 3000);
 
-        this.onBridgeMessage = this.onBridgeMessage.bind(this);
     }
 
     onBridgeMessage(message) {
-        // console.log('wk8--------onBridgeMessage'+message);
-        switch (message) {
-            case "1":
-                this._setSwitchModalVisible();
-                break;
-            case "2":
-                this._setConfirmtModalVisible();
-                break;
+        var tag = message.nativeEvent.data;
+        if(tag==15){
+            this.setState({
+                show:true,
+                tag:tag,
+            })
         }
     }
-
-    _setConfirmtModalVisible() {
-        this.setState({
-            value: this.state.sliderValue,
-        });
-        let isShow = this.state.show;
-        this.setState({
-            show: !isShow,
-        });
-    }
-
-
-    _setSwitchModalVisible() {
-        let isAppear = this.state.appear;
-        this.setState({
-            appear: !isAppear,
-        });
-    }
-
-
-    back() {
-        Orientation.lockToPortrait();
-        this.props.navigator.pop();
-    }
-
-    switch(checked) {
-        this.setState({
-            remember: checked,
-        })
-        if (!this.state.remember) {
-            console.log("打开");
-        }
-    }
-
     switchTab(batch) {
         let isShow = this.state.show;
         this.setState({
@@ -129,14 +102,14 @@ export default class Scada extends React.Component {
         return (
             <View style={styles.all}>
                 <WebView
-                    ref="webviewbridge"
+                    ref={webview => this.webview = webview}
                     startInLoadingState={true}
-                    onBridgeMessage={this.onBridgeMessage}
+                    onMessage={this.onBridgeMessage.bind(this)}
                     scrollEnabled={true}
                     //javaScriptEnabled={true}
-                    source={{ uri: this.state.start_url }}
+                    source={Platform.OS === 'ios' ? require("./scadawebview/scada_view.html") : { uri: 'file:///android_asset/scadawebview/scada_view.html' }}
                     scalesPageToFit={true}
-                    automaticallyAdjustContentInsets={false}
+                    automaticallyAdjustContentInsets={true}
                     style={{ backgroundColor: "#f2d6b8", }}
                 />
 
@@ -150,56 +123,17 @@ export default class Scada extends React.Component {
                     <View style={styles.modalStyle}>
                         <View style={styles.subView}>
                             <View style={styles.modalTitleView}>
-                                <Text style={[styles.tabText,{backgroundColor: this.state.batch?'#35aeff':"#ffffff"}]} onPress={this.switchTab.bind(this,false)} >阀门</Text>
-                                <Text style={[styles.tabText,{backgroundColor: this.state.batch?'#ffffff':"#35aeff"}]} onPress={this.switchTab.bind(this,true)} >批量下发</Text>
+                                <Text style={[styles.tabText, { backgroundColor: this.state.batch ? '#35aeff' : "#ffffff" }]} onPress={this.switchTab.bind(this, false)} >阀门</Text>
+                                <Text style={[styles.tabText, { backgroundColor: this.state.batch ? '#ffffff' : "#35aeff" }]} onPress={this.switchTab.bind(this, true)} >批量下发</Text>
                                 <View style={{ flex: 1 }}></View>
-                                <TouchableOpacity activeOpacity={0.5} onPress={this._setConfirmtModalVisible.bind(this)}>
+                                <TouchableOpacity activeOpacity={0.5} onPress={()=>{this.setState({show:false})}}>
                                     <Image source={require('../../../icons/cancel_icon@2x.png')} style={styles.modalTitleViewImage} />
                                 </TouchableOpacity>
                             </View>
-
-                            <Gateway station_id={this.props.station_id} tag_id={2} batch={this.state.batch} close={()=>this._setConfirmtModalVisible()} />
-
-
-
-
+                            <Gateway station_id={this.props.station_id} tag_id={this.state.tag} batch={this.state.batch} close={() => this.setState({show:false})} />
                         </View>
                     </View>
                 </Modal>
-                <Modal
-                    animationType='slide'
-                    transparent={true}
-                    visible={this.state.appear}
-                    onShow={() => { }}
-                    onRequestClose={() => { }} >
-                    <View style={styles.modalStyle}>
-                        <View style={styles.subView}>
-                            <View style={styles.modalTitleView}>
-                                <Text style={styles.titleText}>
-                                    阀门
-                                </Text>
-                                <TouchableHighlight underlayColor='transparent' onPress={this._setSwitchModalVisible.bind(this)}>
-                                    <Image source={require('../../../icons/cancel_icon@2x.png')} style={styles.modalTitleViewImage} />
-                                </TouchableHighlight>
-                            </View>
-                            <View style={styles.switchView}>
-                                <View style={styles.switch}>
-                                    <Text style={{ marginRight: 10, color: '#9D9E9F' }}>关闭</Text>
-                                    <Switch
-                                        value={this.state.remember}
-                                        onTintColor={"#f2d6b8"}
-                                        thumbTintColor={"#E0960A"}
-                                        onValueChange={(checked) => this.switch(checked)}
-                                    />
-
-                                    <Text style={{ marginLeft: 10, color: '#E0960A' }}>打开</Text>
-                                </View>
-                                <Text style={{ marginTop: 50 }}>2017-02-06 12:45:36</Text>
-                            </View>
-                        </View>
-                    </View>
-                </Modal>
-
             </View>
         )
     }
@@ -284,7 +218,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
 
-   
+
     tabText: {
         padding: 12,
     },

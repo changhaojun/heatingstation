@@ -7,6 +7,7 @@ import React from 'react';
 import { View, Text, Image, Platform, NavigatorIOS, StyleSheet, TouchableOpacity, ListView, AsyncStorage, Navigator } from 'react-native';
 import Dimensions from 'Dimensions';
 import Orientation from 'react-native-orientation';
+import StationDetails from '../tenance/station_details/station_tab';
 var Alert = Platform.select({
     ios: () => require('AlertIOS'),
     android: () => require('Alert'),
@@ -45,15 +46,12 @@ export default class HeatList extends React.Component {
         });
     }
 
-    gotoHistoryEnergyCharts(name, id) {
-        const navigator = this.props.navigator;
-        Orientation.lockToLandscape();
-        navigator.push({
-            component: HistoryEnergyCharts,
+    openScada(name, id) {
+        this.props.navigator.push({
+            component: StationDetails,
             passProps: {
-                company_name: name,
-                company_id: id,
-
+                station_name: name,
+                station_id: id,
             }
         })
     }
@@ -69,7 +67,7 @@ export default class HeatList extends React.Component {
                     enableEmptySections={true}
                     renderRow={(rowData) => {
                         return (
-                            <TouchableOpacity style={styles.item} onPress={this.gotoHistoryEnergyCharts.bind(this, rowData.name, rowData.id)}>
+                            <TouchableOpacity style={styles.item} onPress={this.openScada.bind(this,rowData.station_name,rowData.station_id)}>
                                 <Text style={styles.text}>{rowData.station_name}</Text>
                                 <Text style={styles.text}>{rowData.tag_name}</Text>
                                 <Image style={styles.image} source={require('./../icons/thermometer.png')} />

@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html style="height:100%;transform:rotate(90deg);-ms-transform:rotate(90deg);-moz-transform:rotate(90deg);-webkit-transform:rotate(90deg);-o-transform:rotate(90deg);">
+
+<head>
+        <!-- 修改此文件后必须给Android目录的assets复制一份scadawebview文件夹，否则Android打包时将不更新 -->
+        <title>Insert title here</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+
+<body style="background-color: #30425c;width:748px;height:500px;margin-left:-200px;">
+        <div style="height: 100%;width: 100%;overflow: hidden;" id="divoutside" align="center">
+                <div id="paper" onclick="$('#controller').hide();$('#btn_open').hide();$('#arc_open').hide();" style="margin-top:60px;zoom:80%;"></div>
+        </div>
+        <input id="stationId" type="hidden" value=${stationId}>
+        <input id="stationName" type="hidden" value=${stationName}>
+        <input id="token" type="hidden" value=${accessToken! ''}>
+        <!-- end chart dialog -->
+
+        <script type="text/javascript" src="./raphael-min.js"></script>
+        <script type="text/javascript" src="./fView.js"></script>
+        <script type="text/javascript" src="./Raphael.js"></script>
+        <script type="text/javascript" src="./scada_list.js"></script>
+        <script type="text/javascript" src="./scadaView.js"></script>
+        <script type="text/javascript" src="./scadaClick.js"></script>
+        <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+</body>
+
+</html>

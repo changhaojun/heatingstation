@@ -46,7 +46,7 @@ export default class ArchivesInfo  extends React.Component {
         return (
             <View style={styles.all}>
                 <View style={styles.topRow}>
-                    <TouchableOpacity onPress={()=>this.props.navigator.pop()}><Image style={styles.topSides} source={require('../../../icons/nav_back_icon@2x.png')} /></TouchableOpacity>
+                    <TouchableOpacity onPress={()=>this.props.navigator.pop()}><Image style={styles.topSides} resizeMode="contain" source={require('../../../icons/nav_back_icon.png')} /></TouchableOpacity>
                     <Text style={[styles.topText, styles.all]}>换热站信息</Text>
                     <View style={styles.topSides}  />
                 </View>
@@ -103,30 +103,32 @@ const styles = StyleSheet.create({
     },
     lineView: {
         width: width,
-        height: 40,
+        height: 45,
         borderBottomWidth: 0.2,
         borderBottomColor: "#9f9f9f",
         flexDirection: 'row',
         //justifyContent: 'flex-end',//垂直居中
         alignItems: 'center',
-        paddingBottom:3,
+        //paddingBottom:3,
     },
 
     nameText: {
-        height: 40,
+        height: 45,
         width: 100,
         borderRightWidth: 0.2,
-        borderRightColor: "#9f9f9f",
-        color: "#9f9f9f",
-        fontSize: 17,
+        borderColor: "#9f9f9f",
+        borderBottomWidth: 0.2,
+        color: "#323541",
+        fontSize: 15,
         paddingRight: 10,
         textAlign: 'right',
-        textAlignVertical:"center"
+        textAlignVertical:"center",
+        backgroundColor:"#f5f5f5"
     },
     right: {
         flex:1,
-        color: "#9f9f9f",
-        fontSize: 15,
+        color: "#333333",
+        fontSize: 16,
         marginLeft: 10,
         textAlign: 'left',
     },

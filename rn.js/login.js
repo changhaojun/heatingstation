@@ -72,32 +72,16 @@ export default class Login extends React.Component {
                     }
 
                     AsyncStorage.setItem("access_token", responseJson.access_token, function (errs) {
-                        if (errs) {
-                            Alert.alert(
-                                '提示',
-                                '存储access_token错误',
-                            );
-                        }
                         console.log(responseJson.access_token);
-
+                    });
+                    AsyncStorage.setItem("fullname", responseJson.fullname, function (errs) {
+                        console.log(responseJson.fullname);
                     });
 
                     AsyncStorage.setItem("company_id", responseJson.company_id, function (errs) {
-                        if (errs) {
-                            Alert.alert(
-                                '提示',
-                                '存储company_id错误',
-                            );
-                        }
                         console.log(responseJson.company_id);
                     });
                     AsyncStorage.setItem("company_code", responseJson.company_code, function (errs) {
-                        if (errs) {
-                            Alert.alert(
-                                '提示',
-                                '存储company_code错误',
-                            );
-                        }
                         console.log(responseJson.company_code);
                     });
 
@@ -127,14 +111,7 @@ export default class Login extends React.Component {
         return (
             //  最外层主View
             <View style={styles.all}>
-                {/*状态栏*/}
-                <StatusBar
-                    hidden={false}  //status显示与隐藏
-                    translucent={true} //设置status栏是否透明效果,仅支持安卓
-                    barStyle='default' //设置状态栏文字效果,仅支持iOS,枚举类型:default黑light-content白
-                    networkActivityIndicatorVisible={true} //设置状态栏上面的网络进度菊花,仅支持iOS
-                    showHideTransition='slide' //显隐时的动画效果.默认fade
-                />
+                
                 {/*顶部放置Logo的View*/}
                 <View style={styles.topView}>
                     <Image source={require('./images/login_logo.png')} style={styles.logo}></Image>

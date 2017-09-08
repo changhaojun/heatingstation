@@ -1,7 +1,7 @@
 /**
  * Created by Vector on 17/5/16.
  *
- * 地图页面支线的能耗图表
+ * 地图页面水压图
  */
 import React, { Component } from 'react';
 import { StyleSheet, Text, AlertIOS, View, AsyncStorage, StatusBar, NativeModules, TouchableOpacity, Image, Dimensions } from 'react-native';
@@ -28,8 +28,8 @@ export default class MapChart extends Component {
         var _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
-                console.log(Constants.serverSite+"/v1_0_0/2d?access_token=" + result + "&branch_id=" + props._id + "&time=" + new Date().getFullYear() + "$" + new Date().getMonth() + 1 + "$" + new Date().getDate());
-                fetch(Constants.serverSite+"/v1_0_0/2d?access_token="+result+"&branch_id=590164c45f8d5e2ab842ee57&time=2017$04$26")
+                console.log(Constants.serverSite+"/v1_0_0/twoWaterPressure?access_token=" + result + "&_id=" + props._id + "&time=" + new Date().getFullYear() + "$" + (new Date().getMonth() + 1) + "$" + new Date().getDate());
+                fetch(Constants.serverSite+"/v1_0_0/twoWaterPressure?access_token=" + result + "&_id=" + props._id + "&time=" + new Date().getFullYear() + "$" + (new Date().getMonth() + 1) + "$" + new Date().getDate())
                     .then((response) => response.json())
                     .then((responseJson) => {
                         console.log(responseJson);
@@ -163,14 +163,6 @@ export default class MapChart extends Component {
         };
         return (
             <View style={styles.all}>
-                <StatusBar
-                    hidden={true}  //status显示与隐藏
-                    backgroundColor='red'  //status栏背景色,仅支持安卓
-                    translucent={true} //设置status栏是否透明效果,仅支持安卓
-                    barStyle='default' //设置状态栏文字效果,仅支持iOS,枚举类型:default黑light-content白
-                    networkActivityIndicatorVisible={true} //设置状态栏上面的网络进度菊花,仅支持iOS
-                    showHideTransition='slide' //显隐时的动画效果.默认fade
-                />
                 <View style={styles.navView}>
                     <TouchableOpacity onPress={this.back.bind(this)}>
                         <Image style={{ width: 20, height: 20, marginLeft: 10, marginTop: 10, }} source={require('../icons/nav_back_icon@2x.png')} />

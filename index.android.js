@@ -5,7 +5,7 @@
  */
 
 import React, { Component } from 'react';
-import {AppRegistry,StyleSheet,BackAndroid,ToastAndroid,} from 'react-native';
+import {AppRegistry,StyleSheet,BackAndroid,ToastAndroid,StatusBar,View} from 'react-native';
 import { Navigator } from 'react-native-deprecated-custom-components'
 
 import JPushModule from 'jpush-react-native';
@@ -41,6 +41,16 @@ export default class WisdomHeating extends Component {
         let defaultName = "Login";
         let defaultComponent = Login;
         return (
+            <View style={{flex:1}}>
+                {/*状态栏*/}
+                <StatusBar
+                    hidden={false}  //status显示与隐藏
+                    //translucent={true} //设置status栏是否透明效果,仅支持安卓
+                    barStyle='default' //设置状态栏文字效果,仅支持iOS,枚举类型:default黑light-content白
+                    networkActivityIndicatorVisible={true} //设置状态栏上面的网络进度菊花,仅支持iOS
+                    showHideTransition='slide' //显隐时的动画效果.默认fade
+                    backgroundColor={"#434b59"}
+                />
             <Navigator
                 initialRoute={{ name: defaultName, component: defaultComponent }}
                 configureScene={(route) => {
@@ -53,6 +63,7 @@ export default class WisdomHeating extends Component {
                 }
                 }
             />
+            </View>
         );
     }
 }

@@ -8,7 +8,7 @@ import LogClassification from "./operation_log/log_classification";
 import ArchivesClassification from "./archives/archives_classification";
 import Strategy from "./control_strategy/strategy";
 import Scada from "./scada/scada";
-
+import warn from "./../../home/warn.js"
 var { width, height } = Dimensions.get('window');
 
 export default class StationTab extends React.Component {
@@ -80,9 +80,9 @@ export default class StationTab extends React.Component {
         return (
             <View style={styles.all}>
                 <View style={styles.topRow}>
-                    <TouchableOpacity onPress={()=>this.props.navigator.pop()}><Image style={styles.topSides} source={require('../../icons/nav_back_icon@2x.png')} /></TouchableOpacity>
+                    <TouchableOpacity onPress={()=>this.props.navigator.pop()}><Image style={styles.topSides}  resizeMode="contain" source={require('../../icons/nav_back_icon.png')} /></TouchableOpacity>
                     <Text style={[styles.topText, styles.all]}>{this.props.station_name}</Text>
-                    <View style={styles.topSides}  />
+                    <TouchableOpacity onPress={()=>this.props.navigator.push({component:warn,passProps:{station_id:this.props.station_id}})}><Image style={styles.topSides}  resizeMode="contain" source={require('../../icons/home_nav_warn_icon.png')} /></TouchableOpacity>
                 </View>
                 <View style={styles.topView}>
                     <TouchableOpacity style={styles.all} onPress={this._switch.bind(this, 0,false)}>
@@ -161,8 +161,8 @@ const styles = StyleSheet.create({
 
     },
     topSides: {
-        width: 18,
-        height: 18,
+        width: 20,
+        height: 20,
         marginLeft: 10,
         marginRight: 10,
 
@@ -173,12 +173,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         textAlign: 'center',
         fontSize: 18,
-        marginBottom: 4,
+        //marginBottom: 4,
     },
     topRow: {
         width: width,
-        height: 50,
-        backgroundColor: '#000000',
+        height: 45,
+        backgroundColor: '#434b59',
         //justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',

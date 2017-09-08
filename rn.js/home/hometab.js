@@ -235,7 +235,7 @@ export default class StationTab extends React.Component {
                             enableEmptySections={true}
                             renderRow={(rowData) => {
                                 return (
-                                    <View style={{ paddingLeft: 5, }}>
+                                    <View style={{ paddingLeft: 15, }}>
                                         <Text style={{ fontSize: 13, color: "#777777", lineHeight: 20 }}>{rowData.station_name}</Text>
                                         <View style={{ flexDirection: 'row', }}>
                                             <View style={{ height: 10, width: 250, backgroundColor: "#f3f7fa" }}><View style={{ height: 10, width: 250 * rowData.data_value / this.state.data1[0].data_value, backgroundColor: "#53cbff" }} /></View>

@@ -28,7 +28,8 @@ export default class Gateway extends React.Component {
         var _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
-                fetch(Constants.serverSite+ "/v1_0_0/homesSataionData?station_id=" + props.station_id + "&access_token=" + result + "&tag_id=" + props.tag_id + "")
+                console.log(Constants.serverSite+ "/v1_0_0/issuedStaionData?station_id=" + props.station_id + "&access_token=" + result + "&tag_id=" + props.tag_id + "")
+                fetch(Constants.serverSite+ "/v1_0_0/issuedStaionData?station_id=" + props.station_id + "&access_token=" + result + "&tag_id=" + props.tag_id + "")
                     .then((response) => response.json())
                     .then((responseJson) => {
                         data=[];
@@ -64,10 +65,6 @@ export default class Gateway extends React.Component {
 
         var _this = this;
         var station_id = '';
-
-
-        //_this.props.close();
-
         if (data.length) {
             for (var i = 0; i < data.length; i++) {
                 if (data[i].check) {
@@ -80,9 +77,6 @@ export default class Gateway extends React.Component {
 
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
-
-                //_this.props.close();
-
                 var url=Constants.serverSite+"/v1_0_0/gateway?station_id=" + station_id + "&access_token=" + result + "&tag_id=" + _this.props.tag_id + "&data_value=" + _this.state.sliderValue.toFixed(2) * 100;
                 console.log(url);
                
@@ -175,7 +169,7 @@ export default class Gateway extends React.Component {
 const styles = StyleSheet.create({
     all: {
         minHeight: 150,
-        maxHeight: 400,
+        maxHeight: 360,
         backgroundColor: "#ffffff",
         // marginTop: 20,
     },
