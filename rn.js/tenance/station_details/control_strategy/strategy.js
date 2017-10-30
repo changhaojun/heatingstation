@@ -2,26 +2,17 @@
  * 换热站tab框架页面
  */
 import React from 'react';
-import { View, Text, Image, Switch, StyleSheet, TouchableOpacity, AsyncStorage } from 'react-native';
+import { View, Text, Image, Switch, StyleSheet,Alert, TouchableOpacity, AsyncStorage } from 'react-native';
 import Dimensions from 'Dimensions';
-import EditStrategy from './edit_strategy';
 import Constants from './../../../constants';
+import EditStrategy from './edit_strategy';
 var { width, height } = Dimensions.get('window');
 export default class Strategy extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: [{
-                control_value: [],
-                type: 0,
-                is_enable: 0,
-                station_id: props.station_id
-            }, {
-                control_value: [],
-                type: 1,
-                is_enable: 0,
-                station_id: props.station_id
-            }],
+            data: [],
+            ObjectData: {},
         };
 
         var _this = this;
@@ -32,17 +23,12 @@ export default class Strategy extends React.Component {
                     .then((response) => response.json())
                     .then((responseJson) => {
                         console.log(responseJson);
-                        if (responseJson.length) {
-                            var data = _this.state.data;
-                            for (var i = 0; i < responseJson.length; i++) {
-                                responseJson[i].control_value=responseJson[i].control_value?responseJson[i].control_value:[];//解决control_value为null 的情况
-                                data[responseJson[i].type] = responseJson[i];
-                                console.log(responseJson[i]);
-                                
-                            }
-                            _this.setState({ data: data })
-                            console.log(_this.state.data);
+                        var ObjectData = {};
+                        for (var i = 0; i < responseJson.length; i++) {
+                            ObjectData[responseJson[i].data_tag] = responseJson[i];
                         }
+                        console.log(ObjectData);
+                        _this.setState({ data: responseJson, ObjectData: ObjectData })
                     })
                     .catch((error) => {
                         // console.error(error);
@@ -51,33 +37,28 @@ export default class Strategy extends React.Component {
         }
         )
     }
-    saveData(i) {   
-        var _this = this;
-        AsyncStorage.getItem("access_token", function (errs, result) {
-            console.log(Constants.serverSite+ "/v1_0_0/stationControlStrategy?access_token=" + result + "&data=" + JSON.stringify(_this.state.data));
-            if (!errs) {
-                fetch(Constants.serverSite+ "/v1_0_0/stationControlStrategy?access_token=" + result + "&data=" + JSON.stringify(_this.state.data[i]),{method: 'PUT'})
-                    .then((response) => response.json())
-                    .then((responseJson) => {
-                        console.log(responseJson);
-                    })
-                    .catch((error) => {
-                         console.error(error);
-                    });
-            }
+
+
+    toEdit(i,name) {
+        var trategyTypeId;
+        if (i == 0) {
+            trategyTypeId = 100;
+        } else if (i == 1) {
+            trategyTypeId = 150;
+        } else if (i == 2) {
+            trategyTypeId = 160;
         }
-        )
-    }
-
-
-    toEdit(i) {
-        console.log(this.state.data[i]);
+        if(i<3&&!this.state.ObjectData[trategyTypeId]){
+            Alert.alert("提示","未配置该控制策略，请前往网页端进行配置")
+            return;
+        }
         this.props.navigator.push({
             name: 'EditStrategy',
             component: EditStrategy,
             passProps: {
-                data: this.state.data[i],
-                i:i,
+                ObjectData: this.state.ObjectData,
+                i: i,
+                name:name
             }
         })
 
@@ -86,54 +67,20 @@ export default class Strategy extends React.Component {
     render() {
         return (
             <View style={styles.all}>
-                <View style={styles.lineName} onPress={this.toEdit.bind(this, 0)}>
-                    <Image style={styles.image} resizeMode="contain" source={require('../../../icons/strategy1.png')}></Image>
-                    <Text style={styles.name}>室外温度控制策略</Text>
-                </View>
-                <View style={styles.lineView}>
-                    <Text style={styles.nameText}>启用策略</Text>
-                    <Switch
-                        onValueChange={value => {
-                            var data=this.state.data;
-                            data[0].is_enable = Number(value);
-                            data[1].is_enable = value?Number(!value):0;
-                            this.setState({data:data})
-                            this.saveData(0);
-
-                        }}
-                        onTintColor={"#48B2FC"}
-                        thumbTintColor="#48B2FC"
-                        style={styles.right}
-                        value={Boolean(this.state.data[0].is_enable)} />
-                </View>
-                <TouchableOpacity style={styles.lineView} onPress={()=>this.toEdit(0)}>
-                    <Text style={styles.nameText}>参数设置</Text>
+                <TouchableOpacity style={styles.lineView} onPress={() => this.toEdit(0,"一网泵阀控制")}>
+                    <Text style={styles.nameText}>一网泵阀控制</Text>
                     <Text style={styles.right}>›</Text>
                 </TouchableOpacity>
-
-
-
-                <View style={styles.lineName} onPress={this.toEdit.bind(this, 1)}>
-                    <Image style={[styles.image,{width:20}]} resizeMode="contain" source={require('../../../icons/strategy2.png')}></Image>
-                    <Text style={styles.name}>回水温度控制策略</Text>
-                </View>
-                <View style={styles.lineView}>
-                    <Text style={styles.nameText}>启用策略</Text>
-                    <Switch
-                        onValueChange={value => {
-                            var data=this.state.data;
-                            data[0].is_enable = value?Number(!value):0;
-                            data[1].is_enable = Number(value);
-                            this.setState({data:data})
-                            this.saveData(1);
-                        }}
-                        onTintColor={"#48B2FC"}
-                        thumbTintColor="#48B2FC"
-                        style={styles.right}
-                        value={Boolean(this.state.data[1].is_enable)} />
-                </View>
-                <TouchableOpacity style={styles.lineView} onPress={()=>this.toEdit(1)}>
-                    <Text style={styles.nameText}>参数设置</Text>
+                <TouchableOpacity style={styles.lineView} onPress={() => this.toEdit(1,"循环泵控制")}>
+                    <Text style={styles.nameText}>循环泵控制</Text>
+                    <Text style={styles.right}>›</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.lineView} onPress={() => this.toEdit(2,"补水泵控制")}>
+                    <Text style={styles.nameText}>补水泵控制</Text>
+                    <Text style={styles.right}>›</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.lineView} onPress={() => this.toEdit(3,"泄压阀控制")}>
+                    <Text style={styles.nameText}>泄压阀控制</Text>
                     <Text style={styles.right}>›</Text>
                 </TouchableOpacity>
             </View>
@@ -147,30 +94,10 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#f2f2f2',
     },
-    lineName: {
-        width: width,
-        height: 35,
-        justifyContent: 'center',//垂直居中
-        alignItems: 'center',
-        margin: 2,
-        flexDirection:"row"
-    },
-
-    name: {
-        color: "#333333",
-        fontSize: 14,
-        //marginTop: 25,
-    },
-    image: {
-        width:16,
-        height:20,
-        marginRight:5
-    },
     lineView: {
         width: width,
-        height: 45,
-        borderBottomWidth: 0.2,
-        borderBottomColor: "#9f9f9f",
+        height: 50,
+        marginTop: 5,
         flexDirection: 'row',
         backgroundColor: '#fff',
         alignItems: 'center',
@@ -178,8 +105,8 @@ const styles = StyleSheet.create({
     },
 
     nameText: {
-        color: "#333333",
-        fontSize: 15,
+        color: "#000",
+        fontSize: 17,
         marginLeft: 20,
     },
     right: {

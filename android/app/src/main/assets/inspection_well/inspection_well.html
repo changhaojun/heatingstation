@@ -1,0 +1,243 @@
+<html>
+<!-- 修改此文件后必须给Android目录的assets复制一份mapwebview文件夹，否则Android打包时将不更新 -->
+
+<head>
+    <meta charset="UTF-8">
+    <title>智慧供热系统</title>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=zdgd4171rI06zLQBNad9vKGCn6fcTsIm"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"></script>
+    <style type="text/css">
+        html,
+        body,
+        .mapShow {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        #map {
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mapShow">
+        <div id="map"></div>
+    </div>
+
+    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        window.onload = function () {
+            var allData = [];//存储数据列表
+            var selectLast = false;//是否是在选择上一个检查井
+            var editNum = -1;
+
+            //初始化地图   
+            var map = new BMap.Map("map", { enableMapClick: false, minZoom: 3, });
+            var geoc = new BMap.Geocoder();  //初始化地址解析
+            map.enableScrollWheelZoom();
+            map.enableAutoResize();
+            map.centerAndZoom("北京", 4);
+            var styleJson = [
+                {
+                    "featureType": "building",
+                    "elementType": "alls",
+                    "stylers": {
+                        "hue": "#f3f3f3",
+                        "visibility": "on",
+                    }
+                },
+                {
+                    "featureType": "poi",
+                    "elementType": "labels",
+                    "stylers": {
+                        "visibility": "off",
+                    }
+                },
+                {
+                    "featureType": "road",
+                    "elementType": "all",
+                    "stylers": {
+                        "visibility": "on",
+                    }
+                },
+                {
+                    "featureType": "highway",
+                    "elementType": "all",
+                    "stylers": {
+                        "visibility": "off",
+                    }
+                },
+
+            ]
+            //map.setMapStyle({ styleJson: styleJson });
+            //地图缩放事件
+            map.addEventListener("zoomend", function () {
+                loadmap();
+            });
+            //拖拽地图
+            map.addEventListener("dragend", function () {
+                var mapLevel = map.getZoom();
+                loadmap();
+            });
+            map.addEventListener("click", function (event) {
+                //不是选择下一个并且点击的不是marker
+                if (!selectLast && !event.overlay&&map.getZoom()>15) {
+                    var point = new BMap.Point(event.point.lng, event.point.lat);
+                    if (editNum < 0) {
+                        var i = allData.push({
+                            lng: event.point.lng,
+                            lat: event.point.lat,
+                        })
+                        editNum = i - 1;
+                    } else {
+                        allData[editNum].lng = event.point.lng;
+                        allData[editNum].lat = event.point.lat;
+                    }
+                    loadmap();
+                    //获取坐标对应街道并post值给native
+                    geoc.getLocation(point, function (rs) {
+                        var addComp = rs.addressComponents;
+                        window.postMessage("{type:'setMarkerLoc',point:'" + JSON.stringify(event.point) + "',street:'" + addComp.street + "'}");
+                    });
+                }
+
+            });
+
+            //加载地图数据
+            function loadmap() {
+                var mapLevel = map.getZoom();
+                map.clearOverlays();
+                if (mapLevel > 15) { loadMarker(); }
+                loadPolyline();
+            }
+
+
+            //加载marker
+            function loadMarker() {
+                var bound = map.getBounds();
+                var data = allData;
+                var mapLevel = map.getZoom();
+                for (var i = 0; i < data.length; i++) {
+                    var point = new BMap.Point(data[i].lng, data[i].lat);
+                    if (bound.containsPoint(point)) {
+                        var editMarker = addMarker(data[i]._id, point);
+                        if (i == editNum) {
+                            editMarker.setIcon(new BMap.Icon("./on_manhole.png", new BMap.Size(25, 32), { anchor: new BMap.Size(12, 32) }));
+                        }
+                    }
+                }
+            }
+            //加载管道
+            function loadPolyline() {
+                var bound = map.getBounds();
+                var mapLevel = map.getZoom();
+                for (var i = 0; i < allData.length; i++) {
+                    if (allData[i].last_manhole_loc) {
+                        var point = new BMap.Point(allData[i].lng, allData[i].lat);
+                        var lastPoint = new BMap.Point(allData[i].last_manhole_loc.split(",")[0], allData[i].last_manhole_loc.split(",")[1]);
+                        if (bound.containsPoint(point) || bound.containsPoint(lastPoint)) {
+                            allData[i].polyline = addPolyline(point, lastPoint, true);
+                        }
+                    }
+
+                }
+            }
+
+
+            //set marker type 初始化marker类型
+            function addMarker(id, point) {
+                var marker = new BMap.Marker(point, { icon: new BMap.Icon("./map_marker_manhole.png", new BMap.Size(25, 32), { anchor: new BMap.Size(12, 32) }) })
+                marker.id = id;
+                //数据图标的入口(点击地图上的marker显示相应的数据图表)
+                if (marker.addEventListener) {
+                    marker.addEventListener("click", clickMarker);
+                } else if (marker.attachEvent) {
+                    marker.attachEvent("onclick", clickMarker);
+                }
+                map.addOverlay(marker);              // 将标注添加到地图中
+                return marker;
+            }
+            function addPolyline(start, end, enableClear) {
+                var polyline = new BMap.Polyline([start, end], { strokeColor: "blue", strokeWeight: 2, strokeOpacity: 0.5, enableMassClear: enableClear });   //创建折线
+                map.addOverlay(polyline);   //增加折线
+                //polyline.disableEditing();
+                return polyline;
+            }
+
+
+            //marker点击事件 event.target相当于marker对象
+            function clickMarker(event) {
+                if (editNum >= 0 && selectLast) {
+                    lastMarkerLoc = this.getPosition();
+                    allData[editNum].last_manhole_loc = lastMarkerLoc.lng + "," + lastMarkerLoc.lat;
+                    loadmap();
+                    selectLast = false;
+                    window.postMessage("{type:'last',id:'" + event.target.id + "'}");
+                } else {
+                    for (var i = 0; i < allData.length; i++) {
+                        if (allData[i]._id == event.target.id) {
+                            editNum = i;
+                        }
+                    }
+                    loadmap();
+                    window.postMessage("{type:'edit',id:'" + event.target.id + "'}");
+                }
+            }
+
+            //接受来自native的消息
+            document.addEventListener("message", function (e) {
+                var data = eval("(" + e.data + ")");
+                switch (data.type) {
+                    case "search": {//搜索
+                        searchName = data.value;
+                        filter();
+                        break;
+                    }
+                    case "data": {//保存数据
+                        allData = data.value;
+                        if (data.init) { initArea(); }
+                        loadmap(); //第一次加载数据的时候需要直接加载热力图
+                        break;
+                    }
+                    case "selectLast": {//保存数据
+                        selectLast = true;
+                        break;
+                    }
+                    case "reset": {//搜索
+                        selectLast = false;
+                        editNum = -1;
+                        break;
+                    }
+                }
+
+            })
+            //初始化位置
+            function initArea() {
+                //复位
+                selectLast = false;
+                editNum = -1;
+                var minLat = allData[0].lat;
+                var maxLat = allData[0].lat;
+                var minLng = allData[0].lng;
+                var maxLng = allData[0].lng;
+                for (var i = 0; i < allData.length; i++) {
+                    minLat = allData[i].lat < minLat ? allData[i].lat : minLat;
+                    maxLat = allData[i].lat > maxLat ? allData[i].lat : maxLat;
+                    minLng = allData[i].lng < minLng ? allData[i].lng : minLng;
+                    maxLng = allData[i].lng > maxLng ? allData[i].lng : maxLng;
+                }
+                try {
+                    map.setViewport([new BMap.Point(minLng, minLat), new BMap.Point(maxLng, maxLat)]);
+                } catch (e) {
+                    alert(e);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

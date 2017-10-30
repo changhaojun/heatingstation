@@ -23,10 +23,10 @@ export default class Home extends React.Component {
             <View style={styles.all}>
                 <View style={styles.navView}>
                     <TouchableOpacity onPress={this.backSetting.bind(this)}>
-                        <Image style={{ width: 25, height: 20, marginLeft:10, }} resizeMode="contain" source={require('../../icons/nav_back_icon.png')}/>
+                        <Image style={{ width: 25, height: 20, marginLeft:10, }} resizeMode="contain" source={require('../icons/nav_back_icon.png')}/>
                     </TouchableOpacity>
                     <Text style={styles.topNameText}>关于我们</Text>
-                    <Image style={{ width: 18, height: 20, marginRight:10, }}  resizeMode="contain" source={require('../../icons/nav_flag.png')}/>
+                    <Image style={{ width: 18, height: 20, marginRight:10, }}  resizeMode="contain" source={require('../icons/nav_flag.png')}/>
                 </View>
                 <Text style={{fontSize:15, paddingLeft:5, paddingRight:5, paddingTop:15,fontWeight: '300',color:'#343439'}}>
                       智信远景拥有一支由计算机技术、自动化控制的专家及经营者组成的核心团队。更与国际著名的麻省理工学院及清华大学等HVAC智信远景秉承"卓越、专业以及创新"的产品理念，追求创新，视挑战为机遇，致力于为用户提供卓越的产品与服务。

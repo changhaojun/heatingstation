@@ -41,22 +41,30 @@ export default class Maintenance extends React.Component {
         });
         AsyncStorage.getItem("company_code", function (errs, result) {
             if (!errs) {
-                _this.setState({ company_code: result });
-                console.log(Constants.serverSite + "/v1_0_0/list?access_token=" + _this.state.access_token + "&level=0&tag_id=2&company_code=" + _this.state.company_code + "&_id=" + _this.state.company_id);
-                fetch(Constants.serverSite + "/v1_0_0/list?access_token=" + _this.state.access_token + "&level=0&tag_id=2&company_code=" + _this.state.company_code + "&_id=" + _this.state.company_id)
-                    .then((response) => response.json())
-                    .then((responseJson) => {
-                        console.log(responseJson);
-                        // for (var i = 0; i < responseJson.length; i++) {
-                        //     responseJson[i].heat_consum = responseJson[i].value[0].data_value;
-                        // }
-                        _this.setState({
-                            dataSource: ds.cloneWithRows(responseJson),
-                        });
+                // 如果是分公司 则直接跳转
+                if (result.length > 6) {
+                    _this.props.navigator.push({
+                        component: HeatStation,
+                        passProps: {
+                            company_code: result,
+                        }
                     })
-                    .catch((error) => {
-                        console.error(error);
-                    });
+                } else {
+                    _this.setState({ company_code: result });
+                    console.log(Constants.serverSite + "/v1_0_0/list?access_token=" + _this.state.access_token + "&level=0&tag_id=2&company_code=" + _this.state.company_code + "&_id=" + _this.state.company_id);
+                    fetch(Constants.serverSite + "/v1_0_0/list?access_token=" + _this.state.access_token + "&level=0&tag_id=2&company_code=" + _this.state.company_code + "&_id=" + _this.state.company_id)
+                        .then((response) => response.json())
+                        .then((responseJson) => {
+                            console.log(responseJson);
+                            _this.setState({
+                                dataSource: ds.cloneWithRows(responseJson),
+                            });
+                        })
+                        .catch((error) => {
+                            console.error(error);
+                        });
+                }
+
             }
         });
 
@@ -75,12 +83,12 @@ export default class Maintenance extends React.Component {
     render() {
         return (
             <View style={styles.all}>
-                
+
 
                 <View style={styles.navView}>
                     <Image style={{ width: 25, height: 25, marginLeft: 10, marginTop: 10, }} source={require('../icons/nav_flag.png')} />
                     <Text style={styles.topNameText}>运行维护</Text>
-                    <TouchableHighlight onPress={()=>{this.props.navigator.push({component:Abnormal})}}><Image style={{ width: 25, height: 20, marginRight: 10, }}  resizeMode="contain" source={require('../icons/abnormal_icon.png')} /></TouchableHighlight>
+                    <TouchableHighlight onPress={() => { this.props.navigator.push({ component: Abnormal }) }}><Image style={{ width: 25, height: 20, marginRight: 10, }} resizeMode="contain" source={require('../icons/abnormal_icon.png')} /></TouchableHighlight>
                 </View>
                 <ListView
                     style={{ marginTop: 20 }}
@@ -95,11 +103,11 @@ export default class Maintenance extends React.Component {
                                         <Text style={{ fontSize: 16, color: '#fff', marginTop: -28 }}>{rowData.company_name.substring(0, 2)}</Text>
                                     </Image>
                                     <View style={styles.listItemTextView}>
-                                        <View style={{ flexDirection: "row",borderBottomColor:"#d7d8d9",borderBottomWidth:0.5,marginHorizontal:15,paddingBottom:5 }}>
+                                        <View style={{ flexDirection: "row", borderBottomColor: "#d7d8d9", borderBottomWidth: 0.5, marginHorizontal: 15, paddingBottom: 5 }}>
                                             <Image style={styles.minImage} resizeMode="contain" source={require('../icons/gongsi_icon.png')} />
                                             <Text style={{ fontSize: 16, color: '#212121' }}>{rowData.company_name}</Text>
                                         </View>
-                                        <View style={{ flexDirection: "row",marginTop:20, }}>
+                                        <View style={{ flexDirection: "row", marginTop: 20, }}>
 
                                             <View style={styles.listItemTextView2}>
                                                 <Text style={styles.listItemTextRight}>{rowData.sum}</Text>
@@ -110,7 +118,7 @@ export default class Maintenance extends React.Component {
                                                 <Text style={styles.listItemTextLeft}>供热面积(万㎡)</Text>
                                             </View>
                                             <View style={styles.listItemTextView2}>
-                                                <Text style={styles.listItemTextRight}>{rowData.amount_rh?rowData.amount_rh:"-"}</Text>
+                                                <Text style={styles.listItemTextRight}>{rowData.amount_rh ? rowData.amount_rh : "-"}</Text>
                                                 <Text style={styles.listItemTextLeft}>热耗(GJ)</Text>
                                             </View>
                                         </View>

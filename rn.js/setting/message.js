@@ -23,10 +23,10 @@ export default class Message extends React.Component {
             <View style={styles.all}>
                 <View style={styles.navView}>
                     <TouchableOpacity onPress={this.backSetting.bind(this)}>
-                        <Image style={{ width: 25, height: 20, marginLeft:10, }}  resizeMode="contain" source={require('../../icons/nav_back_icon.png')}/>
+                        <Image style={{ width: 25, height: 20, marginLeft:10, }}  resizeMode="contain" source={require('../icons/nav_back_icon.png')}/>
                     </TouchableOpacity>
                     <Text style={styles.topNameText}>公告</Text>
-                    <Image style={{ width: 25, height: 25, marginRight:10,marginTop: 10, }} source={require('../../icons/nav_flag.png')}/>
+                    <Image style={{ width: 25, height: 25, marginRight:10,marginTop: 10, }} source={require('../icons/nav_flag.png')}/>
                 </View>
             </View>
         )

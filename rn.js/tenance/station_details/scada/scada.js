@@ -60,7 +60,7 @@ export default class Scada extends React.Component {
                 fetch(Constants.serverSite + "/v1_0_0/station/" + this.props.station_id + "/datas?access_token=" + this.state.access_token)
                     .then((response) => response.json())
                     .then((responseJson) => {
-                        console.log(responseJson);
+                        //console.log(responseJson);
                         _this.webview.postMessage("{type:'data',value:" + JSON.stringify(responseJson) + "}");
                     })
                     .catch((error) => {
@@ -83,15 +83,15 @@ export default class Scada extends React.Component {
     }
     switchTab(batch) {
         let isShow = this.state.show;
-        this.setState({
-            batch: batch,
-            show: !isShow,
-        });
-        setTimeout(() => {
-            this.setState({
-                show: isShow,
-            });
-        }, 10);
+        // this.setState({
+        //     batch: batch,
+        //     show: !isShow,
+        // });
+        // setTimeout(() => {
+        //     this.setState({
+        //         show: isShow,
+        //     });
+        // }, 10);
 
     }
 

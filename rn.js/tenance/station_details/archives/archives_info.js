@@ -2,7 +2,7 @@
  * 换热站tab框架页面
  */
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity,AsyncStorage } from 'react-native';
+import { View, Text, Image, StyleSheet,ScrollView, TouchableOpacity,AsyncStorage } from 'react-native';
 import Dimensions from 'Dimensions';
 import ArchivesParam from './archives_param';
 import Constants from './../../../constants';
@@ -50,6 +50,7 @@ export default class ArchivesInfo  extends React.Component {
                     <Text style={[styles.topText, styles.all]}>换热站信息</Text>
                     <View style={styles.topSides}  />
                 </View>
+                <ScrollView>
                 <View style={styles.lineView}>
                     <Text style={styles.nameText}>名称</Text>
                     <Text style={styles.right}>{this.state.data.station_name}</Text>
@@ -86,10 +87,52 @@ export default class ArchivesInfo  extends React.Component {
                     <Text style={styles.nameText}>地势标高</Text>
                     <Text style={styles.right}>{this.state.data.station_elevation}</Text>
                 </View>
+
+                <View style={styles.lineView}>
+                    <Text style={styles.nameText}>公建面积</Text>
+                    <Text style={styles.right}>{this.state.data.building_area}</Text>
+                </View>
+                <View style={styles.lineView}>
+                    <Text style={styles.nameText}>公建个数</Text>
+                    <Text style={styles.right}>{this.state.data.building_count}</Text>
+                </View>
+                <View style={styles.lineView}>
+                    <Text style={styles.nameText}>楼栋总数</Text>
+                    <Text style={styles.right}>{this.state.data.building_sum}</Text>
+                </View>
+                <View style={styles.lineView}>
+                    <Text style={styles.nameText}>住宅个数</Text>
+                    <Text style={styles.right}>{this.state.data.houses}</Text>
+                </View>
+                <View style={styles.lineView}>
+                    <Text style={styles.nameText}>住宅面积</Text>
+                    <Text style={styles.right}>{this.state.data.residential_area}</Text>
+                </View>
+                <View style={styles.lineView}>
+                    <Text style={styles.nameText}>热用户总数</Text>
+                    <Text style={styles.right}>{this.state.data.heat_consumer}</Text>
+                </View>
+                <View style={styles.lineView}>
+                    <Text style={styles.nameText}>系统形式</Text>
+                    <Text style={styles.right}>{this.state.data.system_form}</Text>
+                </View>
+                <View style={styles.lineView}>
+                    <Text style={styles.nameText}>热源距离</Text>
+                    <Text style={styles.right}>{this.state.data.heat_source_distance}</Text>
+                </View>
+                <View style={styles.lineView}>
+                    <Text style={styles.nameText}>热力站类型</Text>
+                    <Text style={styles.right}>{this.state.data.heat_station_type}</Text>
+                </View>
+                <View style={styles.lineView}>
+                    <Text style={styles.nameText}>调控类型</Text>
+                    <Text style={styles.right}>{this.state.data.control_type}</Text>
+                </View>
                 <View style={styles.lineView}>
                     <Text style={styles.nameText}>备注</Text>
                     <Text style={styles.right}>{this.state.data.remark}</Text>
                 </View>
+                </ScrollView>
             </View>
         )
     }

@@ -1,5 +1,6 @@
 <html>
 <!-- 修改此文件后必须给Android目录的assets复制一份mapwebview文件夹，否则Android打包时将不更新 -->
+
 <head>
     <meta charset="UTF-8">
     <title>智慧供热系统</title>
@@ -31,7 +32,7 @@
     <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
     <script type="text/javascript">
         window.onload = function () {
-            var ismarker = false;//这里默认不能设为0，因为设为0无法触发缩放事件
+            //var ismarker = false;//这里默认不能设为0，因为设为0无法触发缩放事件
             var searchName = "";
             var allData = [];//存储数据列表
             var dataType = 1;  //当前类型
@@ -43,7 +44,7 @@
 
             map.enableScrollWheelZoom();
             map.enableAutoResize();
-            map.centerAndZoom("西安", 12);
+            //map.centerAndZoom("北京", 12);
             var styleJson = [
                 {
                     "featureType": "building",
@@ -92,7 +93,7 @@
             //加载地图数据
             function loadmap() {
                 var mapLevel = map.getZoom();
-                if (!searchName && ismarker && mapLevel <= 16) {
+                if (!searchName && mapLevel <= 16) {
                     map.clearOverlays();
                     addheatmap();
                 } else if (searchName || mapLevel > 16) {
@@ -115,18 +116,18 @@
 
             //加载热力图
             function addheatmap() {
-                ismarker = false;
+                //ismarker = false;
                 heatmapOverlay = new BMapLib.HeatmapOverlay({ "radius": 20 });
                 //heatmapOverlay.disableMassClear()
                 map.addOverlay(heatmapOverlay);
-                var max = dataType == 1 ? 100 : dataTag == 2 ? 10000 : 1;
+                var max = dataType == 1 ? 100 : dataType == 2 ? 10000 : 1.2;
                 heatmapOverlay.setDataSet({ data: allData, max: max });
             }
 
             //加载marker
             function loadMarker() {
                 var markerSum = 0;
-                ismarker = true;
+                //ismarker = true;
                 var bound = map.getBounds();
                 var data = searchName ? searchData : allData;
                 var onWinData = [];
@@ -202,7 +203,25 @@
                 window.postMessage("{type:'click',id:'" + event.target.id + "'}");
                 //alert(event.target.index);
             }
-
+            //初始化位置
+            function initArea() {
+                //复位
+                var minLat = allData[0].lat;
+                var maxLat = allData[0].lat;
+                var minLng = allData[0].lng;
+                var maxLng = allData[0].lng;
+                for (var i = 0; i < allData.length; i++) {
+                    minLat = allData[i].lat < minLat ? allData[i].lat : minLat;
+                    maxLat = allData[i].lat > maxLat ? allData[i].lat : maxLat;
+                    minLng = allData[i].lng < minLng ? allData[i].lng : minLng;
+                    maxLng = allData[i].lng > maxLng ? allData[i].lng : maxLng;
+                }
+                try {
+                    map.setViewport([new BMap.Point(minLng, minLat), new BMap.Point(maxLng, maxLat)]);
+                } catch (e) {
+                    alert(e);
+                }
+            }
             //接受来自native的消息
             document.addEventListener("message", function (e) {
                 var data = eval("(" + e.data + ")");
@@ -212,12 +231,13 @@
                         filter();
                         break;
                     }
-                    case "data": {//保存数据
+                    case "data": {
                         allData = data.value;
-                        addheatmap(); //第一次加载数据的时候需要直接加载热力图
+                        initArea();
+                        loadmap(); //第一次加载数据的时候需要直接加载热力图
                         break;
                     }
-                    case "type": {//保存数据
+                    case "type": {
                         dataType = data.value;
                         break;
                     }

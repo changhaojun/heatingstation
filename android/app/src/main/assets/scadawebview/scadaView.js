@@ -32,7 +32,7 @@ window.onload = function () {
 function getTemp(){
 	try {
 		$.ajax({
-			url: "http://121.42.253.149:18816/v1_0_0/scadaTemp2d?system_num=1&access_token="+token,
+			url: "http://114.215.46.56:18816/v1_0_0/scadaTemp2d?system_num=1&access_token="+token,
 			type: 'get',
 			success: function (data) {
 				paper = $("#paper");

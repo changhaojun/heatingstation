@@ -3,7 +3,6 @@ package com.wisdomheating;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.github.yamill.orientation.OrientationPackage;
 import cn.jpush.reactnativejpush.JPushPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -30,7 +29,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
               new MainReactPackage(),
-            new OrientationPackage(this),
+            //new OrientationPackage(this),
             new JPushPackage(false,false),
               new OrientationPackage()
 

@@ -9,7 +9,7 @@ import HeatList from './heat_list';
 import HomeTab from './hometab';
 
 // import Home from './home.ios';
-import Setting from './setting/setting';
+import Setting from '../setting/setting';
 import Warn from './warn';
 import Constants from '../constants';
 export default class Home extends React.Component {
@@ -76,21 +76,21 @@ export default class Home extends React.Component {
                 <View style={[styles.line, { marginTop: 5, }]}>
                     <View style={styles.linehelf}>
                         <Image style={styles.lineImage} source={require('../icons/home1.png')} />
-                        <Text style={styles.lineText}>换热站数量<Text style={styles.linevalue}>{this.state.data?this.state.data.allSatations.stationCounts:""}</Text><Text style={{ fontSize: 13 }}>个</Text></Text>
+                        <Text style={styles.lineText}>换热站数量<Text style={styles.linevalue}>{this.state.data&&this.state.data.allSatations?this.state.data.allSatations.stationCounts:""}</Text><Text style={{ fontSize: 13 }}>个</Text></Text>
                     </View>
                     <View style={styles.linehelf}>
                         <Image style={styles.lineImage} source={require('../icons/home2.png')} />
-                        <Text style={styles.lineText}>供热面积<Text style={styles.linevalue}>{this.state.data?this.state.data.allSatations.total_erea:""}</Text><Text style={{ fontSize: 13 }}>万㎡</Text></Text>
+                        <Text style={styles.lineText}>供热面积<Text style={styles.linevalue}>{this.state.data&&this.state.data.allSatations?this.state.data.allSatations.total_erea:""}</Text><Text style={{ fontSize: 13 }}>万㎡</Text></Text>
                     </View>
                 </View>
                 <View style={[styles.line, { marginTop: 1, }]}>
                     <View style={styles.linehelf}>
                         <Image style={styles.lineImage} source={require('../icons/home3.png')} />
-                        <Text style={styles.lineText}>昨日热量<Text style={styles.linevalue}>{this.state.data?this.state.data.allSatationEnergy.hot_energy:""}</Text><Text style={{ fontSize: 13 }}>万GJ</Text></Text>
+                        <Text style={styles.lineText}>昨日热量<Text style={styles.linevalue}>{this.state.data&&this.state.data.allSatations?this.state.data.allSatationEnergy.hot_energy:""}</Text><Text style={{ fontSize: 13 }}>万GJ</Text></Text>
                     </View>
                     <View style={styles.linehelf}>
                         <Image style={styles.lineImage} source={require('../icons/home4.png')} />
-                        <Text style={styles.lineText}>本周热量<Text style={styles.linevalue}>{this.state.data?this.state.data.weekDatas:""}</Text><Text style={{ fontSize: 13 }}>万GJ</Text></Text>
+                        <Text style={styles.lineText}>本周热量<Text style={styles.linevalue}>{this.state.data&&this.state.data.allSatations?this.state.data.weekDatas:""}</Text><Text style={{ fontSize: 13 }}>万GJ</Text></Text>
                     </View>
                 </View>
                 <HomeTab navigator={this.props.navigator} />

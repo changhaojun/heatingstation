@@ -10,7 +10,7 @@ import {
 import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
 
-
+import InspectionWell from "./inspection_well"
 import AboutUS from './about_us';
 import Message from './message';
 
@@ -57,45 +57,45 @@ export default class Setting extends React.Component {
         return (
             <View style={styles.all}>
                 <View style={styles.topView}>
-                    {/*<View style={styles.navView}>*/}
-                    {/*<Image source={require('../icons/nav_back.png')} style={{ width: 20, height: 20, marginLeft: 10,}}></Image>*/}
-                    {/*<Text style={{fontSize:18, textAlign: 'center'}}>个人中心</Text>*/}
-                    {/*</View>*/}
                     <View style={styles.navView}>
                         <TouchableOpacity onPress={this.backHome.bind(this)}>
-                            <Image style={{ width: 25, height: 20, marginLeft: 10, }} resizeMode="contain" source={require('../../icons/nav_back_icon.png')} />
+                            <Image style={{ width: 25, height: 20, marginLeft: 10, }} resizeMode="contain" source={require('../icons/nav_back_icon.png')} />
                         </TouchableOpacity>
                         <Text style={styles.topNameText}>个人中心</Text>
-                        {/*<TouchableOpacity style={styles.topImage} onPress={this.toNotice.bind(this)}>*/}
-                        <Image style={{ width: 25, height: 25, marginRight: 10, marginTop: 10, }} source={require('../../icons/nav_flag.png')} />
-                        {/*</TouchableOpacity>*/}
+                        <Image style={{ width: 25, height: 25, marginRight: 10, marginTop: 10, }} source={require('../icons/nav_flag.png')} />
                     </View>
                     <View style={styles.imageView}>
-                        <Image style={{ width: 90, height: 90, }} source={require('../../images/touxiang.png')} />
+                        <Image style={{ width: 90, height: 90, }} source={require('../images/touxiang.png')} />
                     </View>
                 </View>
                 <View style={styles.bottomView}>
                     <View style={styles.lineView}>
-                        <Image style={styles.imageItem} source={require('../../icons/user_icon.png')} />
+                        <Image style={styles.imageItem} source={require('../icons/user_icon.png')} />
                         <Text style={styles.textItem}>用户名 {this.state.userName}</Text>
                     </View>
 
                     <TouchableHighlight underlayColor="#ECEDEE" onPress={this.goMessage.bind(this)}>
                         <View style={styles.lineView}>
-                            <Image style={styles.imageItem} source={require('../../icons/message_icon.png')} />
+                            <Image style={styles.imageItem} source={require('../icons/message_icon.png')} />
                             <Text style={styles.textItem}>消息通知</Text>
                         </View>
                     </TouchableHighlight>
 
                     <View style={styles.lineView}>
-                        <Image style={styles.imageItem} source={require('../../icons/version_icon.png')} />
+                        <Image style={styles.imageItem} source={require('../icons/version_icon.png')} />
                         <Text style={styles.textItem}>应用版本 V1.0</Text>
                     </View>
 
                     <TouchableHighlight underlayColor="#ECEDEE" onPress={this.goAboutUS.bind(this)} >
                         <View style={styles.lineView}>
-                            <Image style={styles.imageItem} source={require('../../icons/us_icon.png')} />
+                            <Image style={styles.imageItem} source={require('../icons/us_icon.png')} />
                             <Text style={styles.textItem}>关于我们</Text>
+                        </View>
+                    </TouchableHighlight>
+                    <TouchableHighlight underlayColor="#ECEDEE" onPress={()=>this.props.navigator.push({component:InspectionWell})} >
+                        <View style={styles.lineView}>
+                            <Image style={styles.imageItem} source={require('../icons/well.png')} />
+                            <Text style={styles.textItem}>检查井录入</Text>
                         </View>
                     </TouchableHighlight>
 

@@ -47,6 +47,10 @@ export default class RunqualityMap extends React.Component {
             waterShow:false,
             responseJson: [],
         };
+        
+
+    }
+    getData(){
         var _this = this;
         _this.setState({ showanimating: true });
         AsyncStorage.getItem("company_code", function (errs, result) {
@@ -69,22 +73,21 @@ export default class RunqualityMap extends React.Component {
                     });
             }
         });
-
     }
-
-    setData() {
+    setData(type) {
         var responseJson = this.state.responseJson;
+        var type=type?type:this.state.type;
         for (var i = 0; i < responseJson.length; i++) {
 
-            if (this.state.type == 1) {
+            if (type == 1) {
                 responseJson[i].unit = "℃"
                 responseJson[i].count = responseJson[i].data ? responseJson[i].data["2gw"] : 0;
             }
-            if (this.state.type == 2) {
+            if (type == 2) {
                 responseJson[i].count = responseJson[i].data ? responseJson[i].data["1sr"] : 0;
                 responseJson[i].unit = "KJ/㎡"
             }
-            if (this.state.type == 3) {
+            if (type == 3) {
                 responseJson[i].count = responseJson[i].data ? responseJson[i].data["1gy"] : 0;
                 responseJson[i].unit = "Kpa"
             }
@@ -155,7 +158,7 @@ export default class RunqualityMap extends React.Component {
     selectTag(type) {
         this.setState({ type: type });
         this.webview.postMessage("{type:'type',value:" + type + "}");
-        this.setData();
+        this.setData(type);
     }
 
 
@@ -184,6 +187,7 @@ export default class RunqualityMap extends React.Component {
                 </View>
                 <WebView
                     style={{ flex: 1 }}
+                    onLoad={()=>this.getData()}
                     ref={webview => this.webview = webview}
                     onMessage={this.onBridgeMessage.bind(this)}
                     //injectedJavaScript={"window.access_token='" + this.state.access_token + "';"}
