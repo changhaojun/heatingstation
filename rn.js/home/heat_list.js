@@ -31,6 +31,7 @@ export default class HeatList extends React.Component {
                 fetch(Constants.serverSite+"/v1_0_0/followStation?access_token=" + result)
                     .then((response) => response.json())
                     .then((responseJson) => {
+                        console.log(responseJson);
                         _this.setState({
                             dataSource: ds.cloneWithRows(responseJson),
                         });
@@ -71,7 +72,8 @@ export default class HeatList extends React.Component {
                                 <Text style={styles.text}>{rowData.station_name}</Text>
                                 <Text style={styles.text}>{rowData.tag_name}</Text>
                                 <Image style={styles.image} source={require('./../icons/thermometer.png')} />
-                                <Text style={[styles.text,{flex:1.5,color:"#30adff"}]}>{rowData.data_value}℃</Text>
+                                <Text style={[styles.text,{flex:2,color:"#30adff"}]}>{rowData.data_value}℃</Text>
+                                <Text style={{fontSize: 10,color: "#656565",lineHeight: 20,flex: 3,textAlign:'right',paddingRight:5}}>{rowData.data_time}</Text>
                             </TouchableOpacity>
                         )
                     }}

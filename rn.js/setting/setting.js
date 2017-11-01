@@ -13,6 +13,7 @@ var { width, height } = Dimensions.get('window');
 import InspectionWell from "./inspection_well"
 import AboutUS from './about_us';
 import Message from './message';
+import Login from  '../login';
 
 export default class Setting extends React.Component {
 
@@ -38,7 +39,9 @@ export default class Setting extends React.Component {
     }
 
     exit() {
-        this.props.navigator.popToTop();
+        this.props.navigator.replace({
+            component:Login,
+        })
     }
 
     goAboutUS() {
