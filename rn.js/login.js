@@ -53,37 +53,15 @@ export default class Login extends React.Component {
                 if (navigator && responseJson.code == 200) {
                     if (this.state.remember) {
                         //存储账号密码
-                        AsyncStorage.setItem("userName", this.state.userName, function (errs) {
-                            if (errs) {
-                                Alert.alert(
-                                    '提示',
-                                    '存储帐号错误',
-                                );
-                            }
-                        });
-                        AsyncStorage.setItem("passWord", this.state.passWord, function (errs) {
-                            if (errs) {
-                                Alert.alert(
-                                    '提示',
-                                    '存储密码错误',
-                                );
-                            }
-                        });
+                        AsyncStorage.setItem("userName", this.state.userName, function (errs) {});
+                        AsyncStorage.setItem("passWord", this.state.passWord, function (errs) {});
                     }
-
-                    AsyncStorage.setItem("access_token", responseJson.access_token, function (errs) {
-                        console.log(responseJson.access_token);
-                    });
-                    AsyncStorage.setItem("fullname", responseJson.fullname, function (errs) {
-                        console.log(responseJson.fullname);
-                    });
-
-                    AsyncStorage.setItem("company_id", responseJson.company_id, function (errs) {
-                        console.log(responseJson.company_id);
-                    });
-                    AsyncStorage.setItem("company_code", responseJson.company_code, function (errs) {
-                        console.log(responseJson.company_code);
-                    });
+                    console.log(responseJson.access_token);
+                    AsyncStorage.setItem("company_location", responseJson.company_location, function (errs) {});
+                    AsyncStorage.setItem("access_token", responseJson.access_token, function (errs) {});
+                    AsyncStorage.setItem("fullname", responseJson.fullname, function (errs) {});
+                    AsyncStorage.setItem("company_id", responseJson.company_id, function (errs) {});
+                    AsyncStorage.setItem("company_code", responseJson.company_code, function (errs) {});
 
 
                     //跳转

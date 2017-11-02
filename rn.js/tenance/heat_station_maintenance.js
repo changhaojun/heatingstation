@@ -70,8 +70,11 @@ export default class HeatStationMaintenance extends React.Component {
 
         const _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
+
             if (!errs) {
-                fetch(Constants.serverSite + "/v1_0_0/stationAllDatas?tag_id=7,14,3,17,6&access_token=" + result + "&company_code=" + _this.props.company_code)
+                var uri=Constants.serverSite + "/v1_0_0/stationAllDatas?tag_id=7,14,3,17,6&access_token=" + result + "&company_code=" + _this.props.company_code;
+                console.log(uri)
+                fetch(uri)
                     .then((response) => response.json())
                     .then((responseJson) => {
 

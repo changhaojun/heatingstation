@@ -128,17 +128,17 @@ export default class Main extends React.Component {
                             <Text style={this.state.homeText}>首页</Text>
                         </View>
                     </TouchableOpacity>
+                    <TouchableOpacity activeOpacity={0.5} onPress={this._maintenanceClick.bind(this)} >
+                        <View style={this.state.maintenanceView}>
+                            <Image style={styles.bottomItemImage} source={this.state.maintenanceImage} />
+                            <Text style={this.state.maintenanceText}>运行维护</Text>
+                        </View>
+                    </TouchableOpacity>
                     <TouchableOpacity activeOpacity={0.5} onPress={this._runqualityClick.bind(this)}  >
                         <View style={this.state.runqualityView}>
                             <Image style={styles.bottomItemImage} source={this.state.runqualityImage} />
                             <Text style={this.state.runqualityText
                             }>运行质量</Text>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.5} onPress={this._maintenanceClick.bind(this)} >
-                        <View style={this.state.maintenanceView}>
-                            <Image style={styles.bottomItemImage} source={this.state.maintenanceImage} />
-                            <Text style={this.state.maintenanceText}>运行维护</Text>
                         </View>
                     </TouchableOpacity>
                 </View>

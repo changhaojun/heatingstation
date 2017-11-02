@@ -44,227 +44,240 @@ export default class RunqualityMap extends React.Component {
             dataListSource: ds.cloneWithRows([]),
             station_id: "",
             scadaShow: false,
-            waterShow:false,
+            waterShow: false,
             responseJson: [],
         };
-        
-
-    }
-    getData(){
         var _this = this;
-        _this.setState({ showanimating: true });
         AsyncStorage.getItem("company_code", function (errs, result) {
             _this.setState({ company_code: result })
         });
         AsyncStorage.getItem("access_token", function (errs, result) {
-            if (!errs) {
-                _this.setState({ access_token: result });
-                console.log(Constants.serverSite + "/v1_0_0/stationAllDatas?access_token=" + result + "&company_code=" + _this.state.company_code)
-                fetch(Constants.serverSite + "/v1_0_0/stationAllDatas?access_token=" + result + "&company_code=" + _this.state.company_code)
-                    .then((response) => response.json())
-                    .then((responseJson) => {
-                        console.log(responseJson);
-                        _this.setState({ showanimating: false, responseJson: responseJson });
-                        _this.setData();
-                    })
-                    .catch((error) => {
-                        console.log(error);
-
-                    });
-            }
+            if (!errs) { _this.setState({ access_token: result }); }
         });
     }
-    setData(type) {
-        var responseJson = this.state.responseJson;
-        var type=type?type:this.state.type;
-        for (var i = 0; i < responseJson.length; i++) {
+    getData() {
+        var _this = this;
+        AsyncStorage.getItem("company_location", function (errs, result) {
+            _this.webview.postMessage("{type:'location',value:'" + result + "'}");
+        });
+        
+        this.getStationData();
+        this.getPipeData();
+    }
+    getStationData() {
+        var _this = this;
+        _this.setState({ showanimating: true });
+        var url = Constants.serverSite + "/v1_0_0/stationAllDatas?access_token=" + this.state.access_token + "&company_code=" + _this.state.company_code;
+        console.log(url)
+        fetch(url)
+            .then((response) => response.json())
+            .then((responseJson) => {
+                console.log(responseJson);
+                _this.setState({ showanimating: false, responseJson: responseJson });
+                _this.setData();
+            })
+            .catch((error) => {
+                console.log(error);
 
-            if (type == 1) {
-                responseJson[i].unit = "℃"
-                responseJson[i].count = responseJson[i].data ? responseJson[i].data["2gw"] : 0;
-            }
-            if (type == 2) {
-                responseJson[i].count = responseJson[i].data ? responseJson[i].data["1sr"] : 0;
-                responseJson[i].unit = "KJ/㎡"
-            }
-            if (type == 3) {
-                responseJson[i].count = responseJson[i].data ? responseJson[i].data["1gy"] : 0;
-                responseJson[i].unit = "Kpa"
-            }
-            responseJson[i].color = this.getColor(parseFloat(responseJson[i].count));
-        }
-        this.webview.postMessage("{type:'data',value:" + JSON.stringify(responseJson) + "}");
+            });
     }
 
-    searchSubmit() {
-        this.webview.postMessage("{type:'search',value:'" + this.state.text + "'}");
-    }
-
-    changeCenter(location) {
-        this.setState({ dataListShow: false });
-        this.webview.postMessage("{type:'center',value:'" + location + "'}");
-    }
-
-    onBridgeMessage(message) {
-        var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-        console.log(message.nativeEvent.data);
-        var data = eval("(" + message.nativeEvent.data + ")");
-        switch (data.type) {
-            case "click": {
-                //Alert.alert("d",data.id);
-                
-                this.setState({ station_id: data.id, scadaShow: true })
-                
-                
-                break;
-
-            }
-            case "data": {
-                var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-                this.setState({
-                    dataList: data.data,
-                    dataListSource: ds.cloneWithRows(data.data),
-                });
-                break;
-            }
-        }
-    }
-
-
-    openRunquality() {
-        this.props.navigator.push({
-            component: Runquality,
+getPipeData() {
+    var _this = this;
+    var uri = Constants.serverSite + "/v1_0_0/pipeDiameter?access_token=" + this.state.access_token + "&company_code=" + this.state.company_code;
+    console.log(uri)
+    fetch(uri)
+        .then((response) => response.json())
+        .then((responseJson) => {
+            console.log(responseJson);
+            _this.setState({ pipeData: responseJson });
+            _this.webview.postMessage("{type:'pipe',value:" + JSON.stringify(responseJson) + "}");
         })
-    }
-
-    getColor(value) {
-        var colorid = 0;
-        max = 100;
-        if (this.state.type == 2) {
-            max = 1000;
+        .catch((error) => {
+            console.log(error);
+        });
+}
+setData(type) {
+    var responseJson = this.state.responseJson;
+    var type = type ? type : this.state.type;
+    for (var i = 0; i < responseJson.length; i++) {
+        if (type == 1) {
+            responseJson[i].unit = "℃"
+            responseJson[i].count = responseJson[i].data ? responseJson[i].data["2gw"] : 0;
         }
-        if (this.state.type == 3) {
-            max = 1;
+        if (type == 2) {
+            responseJson[i].count = responseJson[i].data ? responseJson[i].data["1sr"] : 0;
+            responseJson[i].unit = "KJ/㎡"
         }
-        if (value > max / 10 && value < max) {
-            colorid = parseInt(value * 10 / max);
-        } else if (value >= max) {
-            colorid = 9;
+        if (type == 3) {
+            responseJson[i].count = responseJson[i].data ? responseJson[i].data["1gy"] : 0;
+            responseJson[i].unit = "Kpa"
         }
-        var color = ["#05ba74", "#64d102", "#a4df06", "#d2df06", "#ffd800", "#ffc600", "#ffa200", "#ff8400", "#d94e1d", "#ca1414"];
-        return color[colorid];
+        responseJson[i].color = this.getColor(parseFloat(responseJson[i].count));
     }
+    this.webview.postMessage("{type:'data',value:" + JSON.stringify(responseJson) + "}");
+}
 
-    selectTag(type) {
-        this.setState({ type: type });
-        this.webview.postMessage("{type:'type',value:" + type + "}");
-        this.setData(type);
+searchSubmit() {
+    this.webview.postMessage("{type:'search',value:'" + this.state.text + "'}");
+}
+
+onBridgeMessage(message) {
+    var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+    console.log(message.nativeEvent.data);
+    var data = eval("(" + message.nativeEvent.data + ")");
+    switch (data.type) {
+        case "click": {
+            this.setState({ station_id: data.id, scadaShow: true })
+            break;
+        }
+        case "data": {
+            var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+            this.setState({
+                dataList: data.data,
+                dataListSource: ds.cloneWithRows(data.data),
+            });
+            break;
+        }
     }
+}
+
+
+openRunquality() {
+    this.props.navigator.push({
+        component: Runquality,
+    })
+}
+
+getColor(value) {
+    var colorid = 0;
+    max = 100;
+    if (this.state.type == 2) {
+        max = 1000;
+    }
+    if (this.state.type == 3) {
+        max = 1;
+    }
+    if (value > max / 10 && value < max) {
+        colorid = parseInt(value * 10 / max);
+    } else if (value >= max) {
+        colorid = 9;
+    }
+    var color = ["#05ba74", "#64d102", "#a4df06", "#d2df06", "#ffd800", "#ffc600", "#ffa200", "#ff8400", "#d94e1d", "#ca1414"];
+    return color[colorid];
+}
+
+selectTag(type) {
+    this.setState({ type: type });
+    this.webview.postMessage("{type:'type',value:" + type + "}");
+    this.setData(type);
+}
 
 
 
-    render() {
-        var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-        return (
-            <View style={styles.all}>
-                <View style={styles.navView}>
-                    <TouchableOpacity onPress={() => { this.setState({ dataListShow: true }) }}>
-                        <Image style={styles.topImage} source={require('../icons/map_list.png')} />
-                    </TouchableOpacity>
-                    <View style={styles.searchImageView}>
-                        <Image style={styles.searchImage} source={require('../icons/map_search.png')} />
-                    </View>
-                    <TextInput
-                        style={styles.topInputText}
-                        returnKeyType={"search"}
-                        returnKeyLabel={"search"}
-                        onSubmitEditing={this.searchSubmit.bind(this)}
-                        underlineColorAndroid={"transparent"}
-                        placeholder={"搜索"}
-                        onChangeText={(text) => this.setState({ text })}>{this.state.text}</TextInput>
-
-                    <Text style={styles.searchText} onPress={this.searchSubmit.bind(this)}>搜索</Text>
+render() {
+    var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+    return (
+        <View style={styles.all}>
+            <View style={styles.navView}>
+                <TouchableOpacity onPress={() => { this.setState({ dataListShow: true }) }}>
+                    <Image style={styles.topImage} source={require('../icons/map_list.png')} />
+                </TouchableOpacity>
+                <View style={styles.searchImageView}>
+                    <Image style={styles.searchImage} source={require('../icons/map_search.png')} />
                 </View>
-                <WebView
-                    style={{ flex: 1 }}
-                    onLoad={()=>this.getData()}
-                    ref={webview => this.webview = webview}
-                    onMessage={this.onBridgeMessage.bind(this)}
-                    //injectedJavaScript={"window.access_token='" + this.state.access_token + "';"}
-                    source={Platform.OS === 'ios' ? require('./mapwebview/mapshow.html') : { uri: 'file:///android_asset/mapwebview/mapshow.html' }}
-                />
-                <View style={styles.switchView}>
-                    <TouchableOpacity style={[styles.switchItem]} onPress={() => { this.selectTag(1) }}>
-                        <Image style={styles.switchImage} resizeMode="contain" source={this.state.type==1? require('../icons/mapswitch1_s.png'): require('../icons/mapswitch1.png')} />
-                        {/* <Text style={styles.switchText}>供热</Text> */}
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.switchItem} onPress={() => { this.selectTag(2) }}>
-                        <Image style={styles.switchImage} resizeMode="contain" source={this.state.type==2? require('../icons/mapswitch2_s.png'):require('../icons/mapswitch2.png')} />
-                        {/* <Text style={styles.switchText}>能耗</Text> */}
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.switchItem} onPress={() => { this.selectTag(3) }}>
-                        <Image style={styles.switchImage} resizeMode="contain" source={this.state.type==3? require('../icons/mapswitch3_s.png'):require('../icons/mapswitch3.png')} />
-                        {/* <Text style={styles.switchText}>水压</Text> */}
-                    </TouchableOpacity>
-                </View>
-                <Modal
-                    animationType={"none"}
-                    transparent={true}
-                    visible={this.state.showanimating}
-                    onRequestClose={() => { }}>
-                    <View style={{ backgroundColor: "#ffffff67", flex: 1, justifyContent: 'center', alignItems: 'center', }}>
-                        <ActivityIndicator
-                            animating={true}
-                            size="large"
-                        />
-                    </View>
-                </Modal>
+                <TextInput
+                    style={styles.topInputText}
+                    returnKeyType={"search"}
+                    returnKeyLabel={"search"}
+                    onSubmitEditing={this.searchSubmit.bind(this)}
+                    underlineColorAndroid={"transparent"}
+                    placeholder={"搜索"}
+                    onChangeText={(text) => this.setState({ text })}>{this.state.text}</TextInput>
 
-
-                <Modal
-                    animationType={"none"}
-                    transparent={true}
-                    visible={this.state.dataListShow}
-                    onRequestClose={() => { }}>
-                    <TouchableOpacity onPress={() => { this.setState({ dataListShow: false }) }} style={styles.all}>
-                        <ListView
-                            style={styles.dataList}
-                            enableEmptySections={true}
-                            contentContainerStyle={styles.listView}
-                            initialListSize={this.state.dataList.length}
-                            dataSource={this.state.dataListSource}
-                            renderRow={(rowData) =>
-                                <TouchableOpacity style={styles.listItem}>
-                                    <Text style={styles.tagText} >{rowData.station_name}</Text>
-                                    <Text style={[styles.tagText, { color: this.getColor(rowData.count) }]} >{rowData.count}℃</Text>
-                                </TouchableOpacity>}
-                        />
-                    </TouchableOpacity>
-                </Modal>
-                <Modal
-                    animationType={"none"}
-                    transparent={true}
-                    visible={this.state.scadaShow}
-                    onRequestClose={() => { }}>
-                    <View style={{ flex: 1 }}>
-                        <Scada style={{ flex: 1 }} station_id={this.state.station_id} />
-                        <Text style={{ textAlign: "right", fontSize: 50, color: "#fff", marginTop: 0, marginLeft: width - 40, position: "absolute" }} onPress={() => this.setState({ scadaShow: false })}>×</Text>
-                    </View>
-                </Modal>
-                <Modal
-                    animationType={"none"}
-                    transparent={true}
-                    visible={this.state.waterShow}
-                    onRequestClose={() => { }}>
-                    <View style={{ flex: 1 }}>
-                        <WaterChart style={{ flex: 1 }} _id={this.state.station_id} />
-                        <Text style={{ textAlign: "right", fontSize: 50, color: "#fff", marginTop: 0, marginLeft: width - 40, position: "absolute" }} onPress={() => this.setState({ waterShow: false })}>×</Text>
-                    </View>
-                </Modal>
+                <Text style={styles.searchText} onPress={this.searchSubmit.bind(this)}>搜索</Text>
             </View>
+            <WebView
+                style={{ flex: 1 }}
+                onLoad={() => this.getData()}
+                ref={webview => this.webview = webview}
+                onMessage={this.onBridgeMessage.bind(this)}
+                //injectedJavaScript={"window.access_token='" + this.state.access_token + "';"}
+                source={Platform.OS === 'ios' ? require('./mapwebview/mapshow.html') : { uri: 'file:///android_asset/mapwebview/mapshow.html' }}
+                //source={require('./mapwebview/mapshow.html') }
+            />
+            <View style={styles.switchView}>
+                <TouchableOpacity style={[styles.switchItem]} onPress={() => { this.selectTag(1) }}>
+                    <Image style={styles.switchImage} resizeMode="contain" source={this.state.type == 1 ? require('../icons/mapswitch1_s.png') : require('../icons/mapswitch1.png')} />
+                    {/* <Text style={styles.switchText}>供热</Text> */}
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.switchItem} onPress={() => { this.selectTag(2) }}>
+                    <Image style={styles.switchImage} resizeMode="contain" source={this.state.type == 2 ? require('../icons/mapswitch2_s.png') : require('../icons/mapswitch2.png')} />
+                    {/* <Text style={styles.switchText}>能耗</Text> */}
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.switchItem} onPress={() => { this.selectTag(3) }}>
+                    <Image style={styles.switchImage} resizeMode="contain" source={this.state.type == 3 ? require('../icons/mapswitch3_s.png') : require('../icons/mapswitch3.png')} />
+                    {/* <Text style={styles.switchText}>水压</Text> */}
+                </TouchableOpacity>
+            </View>
+            <Modal
+                animationType={"none"}
+                transparent={true}
+                visible={this.state.showanimating}
+                onRequestClose={() => { }}>
+                <View style={{ backgroundColor: "#ffffff67", flex: 1, justifyContent: 'center', alignItems: 'center', }}>
+                    <ActivityIndicator
+                        animating={true}
+                        size="large"
+                    />
+                </View>
+            </Modal>
 
-        )
-    }
+
+            <Modal
+                animationType={"none"}
+                transparent={true}
+                visible={this.state.dataListShow}
+                onRequestClose={() => { }}>
+                <TouchableOpacity onPress={() => { this.setState({ dataListShow: false }) }} style={styles.all}>
+                    <ListView
+                        style={styles.dataList}
+                        enableEmptySections={true}
+                        contentContainerStyle={styles.listView}
+                        initialListSize={this.state.dataList.length}
+                        dataSource={this.state.dataListSource}
+                        renderRow={(rowData) =>
+                            <TouchableOpacity style={styles.listItem}>
+                                <Text style={styles.tagText} >{rowData.station_name}</Text>
+                                <Text style={[styles.tagText, { color: this.getColor(rowData.count) }]} >{rowData.count}℃</Text>
+                            </TouchableOpacity>}
+                    />
+                </TouchableOpacity>
+            </Modal>
+            <Modal
+                animationType={"none"}
+                transparent={true}
+                visible={this.state.scadaShow}
+                onRequestClose={() => { }}>
+                <View style={{ flex: 1 }}>
+                    <Scada style={{ flex: 1 }} station_id={this.state.station_id} />
+                    <Text style={{ textAlign: "right", fontSize: 50, color: "#fff", marginTop: 0, marginLeft: width - 40, position: "absolute" }} onPress={() => this.setState({ scadaShow: false })}>×</Text>
+                </View>
+            </Modal>
+            <Modal
+                animationType={"none"}
+                transparent={true}
+                visible={this.state.waterShow}
+                onRequestClose={() => { }}>
+                <View style={{ flex: 1 }}>
+                    <WaterChart style={{ flex: 1 }} _id={this.state.station_id} />
+                    <Text style={{ textAlign: "right", fontSize: 50, color: "#fff", marginTop: 0, marginLeft: width - 40, position: "absolute" }} onPress={() => this.setState({ waterShow: false })}>×</Text>
+                </View>
+            </Modal>
+        </View>
+
+    )
+}
 }
 
 // 样式
