@@ -41,29 +41,21 @@ export default class Maintenance extends React.Component {
         });
         AsyncStorage.getItem("company_code", function (errs, result) {
             if (!errs) {
-                // 如果是分公司 则直接跳转
-                if (result.length > 6) {
-                    _this.props.navigator.push({
-                        component: HeatStation,
-                        passProps: {
-                            company_code: result,
-                        }
-                    })
-                } else {
-                    _this.setState({ company_code: result });
-                    console.log(Constants.serverSite + "/v1_0_0/list?access_token=" + _this.state.access_token + "&level=0&tag_id=2&company_code=" + _this.state.company_code + "&_id=" + _this.state.company_id);
-                    fetch(Constants.serverSite + "/v1_0_0/list?access_token=" + _this.state.access_token + "&level=0&tag_id=2&company_code=" + _this.state.company_code + "&_id=" + _this.state.company_id)
-                        .then((response) => response.json())
-                        .then((responseJson) => {
-                            console.log(responseJson);
-                            _this.setState({
-                                dataSource: ds.cloneWithRows(responseJson),
-                            });
-                        })
-                        .catch((error) => {
-                            console.error(error);
+
+                _this.setState({ company_code: result });
+                var uri = Constants.serverSite + "/v1_0_0/stationOnline?access_token=" + _this.state.access_token + "&company_code=" + _this.state.company_code + "&company_id=" + _this.state.company_id;
+                console.log(uri);
+                fetch(uri)
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+                        console.log(responseJson);
+                        _this.setState({
+                            dataSource: ds.cloneWithRows(responseJson),
                         });
-                }
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
 
             }
         });
@@ -110,7 +102,7 @@ export default class Maintenance extends React.Component {
                                         <View style={{ flexDirection: "row", marginTop: 20, }}>
 
                                             <View style={styles.listItemTextView2}>
-                                                <Text style={styles.listItemTextRight}>{rowData.sum}</Text>
+                                                <Text style={styles.listItemTextRight}>{rowData.onLine}/{rowData.station_count}</Text>
                                                 <Text style={styles.listItemTextLeft}>换热站数量</Text>
                                             </View>
                                             <View style={styles.listItemTextView2}>

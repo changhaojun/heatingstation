@@ -45,7 +45,7 @@ export default class Scada extends React.Component {
                     if (!errs) {
                         _this.setState({ access_token: result });
                         _this.webview.postMessage("{type:'token',value:'" + result + "'}");
-                        _this.updateData();
+                        //_this.updateData();
                     }
                 });
             },

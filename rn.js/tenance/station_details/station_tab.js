@@ -8,6 +8,7 @@ import LogClassification from "./operation_log/log_classification";
 import ArchivesClassification from "./archives/archives_classification";
 import Strategy from "./control_strategy/strategy";
 import Scada from "./scada/scada";
+import DataList from "./scada/data_list";
 import warn from "./../../home/warn.js"
 var { width, height } = Dimensions.get('window');
 
@@ -15,6 +16,7 @@ export default class StationTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            fristView:Scada,
             topStyle1: styles.topTextSelection,
             topStyle2: styles.topTextNormal,
             topStyle3: styles.topTextNormal,
@@ -23,9 +25,14 @@ export default class StationTab extends React.Component {
             topStyleView2: styles.topViewNormal,
             topStyleView3: styles.topViewNormal,
             topStyleView4: styles.topViewNormal,
+            position:0,
         };
     }
     _switch(position, noScroll) {
+        if(!(noScroll)&&position==this.state.position&&position==0){
+            this.setState({fristView:this.state.fristView==Scada?DataList:Scada,});
+        }
+        this.setState({position:position});
         if(!(noScroll))this.scrollView.scrollTo({ x: position * width, y: 0, animated: true });
 
         this.setState({
@@ -87,7 +94,8 @@ export default class StationTab extends React.Component {
                 <View style={styles.topView}>
                     <TouchableOpacity style={styles.all} onPress={this._switch.bind(this, 0,false)}>
                         <View style={styles.topViewItem}>
-                            <Text style={this.state.topStyle1}>实时组态</Text>
+                            <Text style={this.state.topStyle1}>{this.state.fristView==Scada?"实时组态":"实时数据"}</Text>
+                            {this.state.position==0?<Image style={styles.switch}  resizeMode="contain" source={require('../../icons/ico_switch.png')} />:null}
                         </View>
                         <View style={this.state.topStyleView1}></View>
                     </TouchableOpacity>
@@ -111,7 +119,7 @@ export default class StationTab extends React.Component {
                     </TouchableOpacity>
                 </View>
                 <ScrollView ref={scrollView => this.scrollView = scrollView} horizontal={true} pagingEnabled={true} onScroll={(data) => { this.onScroll(data.nativeEvent.contentOffset.x); }}>
-                    <View style={styles.itemStyle}><Scada navigator={this.props.navigator} station_id={this.props.station_id}/></View>
+                    <View style={styles.itemStyle}><this.state.fristView navigator={this.props.navigator} station_id={this.props.station_id}/></View>
                     <View style={styles.itemStyle}><Strategy navigator={this.props.navigator} station_id={this.props.station_id}/></View>
                     <View style={styles.itemStyle}><LogClassification navigator={this.props.navigator} station_id={this.props.station_id}/></View>
                     <View style={styles.itemStyle}><ArchivesClassification navigator={this.props.navigator} station_id={this.props.station_id}/></View>
@@ -133,13 +141,16 @@ const styles = StyleSheet.create({
     },
     topViewItem: {
         flex: 1,
+        flexDirection: 'row',
         justifyContent: 'center',//垂直居中
+        alignItems: 'center',
     },
     topTextNormal: {
         height: 20,
         color: "#000",
         textAlign: 'center',
     },
+
     topTextSelection: {
         height: 20,
         color: "#35aeff",
@@ -166,6 +177,10 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         marginRight: 10,
 
+    },
+    switch:{
+        width: 15,
+        height: 15,
     },
     topText: {
         color: "#ffffff",
