@@ -39,11 +39,6 @@ const ds = new ListView.DataSource({
 import StationDetails from './station_details/station_tab';
 import Orientation from 'react-native-orientation';
 export default class HeatStationMaintenance extends React.Component {
-
-    componentWillMount() {
-        //Orientation.lockToPortrait();
-    }
-
     constructor(props) {
         super(props);
 
@@ -287,7 +282,7 @@ export default class HeatStationMaintenance extends React.Component {
                 if (this.state.data[zimu[i]]) {
                     h = h + 18;
                     for (let j = 0; j < this.state.data[zimu[i]].length; j++) {
-                        h = h + 45;
+                        h = h + 44;
                     }
                 }
             }
@@ -305,7 +300,7 @@ export default class HeatStationMaintenance extends React.Component {
                     <Image style={{ width: 25, height: 25, marginRight: 10,}} source={require('../icons/nav_flag.png')} />
                 </View>
 
-                <View style={{backgroundColor:'#343439',width:width,height:40,flexDirection:'row'}}>
+                <View style={{backgroundColor:'#434b59',width:width,height:40,flexDirection:'row'}}>
                     <View style={styles.topTabView}>
                         <TouchableOpacity activeOpacity={0.5} onPress={this.allClicked}>
                             <View style={this.state.allSelect?styles.topTabBorderDisplay:styles.topTabBorderUnDisplay}>
@@ -364,9 +359,9 @@ export default class HeatStationMaintenance extends React.Component {
                         renderRow={ data =>(
                             <TouchableHighlight underlayColor="rgba(77,190,255,0.5)" onPress={this.openScada.bind(this, data.station_name, data.station_id)}>
                                 <View style={styles.listView}>
-                                    <View style={styles.selectItemView}>
-                                        <Text style={data.status === 1?{ fontSize: 10, color: '#000000', textAlign: 'center',  }:{fontSize: 10, color: 'rgb(248,184,54)', textAlign: 'center',}} numberOfLines={1}>{data.station_name}</Text>
-                                        <Text style={data.status === 1?{ fontSize: 7, color: '#888888', textAlign: 'center',  }:{ fontSize: 7, color: 'rgb(248,184,54)', textAlign: 'center',  }}>{data.data?data.data.data_time:null}</Text>
+                                    <View style={styles.selectItemView1}>
+                                        <Text style={data.status === 1?{ fontSize: 10, color: '#0099ff', textAlign: 'left', marginLeft:9 }:{fontSize: 10, color: 'rgb(248,184,54)', textAlign: 'left',marginLeft:9}} numberOfLines={1}>{data.station_name}</Text>
+                                        <Text style={data.status === 1?{ fontSize: 7, color: '#0099ff', textAlign: 'left', marginLeft:9 }:{ fontSize: 7, color: 'rgb(248,184,54)', textAlign: 'left', marginLeft:9}}>{data.data?data.data.data_time:null}</Text>
                                     </View>
                                     <View style={styles.selectItemView}>
                                         <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data?data.data["rd"]:"-"}</Text>
@@ -390,7 +385,7 @@ export default class HeatStationMaintenance extends React.Component {
                             <Text style={{ fontSize: 15, padding: 5, paddingLeft: 18, height: 30, backgroundColor: "#f3f3f3" }}>{sectionData}</Text>
                         )}
                         renderSeparator={() => (
-                            <View style={{ height: 1, backgroundColor: "#f2f2f299", width: width - 75, marginLeft: 48 }} />
+                            <View style={{ height: 0.1, backgroundColor: "#f2f2f299", width: width - 75, marginLeft: 48 }} />
                         )}
                     /> :
                         <ActivityIndicator
@@ -401,7 +396,7 @@ export default class HeatStationMaintenance extends React.Component {
 
 
                 </View>
-                <View style={{ position: 'absolute', marginTop: 160, alignSelf: "flex-end", width: 32, }}>
+                <View style={{ position: 'absolute', marginTop: 130, alignSelf: "flex-end", width: 32, }}>
                     <ListView
                         initialListSize={26}
                         dataSource={this.state.dataSourceInitial}
@@ -475,6 +470,13 @@ const styles = StyleSheet.create({
         width: (width - 18) / 6,
         height: 40,
         alignItems:"center",
+        justifyContent: 'center',
+    },
+    selectItemView1: {
+        width: (width - 18) / 6,
+        height: 40,
+        flexDirection:'column',
+        alignItems:"flex-start",
         justifyContent: 'center',
     },
 
@@ -589,7 +591,7 @@ const styles = StyleSheet.create({
         fontSize: 13,
         backgroundColor:"#ffffff00",
         textAlign: "center",
-        height:(height-180)/26
+        height:(height-180)/26,
     },
     listImage: {
         width: 28,

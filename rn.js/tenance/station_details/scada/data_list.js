@@ -7,14 +7,21 @@ import React from 'react';
 import { View, Text, Image, Platform, NavigatorIOS, StyleSheet, TouchableOpacity, ListView, AsyncStorage, Navigator } from 'react-native';
 import Dimensions from 'Dimensions';
 import Orientation from 'react-native-orientation';
-var Alert = Platform.select({
+const Alert = Platform.select({
     ios: () => require('AlertIOS'),
     android: () => require('Alert'),
 })();
 import Constants from './../../../constants';
-var { width, height } = Dimensions.get('window');
+import HeatStationChart from '../heat_station_chart';
+
+const { width, height } = Dimensions.get('window');
 
 export default class DataList extends React.Component {
+
+    // componentWillUnmount() {
+    //     Orientation.lockToLandscape();
+    // }
+
     constructor(props) {
         super(props);
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
@@ -22,14 +29,16 @@ export default class DataList extends React.Component {
             dataSource: ds.cloneWithRows([]),
             data: []
         };
-        var _this = this;
+
+        const _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
                 var uri = Constants.serverSite + "/v1_0_0/station/59ce3054f25ae82b4c1d622a/datas?access_token=" + result;
-                console.log(uri)
+                console.log(uri);
                 fetch(uri)
                     .then((response) => response.json())
                     .then((responseJson) => {
+                        console.log(responseJson);
                         var data = [];
                         for (var i = 0; i < responseJson.length; i++) {
                             if (responseJson[i].tag_id < 100) {
@@ -52,6 +61,17 @@ export default class DataList extends React.Component {
         });
     }
 
+    // 点击跳转到详细信息图表
+    pushToChart(tag_id,tag_name) {
+        this.props.navigator.push({
+            component: HeatStationChart,
+            passProps:{
+                tag_id:tag_id,
+                station_id:this.props.station_id,
+                tag_name:tag_name,
+            }
+        })
+    }
 
     render() {
         return (
@@ -68,7 +88,7 @@ export default class DataList extends React.Component {
                     contentContainerStyle={styles.listView}
                     renderRow={(rowData) => {
                         return (
-                            <TouchableOpacity style={styles.item} >
+                            <TouchableOpacity style={styles.item} onPress={this.pushToChart.bind(this,rowData.tag_id,rowData.tag_name)}>
                                 <View style={styles.line} />
                                 <View style={styles.itemContent} >
                                     <Text style={styles.value}>{rowData.data_value}{rowData.data_unit}</Text>
