@@ -13,6 +13,7 @@
     "native-echarts": "^0.3.0",
     "react": "^16.0.0-alpha.6",
     "react-native": "^0.44.2",
+    "react-native-appupdate": "^1.1.2",
     "react-native-deprecated-custom-components": "^0.1.0",
     "react-native-orientation": "^1.17.0",
     "react-native-swipe-list-view": "^0.4.1",

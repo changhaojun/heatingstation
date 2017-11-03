@@ -27,9 +27,14 @@ export default class Home extends React.Component {
                 _this.setState({ company_code: result })
             }
         });
+        AsyncStorage.getItem("company_id", function (errs, result) {
+            if (!errs) {
+                _this.setState({ company_id: result });
+            }
+        });
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
-                var uri=Constants.serverSite + "/v1_0_0/totalData?company_code=" + _this.state.company_code + "&access_token=" + result;
+                var uri=Constants.serverSite + "/v1_0_0/totalData?company_code=" + _this.state.company_code + "&access_token=" + result+"&company_id=" + _this.state.company_id;
                 console.log(uri)
                 fetch(uri)
                     .then((response) => response.json())

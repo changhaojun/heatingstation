@@ -135,6 +135,8 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-fs')
+    compile project(':react-native-appupdate')
     compile project(':jpush-react-native')
     compile project(':orientation')
     compile fileTree(dir: "libs", include: ["*.jar"])

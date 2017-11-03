@@ -157,7 +157,7 @@
                 var mapLevel = map.getZoom();
                 var marker = new BMap.Marker(point, {
                     icon: new BMap.Symbol(BMap_Symbol_SHAPE_CIRCLE, {
-                        scale: mapLevel<14?(markerNum >= 8 ? 3 : 13):2,//图标缩放大小
+                        scale: mapLevel>=15?(markerNum >= 8 ? 3 : 13):2,//图标缩放大小
                         fillColor: color,//填充颜色
                         fillOpacity: 1,//填充透明度
                         strokeColor: color,

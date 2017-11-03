@@ -45,7 +45,7 @@ export default class Scada extends React.Component {
                     if (!errs) {
                         _this.setState({ access_token: result });
                         _this.webview.postMessage("{type:'token',value:'" + result + "'}");
-                        //_this.updateData();
+                        _this.updateData();
                     }
                 });
             },
@@ -61,7 +61,7 @@ export default class Scada extends React.Component {
                     .then((response) => response.json())
                     .then((responseJson) => {
                         //console.log(responseJson);
-                        _this.webview.postMessage("{type:'data',value:" + JSON.stringify(responseJson) + "}");
+                        if (_this.webview) {_this.webview.postMessage("{type:'data',value:" + JSON.stringify(responseJson) + "}");}
                     })
                     .catch((error) => {
                         console.error(error);
