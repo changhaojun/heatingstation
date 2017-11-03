@@ -30,6 +30,15 @@
     </item>
     <item
         is-multidex="false"
+        jar="/Users/finfosoft/heatingstation/node_modules/react-native-fs/android/build/intermediates/bundles/default/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="ff02acd414a04753c59eba84a60a7022f398e1f7">
+        <dex dex="/Users/finfosoft/heatingstation/android/app/build/intermediates/pre-dexed/debug/classes_b22739a9a0d1e3afb89e812d382e6ffa4cfb87d8.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="/Users/finfosoft/.gradle/caches/modules-2/files-2.1/com.squareup.okio/okio/1.9.0/f824591a0016efbaeddb8300bee54832a1398cfa/okio-1.9.0.jar"
         jumboMode="false"
         optimize="true"
@@ -99,6 +108,15 @@
         revision="25.0.3"
         sha1="6975da39a7040257bd51d21a231b76c915872d38">
         <dex dex="/Users/finfosoft/heatingstation/android/app/build/intermediates/pre-dexed/debug/javax.inject-1_bdf838f270b757b5f4809ea7e61bb968706285a0.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/finfosoft/heatingstation/node_modules/react-native-appupdate/android/build/intermediates/bundles/default/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.3"
+        sha1="17dabda8056a12778633d17a4351128789e79bd7">
+        <dex dex="/Users/finfosoft/heatingstation/android/app/build/intermediates/pre-dexed/debug/classes_135e64c3d1878902a074cb17d74031e304099548.jar" />
     </item>
     <item
         is-multidex="false"
