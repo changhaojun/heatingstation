@@ -1,16 +1,35 @@
 /**
  * 换热站tab框架页面
+ *
+ *
+ * 首页-【热耗】子模块
+ *
+ * 2017/11/4修改 by Vector.
+ *      1、删除无用的模块的导入
+ *      2、对获取到的数据进行判断,防止页面渲染时因无数据造成的渲染错误
+ *      3、删除多余注释
+ *
+ * 2017/11/6修改 by Vector.
+ *      1、修复热耗进度条越界的问题
+ *
  */
+
 import React from 'react';
-import { View, Text, Image, StyleSheet, AsyncStorage, ListView, TouchableOpacity, ScrollView, ToastAndroid } from 'react-native';
+import {
+    View,
+    Text,
+    StyleSheet,
+    AsyncStorage,
+    ListView,
+    TouchableOpacity,
+    ScrollView,
+    AlertIOS,
+} from 'react-native';
 import Dimensions from 'Dimensions';
 import Constants from '../constants';
 import Echarts from 'native-echarts';
-// import Tab1 from "./operation_log/log_classification";
-// import Tab1 from "./archives/archives_classification";
-// import Tab1 from "./control_strategy/strategy";
-var colors=['#5ca5b4', '#f4bf30'];
-var { width, height } = Dimensions.get('window');
+const colors=['#5ca5b4', '#f4bf30'];
+const { width, height } = Dimensions.get('window');
 
 export default class StationTab extends React.Component {
     constructor(props) {
@@ -22,7 +41,7 @@ export default class StationTab extends React.Component {
             data2: [],
             data3: [],
         };
-        var _this = this;
+        const _this = this;
         AsyncStorage.getItem("company_code", function (errs, result) {
             if (!errs) {
                 _this.setState({ company_code: result })
@@ -34,8 +53,20 @@ export default class StationTab extends React.Component {
                 fetch(url)
                     .then((response) => response.json())
                     .then((responseJson) => {
-                        console.log(responseJson);
-                        _this.setState({ data1: responseJson })
+                        if (responseJson.length > 0)
+                        {
+                            _this.setState({
+                                data1: responseJson
+                            });
+                        }
+                        else
+                        {
+                            AlertIOS.alert(
+                                '提示',
+                                '暂无热耗数据'
+                            )
+                        }
+
                     })
                     .catch((error) => {
                         console.error(error);
@@ -82,7 +113,7 @@ export default class StationTab extends React.Component {
                 {
                     type: 'category',
                     axisTick: {
-                        alignWithLabel: true//保证刻度线与刻度标签的对齐
+                        alignWithLabel: true // 保证刻度线与刻度标签的对齐
                     },
                     axisLine: {
                         lineStyle: {
@@ -121,7 +152,7 @@ export default class StationTab extends React.Component {
                         }
                     },
                     axisLabel: {
-                        textStyle: {//改变想轴label的字体样式
+                        textStyle: { // 改变想轴label的字体样式
                             color: '#bbbbbb'
                         },
                         formatter: '{value}'
@@ -130,17 +161,16 @@ export default class StationTab extends React.Component {
                 {
                     type: 'value',
                     name: '面积(万㎡)',
-                    splitLine: { show: false }, //去除网格中的坐标线
+                    splitLine: { show: false }, // 去除网格中的坐标线
                     axisLine: {
                         lineStyle: {
                             color: colors[i]
                         }
                     },
                     axisLabel: {
-                        //rotate:-45,//倾斜度 -90 至 90 默认为0
                         formatter: '{value}',
                         textStyle: {
-                            fontSize: 12,// 让字体变大
+                            fontSize: 12, // 让字体变大
                             fontFamily: "Microsoft YaHei",
                             color: '#bbbbbb'
                         }
@@ -152,8 +182,8 @@ export default class StationTab extends React.Component {
                 {
                     type: 'bar',
                     yAxisIndex: 0,
-                    //smooth:true,//使折线平滑
-                    itemStyle: {//改变柱状图的颜色以及透明度
+                    smooth:true, // 使折线平滑
+                    itemStyle: { // 改变柱状图的颜色以及透明度
                         normal: {
                             color: colors[i],
                             opacity: 0.5
@@ -197,12 +227,12 @@ export default class StationTab extends React.Component {
         if (!(noScroll)) this.scrollView.scrollTo({ x: position * width, y: 0, animated: true });
         this.setState({ onshow: position })
     }
+
     onScroll(x) {
         if (!(x % width)) {
             this._switch(parseInt(x / width), true);
         }
     }
-
 
     render() {
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
@@ -238,8 +268,8 @@ export default class StationTab extends React.Component {
                                     <View style={{ paddingLeft: 15, }}>
                                         <Text style={{ fontSize: 13, color: "#777777", lineHeight: 20 }}>{rowData.station_name}</Text>
                                         <View style={{ flexDirection: 'row', }}>
-                                            <View style={{ height: 10, width: 250, backgroundColor: "#f3f7fa" }}><View style={{ height: 10, width: 250 * rowData.data_value / this.state.data1[0].data_value, backgroundColor: "#53cbff" }} /></View>
-                                            <Text style={{ marginLeft: 5, fontSize: 13, color: "#777777", lineHeight: 10, }}>{rowData.data_value}GJ</Text>
+                                            <View style={{ height: 10, width: 250, backgroundColor: "#f3f7fa" }}><View style={{ height: 10, width: 200 * rowData.data_value / this.state.data1[0].data_value, backgroundColor: "#53cbff" }} /></View>
+                                            <Text style={{ marginLeft: 5, fontSize: 10, color: "#777777", lineHeight: 10, }}>{rowData.data_value}GJ</Text>
                                         </View>
                                     </View>
                                 )
@@ -254,7 +284,6 @@ export default class StationTab extends React.Component {
     }
 }
 
-// 样式
 const styles = StyleSheet.create({
     all: {
         height: 200,
@@ -266,13 +295,12 @@ const styles = StyleSheet.create({
         width: this.window.width,
         height: 38,
         flexDirection: 'row',
-        //paddingHorizontal:20,
         borderBottomWidth: 1,
         borderBottomColor: "#eaeaea"
     },
     topViewItem: {
         flex: 1,
-        justifyContent: 'center',//垂直居中
+        justifyContent: 'center',
     },
     topTextNormal: {
         height: 20,
@@ -297,14 +325,12 @@ const styles = StyleSheet.create({
     itemStyle: {
         flex: 1,
         width: width,
-
     },
     topSides: {
         width: 18,
         height: 18,
         marginLeft: 10,
         marginRight: 10,
-
     },
     topText: {
         color: "#ffffff",
@@ -318,7 +344,6 @@ const styles = StyleSheet.create({
         width: width,
         height: 50,
         backgroundColor: '#000000',
-        //justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
     }

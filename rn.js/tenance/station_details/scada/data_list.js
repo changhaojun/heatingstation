@@ -33,7 +33,7 @@ export default class DataList extends React.Component {
         const _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
-                var uri = Constants.serverSite + "/v1_0_0/station/59ce3054f25ae82b4c1d622a/datas?access_token=" + result;
+                var uri = Constants.serverSite + "/v1_0_0/station/" + _this.props.station_id + "/datas?access_token=" + result;
                 console.log(uri);
                 fetch(uri)
                     .then((response) => response.json())
@@ -92,7 +92,7 @@ export default class DataList extends React.Component {
                                 <View style={styles.line} />
                                 <View style={styles.itemContent} >
                                     <Text style={styles.value}>{rowData.data_value}{rowData.data_unit}</Text>
-                                    <Text style={styles.text}>{rowData.tag_name}</Text>
+                                    <Text style={styles.text1}>{rowData.tag_name}</Text>
                                 </View>
                             </TouchableOpacity>
                         )
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
         width: 18,
         height: 18,
     },
-    text: {
+    text1: {
         fontSize: 15,
         color: "#5e5c68",
     },

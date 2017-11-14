@@ -1,15 +1,36 @@
-// 主页
+/**
+ * Created by Vector on 17/4/15.
+ *
+ * 登录页面
+ *
+ * 2017/11/5修改 by Vector.
+ *      1、将登录提示由强提示改为弱提示
+ *      2、删除无用的模块导入
+ *      3、删除多余注释和无用代码
+ *      4、为本地存储信息失败加入弱提示
+ *
+ */
 import React from 'react';
-import { View, Text, Image, TextInput, StyleSheet, Platform, TouchableOpacity, StatusBar, Switch, AsyncStorage } from 'react-native';
-var Alert = Platform.select({
-    ios: () => require('AlertIOS'),
-    android: () => require('Alert'),
-})();
-import Dimensions from 'Dimensions';
-import Constants from './constants';
-var { width, height } = Dimensions.get('window');
+import {
+    View,
+    Text,
+    Image,
+    TextInput,
+    StyleSheet,
+    Platform,
+    TouchableOpacity,
+    StatusBar,
+    Switch,
+    AsyncStorage,
+    Dimensions
+} from 'react-native';
 
+import Toast from 'react-native-simple-toast';
+import Constants from './constants';
 import Main from './main';
+
+const { width, height } = Dimensions.get('window');
+
 export default class Login extends React.Component {
     // 初始化数据
     constructor(props) {
@@ -23,21 +44,18 @@ export default class Login extends React.Component {
             access_token: null,
             refresh_token: null,
         };
-        var _this = this;
+
+        const _this = this;
         // 将用户名、密码从本地存储中提取出来，并更新状态机
         AsyncStorage.getItem("userName", function (errs, result) {
             if (!errs) {
-
                 _this.setState({ userName: result });
-                console.log(_this.state.userName);
             }
         });
         AsyncStorage.getItem("passWord", function (errs, result) {
             if (!errs) {
                 _this.setState({ passWord: result });
-
-                console.log(_this.state.passWord);
-                if (_this.state.userName != null && _this.state.passWord != null) {
+                if (_this.state.userName !== null && _this.state.passWord !== null) {
                     _this.setState({ remember: true });
                 }
             }
@@ -45,24 +63,36 @@ export default class Login extends React.Component {
     }
     //登录按钮事件
     login() {
-        const navigator = this.props.navigator;//上一个页面传过来的值
+        const navigator = this.props.navigator;
         console.log(Constants.serverSite+"/authorize/authorize?client_id=heat&client_secret=heat&username=" + this.state.userName + "&password=" + this.state.passWord)
         fetch(Constants.serverSite+"/authorize/authorize?client_id=heat&client_secret=heat&username=" + this.state.userName + "&password=" + this.state.passWord)
             .then((response) => response.json())
             .then((responseJson) => {
-                if (navigator && responseJson.code == 200) {
-                    if (this.state.remember) {
-                        //存储账号密码
-                        AsyncStorage.setItem("userName", this.state.userName, function (errs) {});
-                        AsyncStorage.setItem("passWord", this.state.passWord, function (errs) {});
-                    }
-                    console.log(responseJson.access_token);
-                    AsyncStorage.setItem("company_location", responseJson.company_location, function (errs) {});
-                    AsyncStorage.setItem("access_token", responseJson.access_token, function (errs) {});
-                    AsyncStorage.setItem("fullname", responseJson.fullname, function (errs) {});
-                    AsyncStorage.setItem("company_id", responseJson.company_id, function (errs) {});
-                    AsyncStorage.setItem("company_code", responseJson.company_code, function (errs) {});
+                if (navigator && responseJson.code === 200) {
 
+                    if (this.state.remember) {
+                        AsyncStorage.setItem("userName", this.state.userName, function (errs) {
+                            // Toast.showWithGravity("存储账号失败",Toast.SHORT,Toast.BOTTOM);
+                        });
+                        AsyncStorage.setItem("passWord", this.state.passWord, function (errs) {
+                            // Toast.showWithGravity("存储密码失败",Toast.SHORT,Toast.CENTER);
+                        });
+                    }
+                    AsyncStorage.setItem("company_location", responseJson.company_location, function (errs) {
+                        // Toast.showWithGravity("存储company_location失败",Toast.SHORT,Toast.CENTER);
+                    });
+                    AsyncStorage.setItem("access_token", responseJson.access_token, function (errs) {
+                        // Toast.showWithGravity("存储access_token失败",Toast.SHORT,Toast.CENTER);
+                    });
+                    AsyncStorage.setItem("fullname", responseJson.fullname, function (errs) {
+                        // Toast.showWithGravity("存储fullname失败",Toast.SHORT,Toast.CENTER);
+                    });
+                    AsyncStorage.setItem("company_id", responseJson.company_id, function (errs) {
+                        // Toast.showWithGravity("存储company_id失败",Toast.SHORT,Toast.CENTER);
+                    });
+                    AsyncStorage.setItem("company_code", responseJson.company_code, function (errs) {
+                        // Toast.showWithGravity("存储company_code失败",Toast.SHORT,Toast.CENTER);
+                    });
 
                     //跳转
                     navigator.replace({
@@ -70,18 +100,11 @@ export default class Login extends React.Component {
                         component: Main,
                     })
                 } else {
-                    Alert.alert(
-                        '有问题',
-                        '帐号或密码错误',
-                    );
+                    Toast.showWithGravity("账号或密码错误",Toast.SHORT,Toast.CENTER)
                 }
             })
-            .catch((error) => {
-                console.log(error)
-                Alert.alert(
-                    '提示',
-                    '网络连接失败',
-                );
+            .catch(() => {
+                Toast.showWithGravity("网络连接错误",Toast.SHORT,Toast.CENTER)
             });
     }
 
@@ -89,10 +112,10 @@ export default class Login extends React.Component {
         return (
             //  最外层主View
             <View style={styles.all}>
-                
+                <StatusBar hidden={true}/>
                 {/*顶部放置Logo的View*/}
                 <View style={styles.topView}>
-                    <Image source={require('./images/login_logo.png')} style={styles.logo}></Image>
+                    <Image source={require('./images/login_logo.png')} style={styles.logo}/>
                     <Text style={styles.logoTitle}>智慧供热系统</Text>
                 </View>
 
@@ -111,7 +134,8 @@ export default class Login extends React.Component {
                                 defaultValue={this.state.userName}>
                             </TextInput>
                         </View>
-                        <View style={styles.underline}></View>
+                        <View style={styles.underline}>
+                        </View>
                     </View>
                     {/*密码的View*/}
                     <View style={styles.inputView}>
@@ -126,7 +150,8 @@ export default class Login extends React.Component {
                                 defaultValue={this.state.passWord}>
                             </TextInput>
                         </View>
-                        <View style={styles.underline}></View>
+                        <View style={styles.underline}>
+                        </View>
                     </View>
                     <View style={styles.switchView}>
                         <Switch
@@ -174,8 +199,7 @@ const styles = StyleSheet.create({
     logo: {
         width: 80,
         height: 53,
-        //根据宽度或者高度自适应图片大小
-        // resizeMode:Image.resizeMode.contain,
+
     },
     logoTitle: {
         fontSize: 22,
@@ -219,7 +243,6 @@ const styles = StyleSheet.create({
                 height: 40,
             },
         }),
-        // borderWidth: 2,
     },
     underline: {
         width: width - 60,
@@ -259,4 +282,3 @@ const styles = StyleSheet.create({
         marginTop: height / 6,
     }
 });
-module.exports = Login;

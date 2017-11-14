@@ -1,13 +1,35 @@
 /**
  * Created by Vector on 17/4/17.
+ *
+ * 告警页面
+ *
+ * 2017/11/5修改 by Vector.
+ *      1、规范代码格式
+ *      2、删除无用的模块导入
+ *      3、给获取数据为空时加入弱提示
+ *      4、隐藏手机状态栏
  */
-// 告警页面
 import React from 'react';
-import { View, Text, Image, TextInput, Modal, AsyncStorage, StyleSheet, TouchableHighlight, StatusBar, TouchableOpacity, ListView, } from 'react-native';
-import Dimensions from 'Dimensions';
-import Constants from '../constants';
+import {
+    View,
+    Text,
+    Image,
+    TextInput,
+    Modal,
+    AsyncStorage,
+    StyleSheet,
+    TouchableHighlight,
+    StatusBar,
+    TouchableOpacity,
+    ListView,
+    Dimensions
+} from 'react-native';
 
-var { width, height } = Dimensions.get('window');
+import Constants from '../constants';
+import Toast from 'react-native-simple-toast';
+
+const { width, height } = Dimensions.get('window');
+
 var load = 0;
 export default class Warn extends React.Component {
     constructor(props) {
@@ -29,24 +51,32 @@ export default class Warn extends React.Component {
             company_code:"000005"
         };
         this.getData();
-        var _this = this;
+        const _this = this;
         AsyncStorage.getItem("fullname", function (errs, result) {_this.setState({fullname:result})});
         AsyncStorage.getItem("company_code", function (errs, result) {_this.setState({company_code:result})});
     }
+
     getData() {
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-        var _this = this;
+        const _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
                 var uri=Constants.serverSite + "/v1_0_0/alarmHistory?pageNumber=" + load + "&pageSize=15&access_token=" + result + "&start_time=" + _this.state.startTime + "&end_time=" + _this.state.endTime+ "&company_code=" + _this.state.company_code;
                 if(_this.props.station_id){uri=uri+"&station_id="+_this.props.station_id}
-                console.log(uri)
                 fetch(uri)
                     .then((response) => response.json())
                     .then((responseJson) => {
                         console.log(responseJson);
-                        var data = _this.state.data.concat(responseJson.rows);
-                        _this.setState({ dataSource: ds.cloneWithRows(data), data: data })
+
+                        if (responseJson.rows.length > 0)
+                        {
+                            var data = _this.state.data.concat(responseJson.rows);
+                            _this.setState({ dataSource: ds.cloneWithRows(data), data: data })
+                        }
+                        else
+                        {
+                            Toast.showWithGravity("暂无告警数据",Toast.SHORT,Toast.CENTER)
+                        }
                     })
                     .catch((error) => {
                         console.error(error);
@@ -91,6 +121,7 @@ export default class Warn extends React.Component {
     render() {
         return (
             <View style={styles.all}>
+                <StatusBar hidden={true}/>
                 <View style={styles.navView}>
                     <TouchableOpacity onPress={this.back.bind(this)}>
                         <Image style={{width: 25, height: 20, marginLeft: 10,}} resizeMode="contain" source={require('../icons/nav_back_icon.png')} />
@@ -173,12 +204,10 @@ export default class Warn extends React.Component {
     }
 }
 
-// 样式
 const styles = StyleSheet.create({
     all: {
         flex: 1,
         backgroundColor: "#f2f2f2",
-        // marginTop: 20,
     },
     navView: {
         flexDirection: 'row',
@@ -187,12 +216,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#434b59',
         justifyContent: 'center',
         alignItems: 'center',
-        // borderBottomWidth: 1,
-        // borderBottomColor: '#C3AB90',
     },
     topNameText: {
         flex: 1,
-        //marginTop: 10,
         textAlign: 'center',
         color: "#ffffff",
         fontSize: 19,
@@ -254,7 +280,6 @@ const styles = StyleSheet.create({
         alignSelf: "flex-start",
         marginLeft: width - 55,
         position: "absolute",
-        //justifyContentSelf:"flex-end"
     },
     modalBut: {
         fontSize: 15,

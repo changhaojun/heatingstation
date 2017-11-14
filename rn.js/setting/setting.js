@@ -1,14 +1,27 @@
 /**
  * Created by Vector on 17/4/17.
+ *
+ * 设置页面
+ *
+ * 2017/11/5修改 by Vector.
+ *      1、删除无用的模块导入
+ *      2、隐藏状态栏
+ *      3、优化代码逻辑
+ *      4、修改个别图标样式问题
  */
-// 个人中心页面
 import React from 'react';
 import {
-    View, Text, Image, TextInput, NavigatorIOS, StyleSheet, TouchableHighlight, StatusBar, TouchableOpacity, Button,
+    View,
+    Text,
+    Image,
+    StyleSheet,
+    TouchableHighlight,
+    StatusBar,
+    TouchableOpacity,
     AsyncStorage,
+    Dimensions
 } from 'react-native';
-import Dimensions from 'Dimensions';
-var { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 import InspectionWell from "./inspection_well"
 import AboutUS from './about_us';
@@ -24,15 +37,13 @@ export default class Setting extends React.Component {
             userName: '',
         };
 
-        // 将用户名从本地储存拿出，并更新状态机
-        var _this = this;
+        const _this = this;
         AsyncStorage.getItem("userName", function (errs, result) {
             if (!errs) {
                 _this.setState({ userName: result });
             }
         });
     }
-
 
     backHome() {
         this.props.navigator.pop();
@@ -59,6 +70,7 @@ export default class Setting extends React.Component {
     render() {
         return (
             <View style={styles.all}>
+                <StatusBar hidden={true}/>
                 <View style={styles.topView}>
                     <View style={styles.navView}>
                         <TouchableOpacity onPress={this.backHome.bind(this)}>
@@ -77,30 +89,30 @@ export default class Setting extends React.Component {
                         <Text style={styles.textItem}>用户名 {this.state.userName}</Text>
                     </View>
 
-                    <TouchableHighlight underlayColor="#ECEDEE" onPress={this.goMessage.bind(this)}>
+                    <TouchableOpacity underlayColor="#ECEDEE" onPress={this.goMessage.bind(this)}>
                         <View style={styles.lineView}>
                             <Image style={styles.imageItem} source={require('../icons/message_icon.png')} />
                             <Text style={styles.textItem}>消息通知</Text>
                         </View>
-                    </TouchableHighlight>
+                    </TouchableOpacity>
 
                     <View style={styles.lineView}>
                         <Image style={styles.imageItem} source={require('../icons/version_icon.png')} />
                         <Text style={styles.textItem}>应用版本 V1.0</Text>
                     </View>
 
-                    <TouchableHighlight underlayColor="#ECEDEE" onPress={this.goAboutUS.bind(this)} >
+                    <TouchableOpacity underlayColor="#ECEDEE" onPress={this.goAboutUS.bind(this)} >
                         <View style={styles.lineView}>
                             <Image style={styles.imageItem} source={require('../icons/us_icon.png')} />
                             <Text style={styles.textItem}>关于我们</Text>
                         </View>
-                    </TouchableHighlight>
-                    <TouchableHighlight underlayColor="#ECEDEE" onPress={()=>this.props.navigator.push({component:InspectionWell})} >
-                        <View style={styles.lineView}>
-                            <Image style={styles.imageItem} source={require('../icons/well.png')} />
-                            <Text style={styles.textItem}>检查井录入</Text>
-                        </View>
-                    </TouchableHighlight>
+                    </TouchableOpacity>
+                    {/*<TouchableHighlight underlayColor="#ECEDEE" onPress={()=>this.props.navigator.push({component:InspectionWell})} >*/}
+                        {/*<View style={styles.lineView}>*/}
+                            {/*<Image style={{width:22,height:22,marginLeft:40,}} source={require('../icons/well.png')} />*/}
+                            {/*<Text style={styles.textItem}>检查井录入</Text>*/}
+                        {/*</View>*/}
+                    {/*</TouchableHighlight>*/}
 
                     <View style={styles.exitButtonView}>
                         <TouchableOpacity onPress={this.exit.bind(this)}>
@@ -115,11 +127,9 @@ export default class Setting extends React.Component {
     }
 }
 
-// 样式
 const styles = StyleSheet.create({
     all: {
         flex: 1,
-        // backgroundColor: "#ffffff",
         flexDirection: 'column',
     },
     topView: {
@@ -131,7 +141,6 @@ const styles = StyleSheet.create({
     bottomView: {
         flex: 1,
     },
-
     navView: {
         flexDirection: 'row',
         width: width,
@@ -142,7 +151,6 @@ const styles = StyleSheet.create({
     },
     topNameText: {
         flex: 1,
-        //marginTop: 10,
         textAlign: 'center',
         color: "#ffffff",
         fontSize: 19,
@@ -155,7 +163,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     lineView: {
-        //flex:0.15,
         paddingVertical: 18,
         backgroundColor: "#fff",
         flexDirection: 'row',

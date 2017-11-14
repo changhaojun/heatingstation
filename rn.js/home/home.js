@@ -1,27 +1,43 @@
-// 主页
+/**
+ * Created by Vector on 17/4/18.
+ *
+ * 2017/11/5修改 by Vector.
+ *      1、删除多余注释
+ *      2、将部分var定义的变量改为const定义
+ *      3、删除无用的模块导入
+ *      4、删除无用的样式代码
+ *
+ */
 import React from 'react';
-import { View, Text, Image, AsyncStorage,ScrollView,TextInput, NavigatorIOS, StyleSheet, TouchableHighlight, StatusBar, TouchableOpacity } from 'react-native';
-import Dimensions from 'Dimensions';
-var { width, height } = Dimensions.get('window');
+import {
+    View,
+    Text,
+    Image,
+    AsyncStorage,
+    ScrollView,
+    StyleSheet,
+    StatusBar,
+    TouchableOpacity,
+    Dimensions
+} from 'react-native';
 
 import Weather from './weather';
 import HeatList from './heat_list';
 import HomeTab from './hometab';
-
-// import Home from './home.ios';
 import Setting from '../setting/setting';
 import Warn from './warn';
 import Constants from '../constants';
+
+const { width, height } = Dimensions.get('window');
+
 export default class Home extends React.Component {
-
-
     constructor(props) {
         super(props);
         this.state = {
             data: null,
             company_code: "000005"
         };
-        var _this = this;
+        const _this = this;
         AsyncStorage.getItem("company_code", function (errs, result) {
             if (!errs) {
                 _this.setState({ company_code: result })
@@ -35,11 +51,9 @@ export default class Home extends React.Component {
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
                 var uri=Constants.serverSite + "/v1_0_0/totalData?company_code=" + _this.state.company_code + "&access_token=" + result+"&company_id=" + _this.state.company_id;
-                console.log(uri)
                 fetch(uri)
                     .then((response) => response.json())
                     .then((responseJson) => {
-                        console.log(responseJson);
                         _this.setState({ data: responseJson })
                     })
                     .catch((error) => {
@@ -51,14 +65,12 @@ export default class Home extends React.Component {
     }
 
     openSetting() {
-        const navigator = this.props.navigator;
         this.props.navigator.push({
             component: Setting,
         })
     }
 
     openWarn() {
-        const navigator = this.props.navigator;
         this.props.navigator.push({
             component: Warn,
         })
@@ -67,6 +79,9 @@ export default class Home extends React.Component {
     render() {
         return (
             <View style={styles.all}>
+                <StatusBar
+                    hidden={true}
+                />
                 <View style={styles.navView}>
                     <TouchableOpacity onPress={this.openSetting.bind(this)}>
                         <Image style={{ width: 25, height: 25, marginLeft: 10, }} source={require('../icons/home_nav_user_icon.png')} />
@@ -107,7 +122,6 @@ export default class Home extends React.Component {
     }
 }
 
-// 样式
 const styles = StyleSheet.create({
     all: {
         flex: 1,
@@ -120,12 +134,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#434b59',
         justifyContent: 'center',
         alignItems: 'center',
-        // borderBottomWidth: 1,
-        // borderBottomColor: '#C3AB90',
     },
     topNameText: {
         flex: 1,
-        //marginTop: 10,
         textAlign: 'center',
         color: "#ffffff",
         fontSize: 19,
@@ -141,7 +152,6 @@ const styles = StyleSheet.create({
     lineImage: {
         width: 30,
         height: 32,
-        //marginVertical:10,
         marginTop: 17,
     },
     lineText: {
@@ -156,7 +166,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flex: 1,
         alignItems: 'center',
-
     }
 
 });

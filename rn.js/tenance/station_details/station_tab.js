@@ -16,7 +16,7 @@ export default class StationTab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            fristView:Scada,
+            fristView:DataList,
             topStyle1: styles.topTextSelection,
             topStyle2: styles.topTextNormal,
             topStyle3: styles.topTextNormal,
