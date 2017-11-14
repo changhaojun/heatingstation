@@ -39,6 +39,7 @@ const ds = new ListView.DataSource({
 import StationDetails from './station_details/station_tab';
 import Orientation from 'react-native-orientation';
 export default class HeatStationMaintenance extends React.Component {
+
     constructor(props) {
         super(props);
 
@@ -49,8 +50,8 @@ export default class HeatStationMaintenance extends React.Component {
             zimu: "",
             show: false,
 
-            allSelect: true,
-            onLineSelect: false,
+            allSelect: false,
+            onLineSelect: true,
             offLineSelect: false,
 
             allArr:[],
@@ -67,39 +68,13 @@ export default class HeatStationMaintenance extends React.Component {
         AsyncStorage.getItem("access_token", function (errs, result) {
 
             if (!errs) {
-                var uri=Constants.serverSite + "/v1_0_0/stationAllDatas?tag_id=7,14,3,17,6&access_token=" + result + "&company_code=" + _this.props.company_code;
+                var uri=Constants.serverSite + "/v1_0_0/stationAllDatas?tag_id=10,11,12,20,16&access_token=" + result + "&company_code=" + _this.props.company_code;
                 console.log(uri)
                 fetch(uri)
                     .then((response) => response.json())
                     .then((responseJson) => {
 
                         console.log(responseJson);
-
-                        var section = [];
-                        var row = [];
-                        var data = {};
-                        for (var j = 0; j < zimu.length; j++) {
-                            var num = 0;
-                            var rowid = [];
-                            var rowdata = [];
-
-                            for (var i = 0; i < responseJson.length; i++) {
-                                if (responseJson[i].index.toUpperCase() === zimu[j]) {
-                                    rowdata.push(responseJson[i]);
-                                    rowid.push(num);
-                                    num++;
-                                }
-                            }
-
-                            if (rowdata.length > 0) {
-                                row.push(rowid);
-                                data[zimu[j]] = rowdata;
-                                section.push(zimu[j]);
-                            }
-
-                        }
-
-
                         // 提取在线设备 和 掉线设备 并存放到对应的数组中
                         // 点击切换时调用
                         let onLineArr = [];
@@ -117,6 +92,30 @@ export default class HeatStationMaintenance extends React.Component {
                         }
 
 
+                        var section = [];
+                        var row = [];
+                        var data = {};
+                        for (var j = 0; j < zimu.length; j++) {
+                            var num = 0;
+                            var rowid = [];
+                            var rowdata = [];
+                            for (var i = 0; i < onLineArr.length; i++) {
+                
+                                if (onLineArr[i].index.toUpperCase() === zimu[j]) {
+                                    rowdata.push(onLineArr[i]);
+                                    rowid.push(num);
+                                    num++;
+                                }
+                
+                            }
+                            if (rowdata.length > 0) {
+                                row.push(rowid);
+                                data[zimu[j]] = rowdata;
+                                section.push(zimu[j]);
+                            }
+                
+                        }
+
                         // 更新状态机
                         _this.setState({
                             allArr:responseJson,
@@ -125,6 +124,8 @@ export default class HeatStationMaintenance extends React.Component {
                             onLineArr:onLineArr,
                             offLineArr:offLineArr,
                         });
+                        
+                        _this.onLineClicked();
 
                     })
                     .catch((error) => {
@@ -302,15 +303,6 @@ export default class HeatStationMaintenance extends React.Component {
 
                 <View style={{backgroundColor:'#434b59',width:width,height:40,flexDirection:'row'}}>
                     <View style={styles.topTabView}>
-                        <TouchableOpacity activeOpacity={0.5} onPress={this.allClicked}>
-                            <View style={this.state.allSelect?styles.topTabBorderDisplay:styles.topTabBorderUnDisplay}>
-                                <Text style={this.state.allSelect?styles.topTabTextActive:styles.topTabTextInactive}>
-                                    全部
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.topTabView}>
                         <TouchableOpacity activeOpacity={0.5} onPress={this.onLineClicked}>
                             <View style={this.state.onLineSelect?styles.topTabBorderDisplay:styles.topTabBorderUnDisplay}>
                                 <Text style={this.state.onLineSelect?styles.topTabTextActive:styles.topTabTextInactive}>
@@ -328,25 +320,34 @@ export default class HeatStationMaintenance extends React.Component {
                             </View>
                         </TouchableOpacity>
                     </View>
+                    <View style={styles.topTabView}>
+                        <TouchableOpacity activeOpacity={0.5} onPress={this.allClicked}>
+                            <View style={this.state.allSelect?styles.topTabBorderDisplay:styles.topTabBorderUnDisplay}>
+                                <Text style={this.state.allSelect?styles.topTabTextActive:styles.topTabTextInactive}>
+                                    全部
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
                 </View>
                 <View style={styles.titleView}>
                     <View style={styles.selectItemView}>
                         <Text style={styles.titleText}>换热站</Text>
                     </View>
                     <View style={styles.selectItemView}>
-                        <Text style={styles.titleText}>热单耗</Text>
-                    </View>
-                    <View style={styles.selectItemView}>
-                        <Text style={styles.titleText}>二网供温</Text>
+                        <Text style={styles.titleText}>一网供温</Text>
                     </View>
                     <View style={styles.selectItemView}>
                         <Text style={styles.titleText}>一网回温</Text>
                     </View>
                     <View style={styles.selectItemView}>
-                        <Text style={styles.titleText}>一网温差</Text>
+                        <Text style={styles.titleText}>一网供压</Text>
                     </View>
                     <View style={styles.selectItemView}>
-                        <Text style={styles.titleText}>一网压差</Text>
+                        <Text style={styles.titleText}>二网供温</Text>
+                    </View>
+                    <View style={styles.selectItemView}>
+                        <Text style={styles.titleText}>一网流量</Text>
                     </View>
                 </View>
                 <View style={styles.bottomView}>
@@ -355,6 +356,7 @@ export default class HeatStationMaintenance extends React.Component {
                     <ListView
                         ref="ListView"
                         enableEmptySections={true}
+                        showsVerticalScrollIndicator={false}
                         dataSource={this.state.dataSource}
                         renderRow={ data =>(
                             <TouchableHighlight underlayColor="rgba(77,190,255,0.5)" onPress={this.openScada.bind(this, data.station_name, data.station_id)}>
@@ -364,19 +366,19 @@ export default class HeatStationMaintenance extends React.Component {
                                         <Text style={data.status === 1?{ fontSize: 7, color: '#0099ff', textAlign: 'left', marginLeft:9 }:{ fontSize: 7, color: 'rgb(248,184,54)', textAlign: 'left', marginLeft:9}}>{data.data?data.data.data_time:null}</Text>
                                     </View>
                                     <View style={styles.selectItemView}>
-                                        <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data?data.data["rd"]:"-"}</Text>
-                                    </View>
-                                    <View style={styles.selectItemView}>
-                                        <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data?data.data["2gw"]:"-"}</Text>
+                                        <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data?data.data["1gw"]:"-"}</Text>
                                     </View>
                                     <View style={styles.selectItemView}>
                                         <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data?data.data["1hw"]:"-"}</Text>
                                     </View>
                                     <View style={styles.selectItemView}>
-                                        <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data?data.data["1wc"]:"-"}</Text>
+                                        <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data?data.data["1gy"]:"-"}</Text>
                                     </View>
                                     <View style={styles.selectItemView}>
-                                        <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data?data.data["1yc"]:"-"}</Text>
+                                        <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data?data.data["2gw"]:"-"}</Text>
+                                    </View>
+                                    <View style={styles.selectItemView}>
+                                        <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data?data.data["1sl"]:"-"}</Text>
                                     </View>
                                 </View>
                             </TouchableHighlight>
@@ -488,12 +490,12 @@ const styles = StyleSheet.create({
     listText: {
         fontSize: 13,
         color: '#000000',
-        textAlign: 'center',
+        textAlign: 'left',
     },
     listWarnText: {
         fontSize: 13,
         color: 'rgb(248,184,54)',
-        textAlign: 'center',
+        textAlign: 'left',
     },
     bottomView: {
         backgroundColor: '#e9e9e9',
@@ -592,6 +594,7 @@ const styles = StyleSheet.create({
         backgroundColor:"#ffffff00",
         textAlign: "center",
         height:(height-180)/26,
+        width:20
     },
     listImage: {
         width: 28,

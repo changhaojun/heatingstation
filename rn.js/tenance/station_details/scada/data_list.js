@@ -33,7 +33,7 @@ export default class DataList extends React.Component {
         const _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
-                var uri = Constants.serverSite + "/v1_0_0/station/59ce3054f25ae82b4c1d622a/datas?access_token=" + result;
+                var uri = Constants.serverSite + "/v1_0_0/station/"+_this.props.station_id+"/datas?access_token=" + result;
                 console.log(uri);
                 fetch(uri)
                     .then((response) => response.json())
@@ -45,6 +45,7 @@ export default class DataList extends React.Component {
                                 data.push(responseJson[i])
                             }
                         }
+                        console.log(data);
                         _this.setState({
                             data: data,
                             dataSource: ds.cloneWithRows(data),

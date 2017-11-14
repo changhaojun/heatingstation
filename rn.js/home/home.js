@@ -5,7 +5,7 @@ import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
 
 import Weather from './weather';
-import HeatList from './heat_list';
+import FollowList from './follow_list';
 import HomeTab from './hometab';
 
 // import Home from './home.ios';
@@ -99,7 +99,7 @@ export default class Home extends React.Component {
                     </View>
                 </View>
                 <HomeTab navigator={this.props.navigator} />
-                <HeatList navigator={this.props.navigator} />
+                <FollowList navigator={this.props.navigator} />
                 </ScrollView>
             </View>
 
@@ -139,18 +139,18 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff"
     },
     lineImage: {
-        width: 30,
-        height: 32,
+        width: 20,
+        height: 20,
         //marginVertical:10,
-        marginTop: 17,
+        marginHorizontal: 5,
     },
     lineText: {
         fontSize: 15,
-        color: "#666668"
+        color: "#7c7e7f"
     },
     linevalue: {
         fontSize: 16,
-        color: "#26a6ff"
+        color: "#000"
     },
     linehelf: {
         flexDirection: 'row',

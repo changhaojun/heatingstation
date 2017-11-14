@@ -9,7 +9,6 @@ import {
 import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
 import Constants from '../../../constants';
-import Gateway from './gateway';
 import Orientation from 'react-native-orientation';
 
 // 获取当期的时间戳
@@ -35,7 +34,9 @@ export default class Scada extends React.Component {
             batch: false,
             tag:0,
             access_token: null,
+            system:0
         };
+        Orientation.lockToPortrait();//竖屏
     }
     componentDidMount() {
         this._initialScrollIndexTimeout = setTimeout(
@@ -59,8 +60,7 @@ export default class Scada extends React.Component {
             if (_this.webview) {
                 fetch(Constants.serverSite + "/v1_0_0/station/" + this.props.station_id + "/datas?access_token=" + this.state.access_token)
                     .then((response) => response.json())
-                    .then((responseJson) => {
-                        //console.log(responseJson);
+                    .then((responseJson) => { 
                         if (_this.webview) {_this.webview.postMessage("{type:'data',value:" + JSON.stringify(responseJson) + "}");}
                     })
                     .catch((error) => {
@@ -71,28 +71,9 @@ export default class Scada extends React.Component {
         }, 3000);
 
     }
-
+     //点击反馈
     onBridgeMessage(message) {
         var tag = message.nativeEvent.data;
-        if(tag==15){
-            this.setState({
-                show:true,
-                tag:tag,
-            })
-        }
-    }
-    switchTab(batch) {
-        let isShow = this.state.show;
-        // this.setState({
-        //     batch: batch,
-        //     show: !isShow,
-        // });
-        // setTimeout(() => {
-        //     this.setState({
-        //         show: isShow,
-        //     });
-        // }, 10);
-
     }
 
 
@@ -112,28 +93,6 @@ export default class Scada extends React.Component {
                     automaticallyAdjustContentInsets={true}
                     style={{ backgroundColor: "#f2d6b8", }}
                 />
-
-
-                <Modal
-                    animationType='slide'
-                    transparent={true}
-                    visible={this.state.show}
-                    onShow={() => { }}
-                    onRequestClose={() => { }} >
-                    <View style={styles.modalStyle}>
-                        <View style={styles.subView}>
-                            <View style={styles.modalTitleView}>
-                                <Text style={[styles.tabText, { backgroundColor: this.state.batch ? '#35aeff' : "#ffffff" }]} onPress={this.switchTab.bind(this, false)} >阀门</Text>
-                                <Text style={[styles.tabText, { backgroundColor: this.state.batch ? '#ffffff' : "#35aeff" }]} onPress={this.switchTab.bind(this, true)} >批量下发</Text>
-                                <View style={{ flex: 1 }}></View>
-                                <TouchableOpacity activeOpacity={0.5} onPress={()=>{this.setState({show:false})}}>
-                                    <Image source={require('../../../icons/cancel_icon@2x.png')} style={styles.modalTitleViewImage} />
-                                </TouchableOpacity>
-                            </View>
-                            <Gateway station_id={this.props.station_id} tag_id={this.state.tag} batch={this.state.batch} close={() => this.setState({show:false})} />
-                        </View>
-                    </View>
-                </Modal>
             </View>
         )
     }

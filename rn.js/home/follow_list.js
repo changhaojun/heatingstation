@@ -27,8 +27,8 @@ export default class HeatList extends React.Component {
         var _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
-                console.log(Constants.serverSite+"/v1_0_0/followStation?access_token=" + result)
-                fetch(Constants.serverSite+"/v1_0_0/followStation?access_token=" + result)
+                console.log(Constants.serverSite + "/v1_0_0/followStation?access_token=" + result)
+                fetch(Constants.serverSite + "/v1_0_0/followStation?access_token=" + result)
                     .then((response) => response.json())
                     .then((responseJson) => {
                         console.log(responseJson);
@@ -60,7 +60,10 @@ export default class HeatList extends React.Component {
     render() {
         return (
             <View style={styles.all}>
-                <Text style={styles.title}>我的关注</Text>
+                <View style={styles.title}>
+                    <Image style={styles.titleImage} source={require('../icons/follow_station.png')} />
+                    <Text style={styles.titleText}>我的关注</Text>
+                </View>
                 <ListView
                     automaticallyAdjustContentInsets={false}
                     dataSource={this.state.dataSource}
@@ -68,12 +71,15 @@ export default class HeatList extends React.Component {
                     enableEmptySections={true}
                     renderRow={(rowData) => {
                         return (
-                            <TouchableOpacity style={styles.item} onPress={this.openScada.bind(this,rowData.station_name,rowData.station_id)}>
-                                <Text style={styles.text}>{rowData.station_name}</Text>
+                            <TouchableOpacity style={styles.item} onPress={this.openScada.bind(this, rowData.station_name, rowData.station_id)}>
+                                <View style={styles.nameAndTime}>
+                                    <Text style={styles.text}>{rowData.station_name}</Text>
+                                    <Text style={styles.time}>{rowData.data_time}</Text>
+                                </View>
                                 <Text style={styles.text}>{rowData.tag_name}</Text>
                                 <Image style={styles.image} source={require('./../icons/thermometer.png')} />
-                                <Text style={[styles.text,{flex:2,color:"#30adff"}]}>{rowData.data_value}℃</Text>
-                                <Text style={{fontSize: 10,color: "#656565",lineHeight: 20,flex: 3,textAlign:'right',paddingRight:5}}>{rowData.data_time}</Text>
+                                <Text style={[styles.text, { flex: 2, color: "#30adff" }]}>{rowData.data_value}℃</Text>
+
                             </TouchableOpacity>
                         )
                     }}
@@ -87,87 +93,49 @@ export default class HeatList extends React.Component {
 const styles = StyleSheet.create({
     all: {
         flex: 1,
-        backgroundColor:"#fff",
+        backgroundColor: "#fff",
         marginTop: 5,
     },
     item: {
         height: 40,
         alignItems: "center",
         flexDirection: 'row',
-        borderTopWidth:0.2,
-        borderTopColor:"#e7e7e7"
+        borderTopWidth: 0.2,
+        borderTopColor: "#e7e7e7"
     },
     image: {
-        marginTop:20,
+        marginTop: 20,
         width: 30,
         height: 40,
     },
     text: {
         fontSize: 16,
         color: "#656565",
-        lineHeight: 20,
         flex: 3
     },
-    title:{
+    title: {
+        marginVertical: 5,
+        flexDirection: 'row',
+        alignItems: "center",
+    },
+    titleImage: {
+        width: 20,
+        height: 20,
+        marginLeft: 15,
+    },
+    titleText: {
         fontSize: 18,
         color: "#3e3e3e",
-        marginLeft:15,
-        marginTop:5,
-    },
-
-
-
-
-
-
-    heatTextView: {
-        width: width,
-        height: 40,
-        backgroundColor: "#4dbeff",
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        // justifyContent: 'space-around',
-    },
-
-    list: {
-        width: width,
-        backgroundColor: "#f5f5f5",
-        height: 1,
-
-    },
-    listItem: {
-        paddingTop: 4,
-        width: width,
-        height: 50,
-    },
-    listItemImage: {
-        width: 15,
-        height: 15,
-        marginTop: 5,
-        marginRight: 10,
-    },
-    listItemText1: {
-        fontSize: 16,
-        flex: 1,
-        marginLeft: 10,
-        color: '#3d3d3d',
-    },
-    listItemTextView: {
-        flex: 1,
-        flexDirection: 'row',
-    },
-    listItemText2: {
-        color: "#202B3D",
-        marginLeft: 10,
-        fontSize: 12,
+        marginLeft: 5,
     },
     time: {
-        marginTop: 3,
-        // flex: 1,
-        textAlign: 'right',
-        marginRight: 10,
-        fontSize: 10,
-        color: "#b1b1b1"
+        fontSize: 9,
+        color: "#656565",
+        flex: 2,
     },
+    nameAndTime: {
+        flex: 3,
+
+    }
+
 });

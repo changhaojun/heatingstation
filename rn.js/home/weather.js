@@ -35,10 +35,10 @@ export default class Weather extends React.Component {
         var _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
-                fetch("http://121.42.253.149:18825/v1/weathers?city_id=310")
+                fetch("http://114.215.46.56:18825/v1/weathers?city_id=310")
                     .then((response) => response.json())
                     .then((responseJson) => {
-                        console.log(responseJson);
+                        console.log("天气"+responseJson);
                         _this.setState({ dataSource: ds.cloneWithRows(responseJson.daily) })
                     })
                     .catch((error) => {

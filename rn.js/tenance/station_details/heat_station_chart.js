@@ -41,7 +41,7 @@ var start_time = year + "$" + month + "$" + day + "$" + h + ":" + m + ":" + s;
 
 
 var start_time_stamp = d.getTime();
-var end_time_stamp = new Date(start_time_stamp - 2*24*3600*1000);
+var end_time_stamp = new Date(start_time_stamp - 4*3600*1000);
 var end_time_year = end_time_stamp.getFullYear();
 var end_time_month = end_time_stamp.getMonth()+1;
 var end_time_day = end_time_stamp.getDate();
@@ -71,7 +71,7 @@ export default class DataList extends React.Component {
         const _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
-                var uri = Constants.serverSite + "/v1_0_0/hourDatas?access_token=" + result + "&_id=" + _this.props.station_id + "&tag_id=" + _this.props.tag_id + "&start_time=" + "2017$10$30$01:00:00" + "&end_time=" + "2017$11$1$23:00:00" + "&level=3";
+                var uri = Constants.serverSite + "/v1_0_0/hourDatas?access_token=" + result + "&_id=" + _this.props.station_id + "&tag_id=" + _this.props.tag_id + "&start_time=" + end_time + "&end_time=" + start_time + "&level=3";
                 console.log(uri);
                 fetch(uri)
                     .then((response) => response.json())
