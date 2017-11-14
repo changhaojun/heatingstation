@@ -1,10 +1,7 @@
 <html>
-<!-- 修改此文件后必须给Android目录的assets复制一份mapwebview文件夹，否则Android打包时将不更新 -->
-
 <head>
     <meta charset="UTF-8">
     <title>智慧供热系统</title>
-    <link rel="stylesheet" type="text/css" href="css/mapshow.css" />
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=zdgd4171rI06zLQBNad9vKGCn6fcTsIm"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"></script>
     <style type="text/css">
@@ -29,9 +26,11 @@
         <div id="map"></div>
     </div>
 
-    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js">
+    </script>
     <script type="text/javascript">
         window.onload = function () {
+
             //var ismarker = false;//这里默认不能设为0，因为设为0无法触发缩放事件
             var searchName = "";
             var allData = [];//存储换热站数据列表
@@ -235,6 +234,7 @@
             //接受来自native的消息
             document.addEventListener("message", function (e) {
                 var data = eval("(" + e.data + ")");
+
                 switch (data.type) {
                     case "search": {//搜索
                         searchName = data.value;

@@ -220,4 +220,3 @@ const styles = StyleSheet.create({
         paddingTop: 4,
     },
 });
-// module.exports = Main;

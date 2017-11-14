@@ -3,11 +3,19 @@
  */
 import React from 'react';
 import {
-    View, Text, Image, TextInput, Modal, AlertIOS,
-    Slider, Switch, NavigatorIOS, Platform, StyleSheet, TouchableHighlight, StatusBar, TouchableOpacity, AsyncStorage, WebView
+    View,
+    Text,
+    Image,
+    Modal,
+    Platform,
+    StyleSheet,
+    StatusBar,
+    TouchableOpacity,
+    AsyncStorage,
+    WebView
 } from 'react-native';
 import Dimensions from 'Dimensions';
-var { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 import Constants from '../../../constants';
 import Orientation from 'react-native-orientation';
 
@@ -25,6 +33,7 @@ var hours = now.getHours();
 var minutes = now.getMinutes();
 // 获取当前秒
 var seconds = now.getSeconds();
+
 
 export default class Scada extends React.Component {
     constructor(props) {
@@ -87,11 +96,10 @@ export default class Scada extends React.Component {
                     startInLoadingState={true}
                     onMessage={this.onBridgeMessage.bind(this)}
                     scrollEnabled={true}
-                    //javaScriptEnabled={true}
-                    source={Platform.OS === 'ios' ? require("./scadawebview/scada_view.html") : { uri: 'file:///android_asset/scadawebview/scada_view.html' }}
-                    scalesPageToFit={true}
+                    source={require('./scadawebview/scada_view.html')}
+                    scalesPageToFit={false}
                     automaticallyAdjustContentInsets={true}
-                    style={{ backgroundColor: "#f2d6b8", }}
+                    style={{ backgroundColor: "rgb(36,50,74)"}}
                 />
             </View>
         )
@@ -101,9 +109,11 @@ export default class Scada extends React.Component {
 // 样式
 const styles = StyleSheet.create({
     all: {
-        flex: 1,
+        //flex: 1,
         backgroundColor: "#ffffff",
         // marginTop: 20,
+        height:height,
+        width:width
     },
     // modal的样式
     modalStyle: {

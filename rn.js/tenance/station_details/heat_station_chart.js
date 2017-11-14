@@ -1,23 +1,23 @@
 /**
  * Created by vector on 2017/11/2.
  * 换热站信息图标页面
+ *
+ *
+ * 2017/11/10修改 by Vector.
+ *      1、修改图表背景色
  */
 
-
-// 分公司列表页面
 import React from 'react';
 import {
     View,
-    Text,
     Image,
     Platform,
-    NavigatorIOS,
     StyleSheet,
     TouchableOpacity,
     ListView,
     AsyncStorage,
-    Navigator } from 'react-native';
-import Dimensions from 'Dimensions';
+    Dimensions
+} from 'react-native';
 import Echarts from 'native-echarts';
 import Constants from '../../constants';
 import Orientation from 'react-native-orientation';
@@ -66,7 +66,6 @@ export default class DataList extends React.Component {
             yUnit:'',
             yLabel:'',
         };
-
 
         const _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
@@ -213,6 +212,6 @@ const styles = StyleSheet.create({
     chartView:{
         width:height,
         height:width-50,
-        backgroundColor:"red"
+        backgroundColor:"#ffffff"
     }
 });

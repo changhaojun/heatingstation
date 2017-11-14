@@ -92,6 +92,48 @@ export default class HeatStationMaintenance extends React.Component {
                         }
 
 
+                        // var section = [];
+                        // var row = [];
+                        // var data = {};
+                        // for (var j = 0; j < zimu.length; j++) {
+                        //     var num = 0;
+                        //     var rowid = [];
+                        //     var rowdata = [];
+                        //
+                        //     for (var i = 0; i < responseJson.length; i++) {
+                        //         if (responseJson[i].index.toUpperCase() === zimu[j]) {
+                        //             rowdata.push(responseJson[i]);
+                        //             rowid.push(num);
+                        //             num++;
+                        //         }
+                        //     }
+                        //
+                        //     if (rowdata.length > 0) {
+                        //         row.push(rowid);
+                        //         data[zimu[j]] = rowdata;
+                        //         section.push(zimu[j]);
+                        //     }
+                        //
+                        // }
+
+
+                        // 提取在线设备 和 掉线设备 并存放到对应的数组中
+                        // 点击切换时调用
+                        let onLineArr = [];
+                        let offLineArr = [];
+                        for (let i=0; i<responseJson.length; i++)
+                        {
+                            if (responseJson[i].status === 1)
+                            {
+                                onLineArr.push(responseJson[i]);
+                            }
+                            else
+                            {
+                                offLineArr.push(responseJson[i])
+                            }
+                        }
+
+
                         var section = [];
                         var row = [];
                         var data = {};
@@ -100,21 +142,21 @@ export default class HeatStationMaintenance extends React.Component {
                             var rowid = [];
                             var rowdata = [];
                             for (var i = 0; i < onLineArr.length; i++) {
-                
                                 if (onLineArr[i].index.toUpperCase() === zimu[j]) {
                                     rowdata.push(onLineArr[i]);
                                     rowid.push(num);
                                     num++;
                                 }
-                
                             }
                             if (rowdata.length > 0) {
                                 row.push(rowid);
                                 data[zimu[j]] = rowdata;
                                 section.push(zimu[j]);
                             }
-                
+
                         }
+
+
 
                         // 更新状态机
                         _this.setState({
@@ -125,6 +167,8 @@ export default class HeatStationMaintenance extends React.Component {
                             offLineArr:offLineArr,
                         });
                         
+                        _this.onLineClicked();
+
                         _this.onLineClicked();
 
                     })
@@ -355,6 +399,7 @@ export default class HeatStationMaintenance extends React.Component {
                     {this.state.allArr.length ?
                     <ListView
                         ref="ListView"
+                        showsVerticalScrollIndicator={false}
                         enableEmptySections={true}
                         showsVerticalScrollIndicator={false}
                         dataSource={this.state.dataSource}
@@ -481,7 +526,6 @@ const styles = StyleSheet.create({
         alignItems:"flex-start",
         justifyContent: 'center',
     },
-
     titleText: {
         fontSize: 13,
         color: '#0099ff',
@@ -602,9 +646,8 @@ const styles = StyleSheet.create({
         margin: 10,
     },
     listRight: {
-        width: 12,
+        width: 20,
         height: 18,
         margin: 10,
     },
-
 });

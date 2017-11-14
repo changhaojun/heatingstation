@@ -9,19 +9,27 @@
 
 import React from 'react';
 import {
-    View, Text, Image, Platform, ActivityIndicator, AsyncStorage, TextInput, Modal, ListView, NavigatorIOS, StyleSheet, StatusBar, TouchableOpacity, WebView
+    View,
+    Text,
+    Image,
+    Platform,
+    ActivityIndicator,
+    AsyncStorage,
+    TextInput,
+    Modal,
+    ListView,
+    StyleSheet,
+    StatusBar,
+    TouchableOpacity,
+    WebView
 } from 'react-native';
 import Dimensions from 'Dimensions';
-var { width, height } = Dimensions.get('window');
-import Orientation from 'react-native-orientation';
+const { width, height } = Dimensions.get('window');
 var Alert = Platform.select({
     ios: () => require('AlertIOS'),
     android: () => require('Alert'),
 })();
-import CompanyChart from './map_chart/company_chart';
-import ChildCompanyChart from './map_chart/child_company_chart';
-import BranchChart from './map_chart/branch_chart';
-import MapChart from './waterchart';
+
 import Constants from './../constants';
 import Scada from "./../tenance/station_details/scada/scada";
 import WaterChart from './waterchart';
@@ -47,7 +55,7 @@ export default class RunqualityMap extends React.Component {
             waterShow: false,
             responseJson: [],
         };
-        var _this = this;
+        const _this = this;
         AsyncStorage.getItem("company_code", function (errs, result) {
             _this.setState({ company_code: result })
         });
@@ -128,7 +136,7 @@ onBridgeMessage(message) {
     var data = eval("(" + message.nativeEvent.data + ")");
     switch (data.type) {
         case "click": {
-            this.setState({ station_id: data.id, scadaShow: true })
+            this.setState({ station_id: data.id, scadaShow: true });
             break;
         }
         case "data": {
@@ -179,45 +187,41 @@ render() {
     var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     return (
         <View style={styles.all}>
+            <StatusBar hidden={true}/>
             <View style={styles.navView}>
-                <TouchableOpacity onPress={() => { this.setState({ dataListShow: true }) }}>
+                <TouchableOpacity onPress={() => { this.setState({ dataListShow: true })}} style={{width:40,height:30,flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
                     <Image style={styles.topImage} source={require('../icons/map_list.png')} />
                 </TouchableOpacity>
-                <View style={styles.searchImageView}>
-                    <Image style={styles.searchImage} source={require('../icons/map_search.png')} />
+                <View style={{width:width-80,height:30,flexDirection:"row",alignItems:'center',justifyContent:'center',backgroundColor:'#ffffff',borderRadius:30}}>
+                    <TextInput
+                        style={{width:width-100,height:30,backgroundColor:'#ffffff',borderRadius:28,paddingLeft:5}}
+                        returnKeyType={"search"}
+                        returnKeyLabel={"search"}
+                        onSubmitEditing={this.searchSubmit.bind(this)}
+                        placeholder={"搜索"}
+                        onChangeText={(text) => this.setState({text})}>
+                    </TextInput>
                 </View>
-                <TextInput
-                    style={styles.topInputText}
-                    returnKeyType={"search"}
-                    returnKeyLabel={"search"}
-                    onSubmitEditing={this.searchSubmit.bind(this)}
-                    underlineColorAndroid={"transparent"}
-                    placeholder={"搜索"}
-                    onChangeText={(text) => this.setState({ text })}>{this.state.text}</TextInput>
-
-                <Text style={styles.searchText} onPress={this.searchSubmit.bind(this)}>搜索</Text>
+                <TouchableOpacity onPress={this.searchSubmit.bind(this)} activeOpacity={0.5} style={{width:40,height:30,flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+                        <Text style={{ color: "#fff",fontSize: 16,}}>搜索</Text>
+                </TouchableOpacity>
             </View>
             <WebView
                 style={{ flex: 1 }}
                 onLoad={() => this.getData()}
                 ref={webview => this.webview = webview}
                 onMessage={this.onBridgeMessage.bind(this)}
-                //injectedJavaScript={"window.access_token='" + this.state.access_token + "';"}
-                source={Platform.OS === 'ios' ? require('./mapwebview/mapshow.html') : { uri: 'file:///android_asset/mapwebview/mapshow.html' }}
-                //source={require('./mapwebview/mapshow.html') }
+                source={require('./mapwebview/mapshow.html') }
             />
             <View style={styles.switchView}>
                 <TouchableOpacity style={[styles.switchItem]} onPress={() => { this.selectTag(1) }}>
                     <Image style={styles.switchImage} resizeMode="contain" source={this.state.type == 1 ? require('../icons/mapswitch1_s.png') : require('../icons/mapswitch1.png')} />
-                    {/* <Text style={styles.switchText}>供热</Text> */}
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.switchItem} onPress={() => { this.selectTag(2) }}>
                     <Image style={styles.switchImage} resizeMode="contain" source={this.state.type == 2 ? require('../icons/mapswitch2_s.png') : require('../icons/mapswitch2.png')} />
-                    {/* <Text style={styles.switchText}>能耗</Text> */}
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.switchItem} onPress={() => { this.selectTag(3) }}>
                     <Image style={styles.switchImage} resizeMode="contain" source={this.state.type == 3 ? require('../icons/mapswitch3_s.png') : require('../icons/mapswitch3.png')} />
-                    {/* <Text style={styles.switchText}>水压</Text> */}
                 </TouchableOpacity>
             </View>
             <Modal
@@ -293,41 +297,25 @@ const styles = StyleSheet.create({
         width: width,
         height: 45,
         backgroundColor: '#434b59',
-        justifyContent: 'center',
         alignItems: 'center',
-        // borderBottomWidth: 1,
-        // borderBottomColor: '#C3AB90',
+        justifyContent:'space-around'
     },
     searchImageView: {
         height: 28,
         width: 28,
         borderTopLeftRadius: 20,
         borderBottomLeftRadius: 20,
-        //marginTop: 20,
         backgroundColor: "#ffffff",
     },
-    searchImage: {
-        height: 20,
-        width: 20,
-        margin: 5,
-    },
     topInputText: {
-        flex: 1,
-        //marginTop: 30,
-        padding: 0,
-        //marginBottom: 10,
+        height:28,
         color: "#000",
         fontSize: 15,
-        borderTopRightRadius: 20,
-        borderBottomRightRadius: 20,
         backgroundColor: "#ffffff",
     },
     topImage: {
         width: 20,
         height: 20,
-        //marginTop: 20,
-        marginLeft: 10,
-        marginRight: 10,
     },
     tagView: {
         width: 125,
@@ -342,9 +330,6 @@ const styles = StyleSheet.create({
         color: "#fff",
         marginRight: 3,
         fontSize: 18
-        //borderBottomWidth:1,
-        //borderBottomColor:"#fff",
-
     },
     sj: {
         width: 10,
@@ -358,21 +343,10 @@ const styles = StyleSheet.create({
         marginBottom: 50,
     },
     listView: {
-        // 主轴方向
         flexDirection: 'row',
-        // 一行显示不下,换一行
         flexWrap: 'wrap',
-        //horizontal :true,
-        // 侧轴方向
-        alignItems: 'flex-start', // 必须设置,否则换行不起作用
+        alignItems: 'flex-start',
         justifyContent: 'center',
-    },
-
-    searchText: {
-        color: "#fff",
-        fontSize: 15,
-        margin: 5,
-        //paddingTop: 15,
     },
     listItem: {
         marginTop: 3,
@@ -388,16 +362,11 @@ const styles = StyleSheet.create({
         height: 130,
         alignSelf: "flex-end",
         marginTop: 100,
-
-        //backgroundColor: "#fff"
     },
     switchItem: {
         width: 40,
         height: 40,
-        //margin: 5,
-        //backgroundColor: "#fff",
         marginTop: 10,
-        //alignItems: 'center',
     },
     switchImage: {
         width: 40,

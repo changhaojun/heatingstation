@@ -120,9 +120,6 @@ export default class LineChart extends Component {
                 data: this.state.xAxisData,
                 name:"时间",
                 boundaryGap: false,
-                // splitLine:{                  //设置折线图竖直线
-                //     show:true,
-                // },
             },
             yAxis: {
                 type: 'value',

@@ -1,5 +1,12 @@
 /**
  * Created by Vector on 17/4/18.
+ *
+ * 首页-【天气】子模块
+ *
+ * 2017/11/4修改 by Vector.
+ *      1、修改天气图标在iOS平台不出现的Bug
+ *      2、优化部分代码逻辑
+ *
  */
 // 设置页面
 import React from 'react';
@@ -7,23 +14,13 @@ import {
     View,
     Text,
     Image,
-    TextInput,
     ListView,
     StyleSheet,
-    TouchableHighlight,
-    StatusBar,
     AsyncStorage,
-    TouchableOpacity
+    Dimensions
 } from 'react-native';
+const { width, height } = Dimensions.get('window');
 
-import Dimensions from 'Dimensions';
-import Orientation from 'react-native-orientation';
-var { width, height } = Dimensions.get('window');
-
-import WeatherChart from './weather_chart';
-
-var on = 0;
-var oldx = 0;
 export default class Weather extends React.Component {
     constructor(props) {
         super(props);
@@ -32,14 +29,14 @@ export default class Weather extends React.Component {
             x: 0,
             dataSource: ds.cloneWithRows([])
         };
-        var _this = this;
+        const _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
                 fetch("http://114.215.46.56:18825/v1/weathers?city_id=310")
                     .then((response) => response.json())
                     .then((responseJson) => {
-                        console.log("天气"+responseJson);
-                        _this.setState({ dataSource: ds.cloneWithRows(responseJson.daily) })
+                        console.log(responseJson);
+                        _this.setState({ dataSource: ds.cloneWithRows(responseJson.daily)})
                     })
                     .catch((error) => {
                         console.error(error);
@@ -81,9 +78,10 @@ export default class Weather extends React.Component {
                                             <Text style={{ fontSize: 17, color: "#FFF" }}>{rowData.day.weather}</Text>
                                             <Text style={{ fontSize: 12, color: "#FFF",marginTop:3 }}>{rowData.date} {rowData.week}</Text>
                                         </View>
-                                        <Image source={{uri:"http://www.moji.com/templets/mojichina/images/weather/weather/w"+rowData.day.img+".png"}} style={styles.weatherimage} />
+                                        <View style={styles.rightView}>
+                                            <Image source={{uri:"http://www.moji.com/templets/mojichina/images/weather/weather/w" + rowData.day.img + ".png"}} style={{width:60,height:60}}/>
+                                        </View>
                                     </View>
-                                    
                                 </Image>
                         )
                     }}
@@ -93,7 +91,6 @@ export default class Weather extends React.Component {
     }
 }
 
-// 样式
 const styles = StyleSheet.create({
     all: {
         flex: 1,
@@ -103,14 +100,11 @@ const styles = StyleSheet.create({
         width: width,
         height: 140,
     },
-
-
     image1:{
         width: width - 90,
         height: 120,
         margin: 8,
         borderRadius: 5,
-        //borderWidth:1,
         borderColor:"#fff000"
     },
     contentContainerStyle: {
@@ -129,5 +123,13 @@ const styles = StyleSheet.create({
     leftView: {
         flex: 1,
         margin: 15,
+        backgroundColor:"rgba(255,255,255,0)"
     },
+    rightView: {
+        flex:1,
+        backgroundColor:'rgba(255,255,255,0)',
+        flexDirection:'column',
+        alignItems:'center',
+        justifyContent:'center'
+    }
 });

@@ -17,14 +17,14 @@ import Login from './rn.js/login';
 import Orientation from 'react-native-orientation';
 export default class WisdomHeating extends Component {
 
-    componentWillMount() {
-        Orientation.lockToPortrait();
-    }
-
-
-    componentWillUnmount() {
-        Orientation.lockToPortrait();
-    }
+    // componentWillMount() {
+    //     Orientation.lockToPortrait();
+    // }
+    //
+    //
+    // componentWillUnmount() {
+    //     Orientation.lockToPortrait();
+    // }
 
   render() {
     return (

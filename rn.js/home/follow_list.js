@@ -1,22 +1,32 @@
 /**
- * Created by Vector on 17/4/18.首页
+ * Created by Vector on 17/4/18.
+ *
+ * 首页-【我的关注】子模块
+ *
+ * 2017/11/4修改 by Vector.
+ *      1、删除多余注释
+ *      2、删除公用代码
+ *      3、删除无用的模块的导入
+ *      4、将个别var定义的变量修改为const定义
+ *      5、对获取到的数据进行判断,防止页面渲染时因无数据造成的渲染错误
  */
 
-// 分公司列表页面
 import React from 'react';
-import { View, Text, Image, Platform, NavigatorIOS, StyleSheet, TouchableOpacity, ListView, AsyncStorage, Navigator } from 'react-native';
+import {
+    View,
+    Text,
+    Image,
+    StyleSheet,
+    TouchableOpacity,
+    ListView,
+    AsyncStorage,
+    AlertIOS
+} from 'react-native';
 import Dimensions from 'Dimensions';
-import Orientation from 'react-native-orientation';
 import StationDetails from '../tenance/station_details/station_tab';
-var Alert = Platform.select({
-    ios: () => require('AlertIOS'),
-    android: () => require('Alert'),
-})();
 import Constants from './../constants';
-var { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
-// import HeatDetail from '../components/heat_detail.ios.js';
-import HistoryEnergyCharts from './history_energy_charts';
 export default class HeatList extends React.Component {
     constructor(props) {
         super(props);
@@ -24,23 +34,31 @@ export default class HeatList extends React.Component {
         this.state = {
             dataSource: ds.cloneWithRows([]),
         };
-        var _this = this;
+        const _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
                 console.log(Constants.serverSite + "/v1_0_0/followStation?access_token=" + result)
                 fetch(Constants.serverSite + "/v1_0_0/followStation?access_token=" + result)
                     .then((response) => response.json())
                     .then((responseJson) => {
-                        console.log(responseJson);
-                        _this.setState({
-                            dataSource: ds.cloneWithRows(responseJson),
-                        });
+                        if (responseJson.length > 0)
+                        {
+                            _this.setState({
+                                dataSource: ds.cloneWithRows(responseJson),
+                            });
+                        }
+                        else
+                        {
+                            AlertIOS.alert(
+                                '提示',
+                                '暂无关注数据',
+                            );
+                        }
                     })
-                    .catch((error) => {
-                        console.error(error)
-                        Alert.alert(
+                    .catch(() => {
+                        AlertIOS.alert(
                             '提示',
-                            '网络连接错误，获取列表数据失败',
+                            '网络错误,获取数据失败',
                         );
                     });
             }
@@ -89,7 +107,6 @@ export default class HeatList extends React.Component {
     }
 }
 
-// 样式
 const styles = StyleSheet.create({
     all: {
         flex: 1,
