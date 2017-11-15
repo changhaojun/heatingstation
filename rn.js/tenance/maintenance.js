@@ -39,9 +39,9 @@ export default class Maintenance extends React.Component {
             company_id: null,
             company_code: null,
             refresh_token: null,
-            data:[],
-            searchValue:'',
-            stationList:false,
+            data: [],
+            searchValue: '',
+            stationList: false,
         };
 
         var _this = this;
@@ -67,15 +67,13 @@ export default class Maintenance extends React.Component {
                     .then((responseJson) => {
                         console.log(responseJson);
 
-                        if (responseJson.length > 0)
-                        {
+                        if (responseJson.length > 0) {
                             _this.setState({
-                                data:responseJson,
+                                data: responseJson,
                                 dataSource: ds.cloneWithRows(responseJson),
                             });
                         }
-                        else
-                        {
+                        else {
                             AlertIOS.alert(
                                 '提示',
                                 '暂无数据'
@@ -102,29 +100,28 @@ export default class Maintenance extends React.Component {
         })
     }
 
-    searchStationList() {
+    // searchStationList() {
 
-        if (this.state.searchValue === "爱" && this.state.searchValue !== "")
-        {
-            this.setState({
-                stationList:true,
-            })
-        }
-        else
-        {
-            AlertIOS.alert(
-                '',
-                '未找到您要查询的换热站'
-            )
-        }
-    }
+    //     if (this.state.searchValue === "爱" && this.state.searchValue !== "")
+    //     {
+    //         this.setState({
+    //             stationList:true,
+    //         })
+    //     }
+    //     else
+    //     {
+    //         AlertIOS.alert(
+    //             '',
+    //             '未找到您要查询的换热站'
+    //         )
+    //     }
+    // }
 
 
     stationListShow() {
-        if (this.state.searchValue === "")
-        {
+        if (this.state.searchValue === "") {
             this.setState({
-                stationList:false,
+                stationList: false,
             })
         }
     }
@@ -133,77 +130,77 @@ export default class Maintenance extends React.Component {
     render() {
         return (
             <View style={styles.all}>
-                <StatusBar
-                    hidden={true}
-                />
                 <View style={styles.navView}>
-                    <View style={{width:width-60,height:30,marginTop:10,borderRadius:15,backgroundColor:'rgb(255,255,255)',marginLeft:20}}>
+                    <Image style={{ width: 25, height: 25, marginLeft: 10, marginTop: 10, }} source={require('../icons/nav_flag.png')} />
+                    <Text style={styles.topNameText}>运行维护</Text>
+                    <TouchableOpacity onPress={() => { this.props.navigator.push({ component: Abnormal }) }}><Image style={{ width: 25, height: 20, marginRight: 10, }} resizeMode="contain" source={require('../icons/abnormal_icon.png')} /></TouchableOpacity>
+                    {/* <View style={{ width: width - 60, height: 30, marginTop: 10, borderRadius: 15, backgroundColor: 'rgb(255,255,255)', marginLeft: 20 }}>
                         <TextInput
                             placeholder="请输入换热站名称"
                             onChangeText={(searchValue) => this.setState({ searchValue })}
                             onSubmitEditing={this.searchStationList.bind(this)}
                             onEndEditing={this.stationListShow.bind(this)}
                             returnKeyType="search"
-                            style={{width:width-60,height:30,textAlign:"center"}}>
+                            style={{ width: width - 60, height: 30, textAlign: "center" }}>
                         </TextInput>
                     </View>
                     <TouchableOpacity onPress={() => { this.props.navigator.push({ component: Abnormal }) }}>
-                        <Image style={{ marginTop:15,width: 25, height: 20, marginRight: 10,marginLeft: 6, }} resizeMode="contain" source={require('../icons/abnormal_icon.png')} />
-                    </TouchableOpacity>
+                        <Image style={{ marginTop: 15, width: 25, height: 20, marginRight: 10, marginLeft: 6, }} resizeMode="contain" source={require('../icons/abnormal_icon.png')} />
+                    </TouchableOpacity> */}
                 </View>
 
-                {this.state.data.length > 0?
-                <ListView
-                    style={{ marginTop: 20 }}
-                    automaticallyAdjustContentInsets={false}
-                    dataSource={this.state.dataSource}
-                    enableEmptySections={true}
-                    renderRow={(rowData) => {
-                        return (
-                            <TouchableOpacity underlayColor="#ECEDEE" onPress={this.gotoHeatStation.bind(this, rowData.company_code)}>
-                                <Image style={styles.listItemView} resizeMode="contain" source={require('../icons/bg_company.png')}>
-                                    <Image style={styles.listItemIconView} resizeMode="contain" source={require('../icons/company_icon.png')}>
-                                        <Text style={{ fontSize: 16, color: '#fff', marginTop: -28,}}>{rowData.company_name.substr(0,2)}</Text>
-                                    </Image>
-                                    <View style={styles.listItemTextView}>
-                                        <View style={{ flexDirection: "row", borderBottomColor: "#d7d8d9", borderBottomWidth: 0.5, marginHorizontal: 15, paddingBottom: 5, backgroundColor:'rgba(255,255,255,0)' }}>
-                                            <Image style={styles.minImage} resizeMode="contain" source={require('../icons/gongsi_icon.png')} />
-                                            <Text style={{ fontSize: 16, color: '#212121'}}>{rowData.company_name}</Text>
-                                        </View>
-                                        <View style={{ flexDirection: "row", marginTop: 20, }}>
+                {this.state.data.length > 0 ?
+                    <ListView
+                        style={{ marginTop: 20 }}
+                        automaticallyAdjustContentInsets={false}
+                        dataSource={this.state.dataSource}
+                        enableEmptySections={true}
+                        renderRow={(rowData) => {
+                            return (
+                                <TouchableOpacity underlayColor="#ECEDEE" onPress={this.gotoHeatStation.bind(this, rowData.company_code)}>
+                                    <Image style={styles.listItemView} resizeMode="contain" source={require('../icons/bg_company.png')}>
+                                        <Image style={styles.listItemIconView} resizeMode="contain" source={require('../icons/company_icon.png')}>
+                                            <Text style={{ fontSize: 16, color: '#fff', marginTop: -28, }}>{rowData.company_name.substr(0, 2)}</Text>
+                                        </Image>
+                                        <View style={styles.listItemTextView}>
+                                            <View style={{ flexDirection: "row", borderBottomColor: "#d7d8d9", borderBottomWidth: 0.5, marginHorizontal: 15, paddingBottom: 5, backgroundColor: 'rgba(255,255,255,0)' }}>
+                                                <Image style={styles.minImage} resizeMode="contain" source={require('../icons/gongsi_icon.png')} />
+                                                <Text style={{ fontSize: 16, color: '#212121' }}>{rowData.company_name}</Text>
+                                            </View>
+                                            <View style={{ flexDirection: "row", marginTop: 20, }}>
 
-                                            <View style={styles.listItemTextView2}>
-                                                <Text style={styles.listItemTextRight}>{rowData.onLine}/{rowData.station_count}</Text>
-                                                <Text style={styles.listItemTextLeft}>换热站数量</Text>
-                                            </View>
-                                            <View style={styles.listItemTextView2}>
-                                                <Text style={styles.listItemTextRight}>{rowData.total_area.toFixed(2)}</Text>
-                                                <Text style={styles.listItemTextLeft}>供热面积(万㎡)</Text>
-                                            </View>
-                                            {/*<View style={styles.listItemTextView2}>*/}
+                                                <View style={styles.listItemTextView2}>
+                                                    <Text style={styles.listItemTextRight}>{rowData.onLine}/{rowData.station_count}</Text>
+                                                    <Text style={styles.listItemTextLeft}>换热站数量</Text>
+                                                </View>
+                                                <View style={styles.listItemTextView2}>
+                                                    <Text style={styles.listItemTextRight}>{rowData.total_area.toFixed(2)}</Text>
+                                                    <Text style={styles.listItemTextLeft}>供热面积(万㎡)</Text>
+                                                </View>
+                                                {/*<View style={styles.listItemTextView2}>*/}
                                                 {/*<Text style={styles.listItemTextRight}>{rowData.amount_rh ? rowData.amount_rh : "-"}</Text>*/}
                                                 {/*<Text style={styles.listItemTextLeft}>热耗(GJ)</Text>*/}
-                                            {/*</View>*/}
+                                                {/*</View>*/}
+                                            </View>
                                         </View>
-                                    </View>
-                                </Image>
-                            </TouchableOpacity>
-                        )
-                    }}
-                />:
-                <ActivityIndicator
-                    style={{marginTop:20}}
-                    animating={true}
-                    size="small"
-                />
+                                    </Image>
+                                </TouchableOpacity>
+                            )
+                        }}
+                    /> :
+                    <ActivityIndicator
+                        style={{ marginTop: 20 }}
+                        animating={true}
+                        size="small"
+                    />
                 }
 
                 {
-                    this.state.stationList?
-                        <View style={{marginTop:100,width:width,height:200,backgroundColor:"red",position:'absolute',}}>
+                    this.state.stationList ?
+                        <View style={{ marginTop: 100, width: width, height: 200, backgroundColor: "red", position: 'absolute', }}>
                             <Text>换热站列表页面</Text>
                         </View>
-                        :null
+                        : null
                 }
 
             </View>
@@ -223,7 +220,7 @@ const styles = StyleSheet.create({
         height: 45,
         backgroundColor: '#434b59',
         justifyContent: 'center',
-       // alignItems: 'center',
+        alignItems: 'center',
     },
     topNameText: {
         flex: 1,
@@ -264,7 +261,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor:'rgba(255,255,255,0)'
+        backgroundColor: 'rgba(255,255,255,0)'
     },
     listItemTextView: {
         flex: 1,
@@ -283,7 +280,7 @@ const styles = StyleSheet.create({
     listItemTextView2: {
         alignItems: 'center',
         flex: 1,
-        backgroundColor:'rgba(255,255,255,0)'
+        backgroundColor: 'rgba(255,255,255,0)'
     },
     minImage: {
         width: 20,

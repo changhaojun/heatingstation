@@ -11,10 +11,11 @@ import Scada from "./scada/scada";
 import DataList from "./scada/data_list";
 import warn from "./../../home/warn.js"
 var { width, height } = Dimensions.get('window');
-
+import Orientation from 'react-native-orientation';
 export default class StationTab extends React.Component {
     constructor(props) {
         super(props);
+        Orientation.lockToPortrait();//竖屏
         this.state = {
             fristView:DataList,
             topStyle1: styles.topTextSelection,

@@ -187,16 +187,16 @@ render() {
     var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     return (
         <View style={styles.all}>
-            <StatusBar hidden={true}/>
             <View style={styles.navView}>
                 <TouchableOpacity onPress={() => { this.setState({ dataListShow: true })}} style={{width:40,height:30,flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
                     <Image style={styles.topImage} source={require('../icons/map_list.png')} />
                 </TouchableOpacity>
                 <View style={{width:width-80,height:30,flexDirection:"row",alignItems:'center',justifyContent:'center',backgroundColor:'#ffffff',borderRadius:30}}>
                     <TextInput
-                        style={{width:width-100,height:30,backgroundColor:'#ffffff',borderRadius:28,paddingLeft:5}}
+                        style={{width:width-100,height:30,backgroundColor:'#ffffff',borderRadius:28,padding: 0,paddingLeft:5}}
                         returnKeyType={"search"}
                         returnKeyLabel={"search"}
+                        underlineColorAndroid="transparent"
                         onSubmitEditing={this.searchSubmit.bind(this)}
                         placeholder={"搜索"}
                         onChangeText={(text) => this.setState({text})}>
@@ -211,7 +211,7 @@ render() {
                 onLoad={() => this.getData()}
                 ref={webview => this.webview = webview}
                 onMessage={this.onBridgeMessage.bind(this)}
-                source={require('./mapwebview/mapshow.html') }
+                source={Platform.OS === 'ios' ? require('./mapwebview/mapshow.html') : { uri: 'file:///android_asset/mapwebview/mapshow.html' }}
             />
             <View style={styles.switchView}>
                 <TouchableOpacity style={[styles.switchItem]} onPress={() => { this.selectTag(1) }}>

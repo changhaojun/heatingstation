@@ -112,7 +112,6 @@ export default class Login extends React.Component {
         return (
             //  最外层主View
             <View style={styles.all}>
-                <StatusBar hidden={true}/>
                 {/*顶部放置Logo的View*/}
                 <View style={styles.topView}>
                     <Image source={require('./images/login_logo.png')} style={styles.logo}/>

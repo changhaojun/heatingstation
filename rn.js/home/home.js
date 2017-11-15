@@ -79,9 +79,6 @@ export default class Home extends React.Component {
     render() {
         return (
             <View style={styles.all}>
-                <StatusBar
-                    hidden={true}
-                />
                 <View style={styles.navView}>
                     <TouchableOpacity onPress={this.openSetting.bind(this)}>
                         <Image style={{ width: 25, height: 25, marginLeft: 10, }} source={require('../icons/home_nav_user_icon.png')} />

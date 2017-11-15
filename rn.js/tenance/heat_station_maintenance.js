@@ -92,48 +92,6 @@ export default class HeatStationMaintenance extends React.Component {
                         }
 
 
-                        // var section = [];
-                        // var row = [];
-                        // var data = {};
-                        // for (var j = 0; j < zimu.length; j++) {
-                        //     var num = 0;
-                        //     var rowid = [];
-                        //     var rowdata = [];
-                        //
-                        //     for (var i = 0; i < responseJson.length; i++) {
-                        //         if (responseJson[i].index.toUpperCase() === zimu[j]) {
-                        //             rowdata.push(responseJson[i]);
-                        //             rowid.push(num);
-                        //             num++;
-                        //         }
-                        //     }
-                        //
-                        //     if (rowdata.length > 0) {
-                        //         row.push(rowid);
-                        //         data[zimu[j]] = rowdata;
-                        //         section.push(zimu[j]);
-                        //     }
-                        //
-                        // }
-
-
-                        // 提取在线设备 和 掉线设备 并存放到对应的数组中
-                        // 点击切换时调用
-                        let onLineArr = [];
-                        let offLineArr = [];
-                        for (let i=0; i<responseJson.length; i++)
-                        {
-                            if (responseJson[i].status === 1)
-                            {
-                                onLineArr.push(responseJson[i]);
-                            }
-                            else
-                            {
-                                offLineArr.push(responseJson[i])
-                            }
-                        }
-
-
                         var section = [];
                         var row = [];
                         var data = {};
