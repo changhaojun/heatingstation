@@ -45,7 +45,7 @@ export default class Scada extends React.Component {
             access_token: null,
             system:0
         };
-        Orientation.lockToPortrait();//竖屏
+        
     }
     componentDidMount() {
         this._initialScrollIndexTimeout = setTimeout(
@@ -96,8 +96,8 @@ export default class Scada extends React.Component {
                     startInLoadingState={true}
                     onMessage={this.onBridgeMessage.bind(this)}
                     scrollEnabled={true}
-                    source={require('./scadawebview/scada_view.html')}
-                    scalesPageToFit={false}
+                    source={Platform.OS === 'ios' ? require("./scadawebview/scada_view.html") : { uri: 'file:///android_asset/scadawebview/scada_view.html' }}
+                    scalesPageToFit={true}
                     automaticallyAdjustContentInsets={true}
                     style={{ backgroundColor: "rgb(36,50,74)"}}
                 />
@@ -109,11 +109,9 @@ export default class Scada extends React.Component {
 // 样式
 const styles = StyleSheet.create({
     all: {
-        //flex: 1,
+        flex: 1,
         backgroundColor: "#ffffff",
-        // marginTop: 20,
-        height:height,
-        width:width
+       
     },
     // modal的样式
     modalStyle: {
