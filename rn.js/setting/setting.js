@@ -19,7 +19,8 @@ import {
     StatusBar,
     TouchableOpacity,
     AsyncStorage,
-    Dimensions
+    Dimensions,
+    Alert
 } from 'react-native';
 const { width, height } = Dimensions.get('window');
 
@@ -66,11 +67,14 @@ export default class Setting extends React.Component {
             component: Message,
         })
     }
+    delCache(){
+        AsyncStorage.removeItem("history_search_station"); //清除搜索换热站历史
+        Alert.alert('提示','清除完成');
+    }
 
     render() {
         return (
             <View style={styles.all}>
-                <StatusBar hidden={true}/>
                 <View style={styles.topView}>
                     <View style={styles.navView}>
                         <TouchableOpacity onPress={this.backHome.bind(this)}>
@@ -100,6 +104,10 @@ export default class Setting extends React.Component {
                         <Image style={styles.imageItem} source={require('../icons/version_icon.png')} />
                         <Text style={styles.textItem}>应用版本 V1.0</Text>
                     </View>
+                    <TouchableOpacity style={styles.lineView} onPress={()=>this.delCache()}>
+                        <Image style={styles.imageItem} source={require('../icons/ico_clear.png')} />
+                        <Text style={styles.textItem}>清除缓存</Text>
+                    </TouchableOpacity>
 
                     <TouchableOpacity underlayColor="#ECEDEE" onPress={this.goAboutUS.bind(this)} >
                         <View style={styles.lineView}>

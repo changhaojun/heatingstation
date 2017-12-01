@@ -120,7 +120,7 @@ export default class StationTab extends React.Component {
                     </TouchableOpacity>
                 </View>
                 <ScrollView ref={scrollView => this.scrollView = scrollView} horizontal={true} pagingEnabled={true} onScroll={(data) => { this.onScroll(data.nativeEvent.contentOffset.x); }}>
-                    <View style={styles.itemStyle}><this.state.fristView navigator={this.props.navigator} station_id={this.props.station_id}/></View>
+                    <View style={styles.itemStyle}><this.state.fristView navigator={this.props.navigator} station_id={this.props.station_id} station_name={this.props.station_name}/></View>
                     <View style={styles.itemStyle}><Strategy navigator={this.props.navigator} station_id={this.props.station_id}/></View>
                     <View style={styles.itemStyle}><LogClassification navigator={this.props.navigator} station_id={this.props.station_id}/></View>
                     <View style={styles.itemStyle}><ArchivesClassification navigator={this.props.navigator} station_id={this.props.station_id}/></View>

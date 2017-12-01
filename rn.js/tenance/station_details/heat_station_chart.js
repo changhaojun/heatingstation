@@ -9,6 +9,7 @@
 
 import React from 'react';
 import {
+    Text,
     View,
     Image,
     Platform,
@@ -32,7 +33,7 @@ const { width, height } = Dimensions.get('window');
 
 var d = new Date();
 var year = d.getFullYear();
-var month = d.getMonth()+1;
+var month = d.getMonth() + 1;
 var day = d.getDate();
 var h = d.getHours();
 var m = d.getMinutes();
@@ -41,9 +42,9 @@ var start_time = year + "$" + month + "$" + day + "$" + h + ":" + m + ":" + s;
 
 
 var start_time_stamp = d.getTime();
-var end_time_stamp = new Date(start_time_stamp - 4*3600*1000);
+var end_time_stamp = new Date(start_time_stamp - 4 * 3600 * 1000);
 var end_time_year = end_time_stamp.getFullYear();
-var end_time_month = end_time_stamp.getMonth()+1;
+var end_time_month = end_time_stamp.getMonth() + 1;
 var end_time_day = end_time_stamp.getDate();
 var end_time_h = end_time_stamp.getHours();
 var end_time_m = end_time_stamp.getMinutes();
@@ -60,11 +61,11 @@ export default class DataList extends React.Component {
         super(props);
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         this.state = {
-            xArr:[],
-            yArr:[],
-            xUnit:'时间',
-            yUnit:'',
-            yLabel:'',
+            xArr: [],
+            yArr: [],
+            xUnit: '时间',
+            yUnit: '',
+            yLabel: '',
         };
 
         const _this = this;
@@ -82,17 +83,16 @@ export default class DataList extends React.Component {
                         var yUnit;
 
 
-                        if (responseJson.length > 0)
-                        {
+                        if (responseJson.length > 0) {
+                            responseJson.pop()
                             for (var i = 0; i < responseJson.length; i++) {
-                                xArr.push(responseJson[i].create_date);
+                                xArr.push(responseJson[i].create_date.split(" ")[1]);
                                 yArr.push(responseJson[i].data_value);
                             }
 
                             yUnit = responseJson[0].data_unit;
                         }
-                        else
-                        {
+                        else {
                             Alert.alert(
                                 '',
                                 '暂无图表数据',
@@ -101,9 +101,9 @@ export default class DataList extends React.Component {
 
 
                         _this.setState({
-                            xArr:xArr,
-                            yArr:yArr,
-                            yUnit:yUnit,
+                            xArr: xArr,
+                            yArr: yArr,
+                            yUnit: yUnit,
                         });
                     })
                     .catch((error) => {
@@ -127,33 +127,37 @@ export default class DataList extends React.Component {
     render() {
 
         var option = {
+            backgroundColor: '#0071b2',//背景色
             title: {
-                show:false
+                show: false
             },
             legend: {
-                show:false
+                show: false
             },
-            grid:{
-                left:50,
-                right:50,
-                top:50,
-                bottom:80,
+            grid: {
+                left: 20,
+                right: 50,
+                top: 50,
+                bottom: 80,
                 containLabel: true,
+                borderColor:"#998cbf"
             },
             xAxis: {
                 data: this.state.xArr,
                 name: this.state.xUnit,
                 boundaryGap: false,
+                axisLine:{lineStyle:{color:"#118cbf"}},
+                nameTextStyle:{color:"#fff"},
+                axisLabel:{textStyle:{color:"#fff"}},
             },
             yAxis: {
                 type: 'value',
-                axisLabel: {
-                    formatter: '{value}'+ this.state.yUnit
-                },
+                scale:true,
+                axisLabel: {textStyle:{color:"#fff"}, formatter: '{value}' + this.state.yUnit},
                 name: this.props.tag_name + "/" + this.state.yUnit,
-                splitLine:{
-                    show:true
-                },
+                splitLine: {show: true,lineStyle:{color:"#118cbf"}},
+                axisLine:{lineStyle:{color:"#118cbf"}},
+                nameTextStyle:{color:"#fff"},
             },
             dataZoom: [
                 {
@@ -166,32 +170,38 @@ export default class DataList extends React.Component {
                 // name: '温度',
                 type: 'line',
                 clipOverflow: true,
-                smooth: true,
+                //smooth: true,
                 symbol: 'none',
                 //areaStyle: { normal: { color: "rgb(200,232,226)" } }, //曲线下方的面积的颜色
                 data: this.state.yArr,
-                itemStyle : { normal: {label : {show: false}}},
+                itemStyle: { normal: { label: { show: false }} },
                 markPoint: {
+                    symbol:"circle",
+                    symbolSize:12,
+                    label:{normal:{show:false}},
+                    itemStyle:{normal:{color:"#ffffff",borderColor:"#6eb3d7",borderWidth:3,borderType:"dashed",shadowBlur:10,shadowColor: 'rgba(225, 225, 225, 0.5)'}},
                     data: [
-                        { type: 'max', name: '最大值' },
-                        { type: 'min', name: '最小值' }
+                        { type: 'average', name: '平均值' },
                     ]
                 },
-                markLine: {
-                    data: [
-                        { type: 'average', name: '平均值' }
-                    ]
+                lineStyle: {
+                    normal: {
+                        color:"#c1d7e1",
+                        shadowColor: "#00508a88", 
+                        shadowOffsetY: 25,
+                        shadowBlur:50 
+                    }
                 },
+
             }]
         };
 
-        return(
+        return (
             <View>
-                <View style={styles.navView}>
-                    <TouchableOpacity activeOpacity={0.5} onPress={this.back.bind(this)}>
-                    <Image style={{width:30,height:25,marginLeft:10,marginTop:15}} source={require('../../icons/back.png')}/>
+                <TouchableOpacity style={styles.navView} activeOpacity={0.5} onPress={this.back.bind(this)}>
+                        <Image style={{ width: 10, height: 18, marginLeft: 10, }} source={require('../../icons/nav_back_icon.png')} />
+                        <Text style={styles.reText}>{this.props.station_name}</Text>
                     </TouchableOpacity>
-                </View>
                 <View style={styles.chartView}>
                     <Echarts option={option} height={width} />
                 </View>
@@ -202,16 +212,21 @@ export default class DataList extends React.Component {
 
 
 const styles = StyleSheet.create({
-    navView:{
-        width:height,
-        height:50,
-        backgroundColor:"#434b59",
-        flexDirection:"row",
-        alignItems:'center'
+    navView: {
+        width: height,
+        height: 40,
+        backgroundColor: "#434b59",
+        flexDirection: "row",
+        alignItems: 'center'
     },
-    chartView:{
-        width:height,
-        height:width-50,
-        backgroundColor:"#ffffff"
+    chartView: {
+        width: height,
+        height: width - 40,
+        backgroundColor: "#0071b2"
+    },
+    reText:{
+        color:"#fff",
+        fontSize:16,
+        marginLeft:5
     }
 });

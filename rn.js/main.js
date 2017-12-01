@@ -9,7 +9,8 @@ import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
 
 import Home from './home/home.js';
-import RunQuality from './temperatmap/runquality_map';
+//import RunQuality from './temperatmap/runquality_map';
+import RunQuality from  "./contrast_analysis/contrast_analysis"
 import Maintenance from './tenance/maintenance';
 
 
@@ -137,8 +138,7 @@ export default class Main extends React.Component {
                     <TouchableOpacity activeOpacity={0.5} onPress={this._runqualityClick.bind(this)}  >
                         <View style={this.state.runqualityView}>
                             <Image style={styles.bottomItemImage} source={this.state.runqualityImage} />
-                            <Text style={this.state.runqualityText
-                            }>运行质量</Text>
+                            <Text style={this.state.runqualityText}>对比分析</Text>
                         </View>
                     </TouchableOpacity>
                 </View>

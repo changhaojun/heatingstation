@@ -113,19 +113,16 @@ export default class Maintenance extends React.Component {
     render() {
         return (
             <View style={styles.all}>
-                <StatusBar
-                    hidden={true}
-                />
                 <View style={styles.navView}>
                     <TouchableOpacity activeOpacity={0.5} onPress={this.pushToSearchStation.bind(this)}>
-                        <View style={{width:width-60,height:30,marginTop:10,borderRadius:5,backgroundColor:'rgb(255,255,255)',marginLeft:20,flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
+                        <View style={{width:width-50,height:30,marginTop:10,borderRadius:5,backgroundColor:'rgb(255,255,255)',marginLeft:10,flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
                             <Text style={{fontSize:15,color:"rgba(0,0,0,0.7)"}}>
                                 请输入要查询的换热站
                             </Text>
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => { this.props.navigator.push({ component: Abnormal }) }}>
-                        <Image style={{ marginTop:15,width: 25, height: 20, marginRight: 10,marginLeft: 6, }} resizeMode="contain" source={require('../icons/abnormal_icon.png')} />
+                        <Image style={{ marginTop:15,width: 25, height: 20, marginRight: 10,marginLeft: 10, }} resizeMode="contain" source={require('../icons/abnormal_icon.png')} />
                     </TouchableOpacity>
                 </View>
 

@@ -20,7 +20,7 @@ import {
 import Constants from './../constants';
 import Dimensions from 'Dimensions';
 const { width, height } = Dimensions.get('window');
-const zimu = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+const zimu = ["#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 
 
 var getSectionData = (dataBlob, sectionID) => {
@@ -54,21 +54,28 @@ export default class HeatStationMaintenance extends React.Component {
             onLineSelect: true,
             offLineSelect: false,
 
-            allArr:[],
-            onLineArr:[],
-            offLineArr:[],
+            allArr: [],
+            onLineArr: [],
+            offLineArr: [],
+            tagList: null,
         };
-
-        this.allClicked = this.allClicked.bind(this);
-        this.onLineClicked = this.onLineClicked.bind(this);
-        this.offLineClicked = this.offLineClicked.bind(this);
-
 
         const _this = this;
         AsyncStorage.getItem("access_token", function (errs, result) {
 
             if (!errs) {
-                var uri=Constants.serverSite + "/v1_0_0/stationAllDatas?tag_id=10,11,12,20,16&access_token=" + result + "&company_code=" + _this.props.company_code;
+                var uri = Constants.serverSite + "/v1_0_0/tags?access_token=" + result + "&level=2";
+                console.log(uri)
+                fetch(uri)
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+                        console.log(responseJson);
+                        _this.setState({ tagList: responseJson })
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+                uri = Constants.serverSite + "/v1_0_0/stationAllDatas?tag_id=10,11,12,20,16&access_token=" + result + "&company_code=" + _this.props.company_code;
                 console.log(uri)
                 fetch(uri)
                     .then((response) => response.json())
@@ -79,55 +86,21 @@ export default class HeatStationMaintenance extends React.Component {
                         // 点击切换时调用
                         let onLineArr = [];
                         let offLineArr = [];
-                        for (let i=0; i<responseJson.length; i++)
-                        {
-                            if (responseJson[i].status === 1)
-                            {
+                        for (let i = 0; i < responseJson.length; i++) {
+                            if (responseJson[i].status === 1) {
                                 onLineArr.push(responseJson[i]);
-                            }
-                            else
-                            {
+                            } else {
                                 offLineArr.push(responseJson[i])
                             }
                         }
-
-
-                        var section = [];
-                        var row = [];
-                        var data = {};
-                        for (var j = 0; j < zimu.length; j++) {
-                            var num = 0;
-                            var rowid = [];
-                            var rowdata = [];
-                            for (var i = 0; i < onLineArr.length; i++) {
-                                if (onLineArr[i].index.toUpperCase() === zimu[j]) {
-                                    rowdata.push(onLineArr[i]);
-                                    rowid.push(num);
-                                    num++;
-                                }
-                            }
-                            if (rowdata.length > 0) {
-                                row.push(rowid);
-                                data[zimu[j]] = rowdata;
-                                section.push(zimu[j]);
-                            }
-
-                        }
-
-
-
                         // 更新状态机
                         _this.setState({
-                            allArr:responseJson,
-                            data: data,
-                            dataSource: ds.cloneWithRowsAndSections(data, section, row),
-                            onLineArr:onLineArr,
-                            offLineArr:offLineArr,
+                            allArr: responseJson,
+                            onLineArr: onLineArr,
+                            offLineArr: offLineArr,
                         });
-                        
-                        _this.onLineClicked();
 
-                        _this.onLineClicked();
+                        _this.selClicked(1);
 
                     })
                     .catch((error) => {
@@ -151,24 +124,9 @@ export default class HeatStationMaintenance extends React.Component {
             }
         })
     }
-
-    searchStation() {
-        const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-        var newdata = [];
-        for (var i = 0; i < this.state.data.length; i++) {
-            if (this.state.dataSource[i].station_name.match(this.state.searchValue)) {
-                newdata.push(this.state.data[i]);
-            }
-            this.setState({
-                dataSource: ds.cloneWithRows(newdata),
-
-            });
-        }
-
-    }
-
-    // 全部设备点击事件
-    allClicked() {
+    // 选择点击事件  1：在线  2：掉线   3：全部
+    selClicked(sel) {
+        var allData = sel == 1 ? this.state.onLineArr : sel == 2 ? this.state.offLineArr : this.state.allArr;
         var section = [];
         var row = [];
         var data = {};
@@ -176,51 +134,12 @@ export default class HeatStationMaintenance extends React.Component {
             var num = 0;
             var rowid = [];
             var rowdata = [];
-            for (var i = 0; i < this.state.allArr.length; i++) {
-
-                if (this.state.allArr[i].index.toUpperCase() === zimu[j]) {
-                    rowdata.push(this.state.allArr[i]);
+            for (var i = 0; i < allData.length; i++) {
+                if (allData[i].index.toUpperCase() === zimu[j] || zimu[j] == "#" && (allData[i].index.toUpperCase() > "Z" || allData[i].index.toUpperCase() < "A")) {
+                    rowdata.push(allData[i]);
                     rowid.push(num);
                     num++;
                 }
-
-            }
-            if (rowdata.length > 0) {
-                row.push(rowid);
-                data[zimu[j]] = rowdata;
-                section.push(zimu[j]);
-            }
-
-        }
-
-
-        this.setState({
-            allSelect: true,
-            onLineSelect: false,
-            offLineSelect: false,
-            data: data,
-            dataSource: ds.cloneWithRowsAndSections(data, section, row),
-        })
-    }
-
-
-    // 在线设备点击事件
-    onLineClicked() {
-        var section = [];
-        var row = [];
-        var data = {};
-        for (var j = 0; j < zimu.length; j++) {
-            var num = 0;
-            var rowid = [];
-            var rowdata = [];
-            for (var i = 0; i < this.state.onLineArr.length; i++) {
-
-                if (this.state.onLineArr[i].index.toUpperCase() === zimu[j]) {
-                    rowdata.push(this.state.onLineArr[i]);
-                    rowid.push(num);
-                    num++;
-                }
-
             }
             if (rowdata.length > 0) {
                 row.push(rowid);
@@ -231,45 +150,9 @@ export default class HeatStationMaintenance extends React.Component {
         }
 
         this.setState({
-            allSelect: false,
-            onLineSelect: true,
-            offLineSelect: false,
-            data: data,
-            dataSource: ds.cloneWithRowsAndSections(data, section, row),
-        });
-    }
-
-
-    // 掉线设备点击事件
-    offLineClicked() {
-        var section = [];
-        var row = [];
-        var data = {};
-        for (var j = 0; j < zimu.length; j++) {
-            var num = 0;
-            var rowid = [];
-            var rowdata = [];
-            for (var i = 0; i < this.state.offLineArr.length; i++) {
-
-                if (this.state.offLineArr[i].index.toUpperCase() === zimu[j]) {
-                    rowdata.push(this.state.offLineArr[i]);
-                    rowid.push(num);
-                    num++;
-                }
-
-            }
-            if (rowdata.length > 0) {
-                row.push(rowid);
-                data[zimu[j]] = rowdata;
-                section.push(zimu[j]);
-            }
-
-        }
-
-        this.setState({
-            allSelect: false,
-            onLineSelect: false,
-            offLineSelect: true,
+            allSelect: sel == 3 ? true : false,
+            onLineSelect: sel == 1 ? true : false,
+            offLineSelect: sel == 2 ? true : false,
             data: data,
             dataSource: ds.cloneWithRowsAndSections(data, section, row),
         })
@@ -283,9 +166,9 @@ export default class HeatStationMaintenance extends React.Component {
 
             } else {
                 if (this.state.data[zimu[i]]) {
-                    h = h + 18;
+                    h = h + 19;
                     for (let j = 0; j < this.state.data[zimu[i]].length; j++) {
-                        h = h + 44;
+                        h = h + 59;
                     }
                 }
             }
@@ -297,35 +180,35 @@ export default class HeatStationMaintenance extends React.Component {
             <View style={styles.all}>
                 <View style={styles.navView}>
                     <TouchableOpacity onPress={this.back.bind(this)}>
-                        <Image style={{ width: 25, height: 20, marginLeft: 10, }}  resizeMode="contain" source={require('../icons/nav_back_icon.png')} />
+                        <Image style={{ width: 25, height: 20, marginLeft: 10, }} resizeMode="contain" source={require('../icons/nav_back_icon.png')} />
                     </TouchableOpacity>
                     <Text style={styles.topNameText}>换热站运行情况</Text>
-                    <Image style={{ width: 25, height: 25, marginRight: 10,}} source={require('../icons/nav_flag.png')} />
+                    <Image style={{ width: 25, height: 25, marginRight: 10, }} source={require('../icons/nav_flag.png')} />
                 </View>
 
-                <View style={{backgroundColor:'#434b59',width:width,height:40,flexDirection:'row'}}>
+                <View style={{ backgroundColor: '#434b59', width: width, height: 40, flexDirection: 'row' }}>
                     <View style={styles.topTabView}>
-                        <TouchableOpacity activeOpacity={0.5} onPress={this.onLineClicked}>
-                            <View style={this.state.onLineSelect?styles.topTabBorderDisplay:styles.topTabBorderUnDisplay}>
-                                <Text style={this.state.onLineSelect?styles.topTabTextActive:styles.topTabTextInactive}>
+                        <TouchableOpacity activeOpacity={0.5} onPress={() => this.selClicked(1)}>
+                            <View style={this.state.onLineSelect ? styles.topTabBorderDisplay : styles.topTabBorderUnDisplay}>
+                                <Text style={this.state.onLineSelect ? styles.topTabTextActive : styles.topTabTextInactive}>
                                     在线
                                 </Text>
                             </View>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.topTabView}>
-                        <TouchableOpacity activeOpacity={0.5} onPress={this.offLineClicked}>
-                            <View style={this.state.offLineSelect?styles.topTabBorderDisplay:styles.topTabBorderUnDisplay}>
-                                <Text style={this.state.offLineSelect?styles.topTabTextActive:styles.topTabTextInactive}>
+                        <TouchableOpacity activeOpacity={0.5} onPress={() => this.selClicked(2)}>
+                            <View style={this.state.offLineSelect ? styles.topTabBorderDisplay : styles.topTabBorderUnDisplay}>
+                                <Text style={this.state.offLineSelect ? styles.topTabTextActive : styles.topTabTextInactive}>
                                     掉线
                                 </Text>
                             </View>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.topTabView}>
-                        <TouchableOpacity activeOpacity={0.5} onPress={this.allClicked}>
-                            <View style={this.state.allSelect?styles.topTabBorderDisplay:styles.topTabBorderUnDisplay}>
-                                <Text style={this.state.allSelect?styles.topTabTextActive:styles.topTabTextInactive}>
+                        <TouchableOpacity activeOpacity={0.5} onPress={() => this.selClicked(3)}>
+                            <View style={this.state.allSelect ? styles.topTabBorderDisplay : styles.topTabBorderUnDisplay}>
+                                <Text style={this.state.allSelect ? styles.topTabTextActive : styles.topTabTextInactive}>
                                     全部
                                 </Text>
                             </View>
@@ -333,66 +216,65 @@ export default class HeatStationMaintenance extends React.Component {
                     </View>
                 </View>
                 <View style={styles.titleView}>
-                    <View style={styles.selectItemView}>
-                        <Text style={styles.titleText}>换热站</Text>
+                    <View style={styles.selectItemView1}>
+                        <Text style={styles.titleText}>{this.state.tagList ? this.state.tagList[0].tag_name : ""}</Text>
                     </View>
                     <View style={styles.selectItemView}>
-                        <Text style={styles.titleText}>一网供温</Text>
+                        <Text style={styles.titleText}>{this.state.tagList ? this.state.tagList[1].tag_name : ""}</Text>
                     </View>
                     <View style={styles.selectItemView}>
-                        <Text style={styles.titleText}>一网回温</Text>
+                        <Text style={styles.titleText}>{this.state.tagList ? this.state.tagList[2].tag_name : ""}</Text>
                     </View>
                     <View style={styles.selectItemView}>
-                        <Text style={styles.titleText}>一网供压</Text>
+                        <Text style={styles.titleText}>{this.state.tagList ? this.state.tagList[3].tag_name : ""}</Text>
                     </View>
                     <View style={styles.selectItemView}>
-                        <Text style={styles.titleText}>二网供温</Text>
-                    </View>
-                    <View style={styles.selectItemView}>
-                        <Text style={styles.titleText}>一网流量</Text>
+                        <Text style={styles.titleText}>{this.state.tagList ? this.state.tagList[4].tag_name : ""}</Text>
                     </View>
                 </View>
                 <View style={styles.bottomView}>
 
-                    {this.state.allArr.length ?
-                    <ListView
-                        ref="ListView"
-                        showsVerticalScrollIndicator={false}
-                        enableEmptySections={true}
-                        showsVerticalScrollIndicator={false}
-                        dataSource={this.state.dataSource}
-                        renderRow={ data =>(
-                            <TouchableHighlight underlayColor="rgba(77,190,255,0.5)" onPress={this.openScada.bind(this, data.station_name, data.station_id)}>
-                                <View style={styles.listView}>
-                                    <View style={styles.selectItemView1}>
-                                        <Text style={data.status === 1?{ fontSize: 10, color: '#0099ff', textAlign: 'left', marginLeft:9 }:{fontSize: 10, color: 'rgb(248,184,54)', textAlign: 'left',marginLeft:9}} numberOfLines={1}>{data.station_name}</Text>
-                                        <Text style={data.status === 1?{ fontSize: 7, color: '#0099ff', textAlign: 'left', marginLeft:9 }:{ fontSize: 7, color: 'rgb(248,184,54)', textAlign: 'left', marginLeft:9}}>{data.data?data.data.data_time:null}</Text>
+                    {this.state.allArr.length && this.state.tagList && this.state.tagList.length ?
+                        <ListView
+                            ref="ListView"
+                            initialListSize={this.state.allArr.length}
+                            showsVerticalScrollIndicator={false}
+                            enableEmptySections={true}
+                            showsVerticalScrollIndicator={false}
+                            dataSource={this.state.dataSource}
+                            renderRow={data => (
+                                <TouchableOpacity underlayColor="rgba(77,190,255,0.5)" onPress={this.openScada.bind(this, data.station_name, data.station_id)}>
+                                    <View style={[styles.listView, { height: 28, alignItems: "flex-end", }]}>
+                                        <Text style={{ fontSize: 15, color: data.status === 1 ? '#0099ff' : "#919293", }} numberOfLines={1}>{data.station_name}</Text>
+                                        <View style={{ flex: 1 }} />
+                                        <Text style={{ fontSize: 11, color: '#919293', marginRight: 40, marginBottom: 3, }}>{data.data ? data.data.data_time : null}</Text>
                                     </View>
-                                    <View style={styles.selectItemView}>
-                                        <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data?data.data["1gw"]:"-"}</Text>
+                                    <View style={styles.listView}>
+                                        <View style={styles.selectItemView1}>
+                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data ? data.data[this.state.tagList[0].abbre] : "━━"}</Text>
+                                        </View>
+                                        <View style={styles.selectItemView}>
+                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data ? data.data[this.state.tagList[1].abbre] : "━━"}</Text>
+                                        </View>
+                                        <View style={styles.selectItemView}>
+                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data ? data.data[this.state.tagList[2].abbre] : "━━"}</Text>
+                                        </View>
+                                        <View style={styles.selectItemView}>
+                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data ? data.data[this.state.tagList[3].abbre] : "━━"}</Text>
+                                        </View>
+                                        <View style={styles.selectItemView}>
+                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data ? data.data[this.state.tagList[4].abbre] : "━━"}</Text>
+                                        </View>
                                     </View>
-                                    <View style={styles.selectItemView}>
-                                        <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data?data.data["1hw"]:"-"}</Text>
-                                    </View>
-                                    <View style={styles.selectItemView}>
-                                        <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data?data.data["1gy"]:"-"}</Text>
-                                    </View>
-                                    <View style={styles.selectItemView}>
-                                        <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data?data.data["2gw"]:"-"}</Text>
-                                    </View>
-                                    <View style={styles.selectItemView}>
-                                        <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data?data.data["1sl"]:"-"}</Text>
-                                    </View>
-                                </View>
-                            </TouchableHighlight>
-                        )}
-                        renderSectionHeader={(sectionData, sectionID) => (
-                            <Text style={{ fontSize: 15, padding: 5, paddingLeft: 18, height: 30, backgroundColor: "#f3f3f3" }}>{sectionData}</Text>
-                        )}
-                        renderSeparator={() => (
-                            <View style={{ height: 0.1, backgroundColor: "#f2f2f299", width: width - 75, marginLeft: 48 }} />
-                        )}
-                    /> :
+                                </TouchableOpacity>
+                            )}
+                            renderSectionHeader={(sectionData, sectionID) => (
+                                <Text style={{ fontSize: 15, paddingLeft: 18, height: 20, backgroundColor: "#f3f3f3", color: "#919293" }}>{sectionData}</Text>
+                            )}
+                            renderSeparator={() => (
+                                <View style={{ height: 1, backgroundColor: "#f2f2f2", width: width - 25, }} />
+                            )}
+                        /> :
                         <ActivityIndicator
                             animating={true}
                             size="large"
@@ -401,9 +283,9 @@ export default class HeatStationMaintenance extends React.Component {
 
 
                 </View>
-                <View style={{ position: 'absolute', marginTop: 130, alignSelf: "flex-end", width: 32, }}>
+                <View style={{ position: 'absolute', marginTop: 120, alignSelf: "flex-end", width: 26, }}>
                     <ListView
-                        initialListSize={26}
+                        initialListSize={27}
                         dataSource={this.state.dataSourceInitial}
                         enableEmptySections={true}
                         renderRow={data => (
@@ -457,50 +339,50 @@ const styles = StyleSheet.create({
     },
     titleView: {
         width: width,
-        height: 40,
+        height: 30,
         backgroundColor: '#ffffff',
         flexDirection: 'row',
         alignItems: 'center',
+        marginLeft: 10,
+        marginRight: 30,
     },
     listView: {
         width: width,
-        height: 40,
+        height: 30,
         backgroundColor: '#ffffff',
         flexDirection: 'row',
         alignItems: 'center',
-        borderBottomWidth: 1,
-        borderColor: '#e9e9e9',
+        marginLeft: 10,
+        marginRight: 30,
+
     },
     selectItemView: {
-        width: (width - 18) / 6,
+        width: (width - 40) / 5,
         height: 40,
-        alignItems:"center",
+        alignItems: "flex-end",
         justifyContent: 'center',
     },
     selectItemView1: {
-        width: (width - 18) / 6,
+        width: (width - 40) / 5,
         height: 40,
-        flexDirection:'column',
-        alignItems:"flex-start",
+        alignItems: "flex-start",
         justifyContent: 'center',
     },
     titleText: {
-        fontSize: 13,
+        fontSize: 11,
         color: '#0099ff',
-        textAlign: 'center',
+        textAlign: 'right',
     },
     listText: {
-        fontSize: 13,
+        fontSize: 16,
         color: '#000000',
-        textAlign: 'left',
     },
     listWarnText: {
-        fontSize: 13,
-        color: 'rgb(248,184,54)',
-        textAlign: 'left',
+        fontSize: 16,
+        color: '#919293',
     },
     bottomView: {
-        backgroundColor: '#e9e9e9',
+        //backgroundColor: '#e9e9e9',
         flexDirection: 'row',
         justifyContent: 'center',
         flex: 1,
@@ -552,32 +434,32 @@ const styles = StyleSheet.create({
         color: '#515151',
         paddingLeft: 30,
     },
-    topTabView:{
-        width:width*1/3,
-        height:40,
-        flexDirection:'row',
-        alignItems:'center',
-        justifyContent:'center'
+    topTabView: {
+        width: width * 1 / 3,
+        height: 40,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     topTabTextInactive: {
-        color:'#ffffff',
-        fontSize:18
+        color: '#ffffff',
+        fontSize: 18
     },
     topTabTextActive: {
-        color:'rgb(84,141,183)',
-        fontSize:18
+        color: 'rgb(84,141,183)',
+        fontSize: 18
     },
     topTabBorderDisplay: {
-        width:width * 1/3 - 20,
-        height:40,
-        flexDirection:'row',
-        alignItems:'center',
-        justifyContent:'center',
-        borderBottomWidth:2,
-        borderBottomColor:'rgb(84,141,183)'
+        width: width * 1 / 3 - 20,
+        height: 40,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderBottomWidth: 2,
+        borderBottomColor: 'rgb(84,141,183)'
     },
     topTabBorderUnDisplay: {
-        borderBottomWidth:0
+        borderBottomWidth: 0
     },
     rowFront: {
         width: width,
@@ -590,13 +472,13 @@ const styles = StyleSheet.create({
     },
     indexListText: {
         flex: 1,
-        paddingLeft:10,
-        color: "#000000",
-        fontSize: 13,
-        backgroundColor:"#ffffff00",
+        //paddingLeft:10,
+        color: "#00000088",
+        fontSize: 15,
+        backgroundColor: "#ffffff00",
         textAlign: "center",
-        height:(height-180)/26,
-        width:20
+        height: (height - 165) / 26,
+        width: 26
     },
     listImage: {
         width: 28,
