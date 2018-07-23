@@ -27,7 +27,7 @@ const { width, height } = Dimensions.get('window');
 import InspectionWell from "./inspection_well"
 import AboutUS from './about_us';
 import Message from './message';
-import Login from  '../login';
+import Login from '../login';
 
 export default class Setting extends React.Component {
 
@@ -52,7 +52,10 @@ export default class Setting extends React.Component {
 
     exit() {
         this.props.navigator.replace({
-            component:Login,
+            component: Login,
+            passProps: {
+                exit: true
+            }
         })
     }
 
@@ -67,9 +70,9 @@ export default class Setting extends React.Component {
             component: Message,
         })
     }
-    delCache(){
+    delCache() {
         AsyncStorage.removeItem("history_search_station"); //清除搜索换热站历史
-        Alert.alert('提示','清除完成');
+        Alert.alert('提示', '清除完成');
     }
 
     render() {
@@ -104,7 +107,7 @@ export default class Setting extends React.Component {
                         <Image style={styles.imageItem} source={require('../icons/version_icon.png')} />
                         <Text style={styles.textItem}>应用版本 V1.0</Text>
                     </View>
-                    <TouchableOpacity style={styles.lineView} onPress={()=>this.delCache()}>
+                    <TouchableOpacity style={styles.lineView} onPress={() => this.delCache()}>
                         <Image style={styles.imageItem} source={require('../icons/ico_clear.png')} />
                         <Text style={styles.textItem}>清除缓存</Text>
                     </TouchableOpacity>
@@ -116,10 +119,10 @@ export default class Setting extends React.Component {
                         </View>
                     </TouchableOpacity>
                     {/*<TouchableHighlight underlayColor="#ECEDEE" onPress={()=>this.props.navigator.push({component:InspectionWell})} >*/}
-                        {/*<View style={styles.lineView}>*/}
-                            {/*<Image style={{width:22,height:22,marginLeft:40,}} source={require('../icons/well.png')} />*/}
-                            {/*<Text style={styles.textItem}>检查井录入</Text>*/}
-                        {/*</View>*/}
+                    {/*<View style={styles.lineView}>*/}
+                    {/*<Image style={{width:22,height:22,marginLeft:40,}} source={require('../icons/well.png')} />*/}
+                    {/*<Text style={styles.textItem}>检查井录入</Text>*/}
+                    {/*</View>*/}
                     {/*</TouchableHighlight>*/}
 
                     <View style={styles.exitButtonView}>
@@ -165,7 +168,7 @@ const styles = StyleSheet.create({
     },
     imageView: {
         flex: 1,
-        backgroundColor:"#434b59",
+        backgroundColor: "#434b59",
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: "center",

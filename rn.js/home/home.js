@@ -50,7 +50,7 @@ export default class Home extends React.Component {
         });
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
-                var uri=Constants.serverSite + "/v1_0_0/totalData?company_code=" + _this.state.company_code + "&access_token=" + result+"&company_id=" + _this.state.company_id;
+                var uri = Constants.serverSite + "/v1_0_0/totalData?company_code=" + _this.state.company_code + "&access_token=" + result + "&company_id=" + _this.state.company_id;
                 fetch(uri)
                     .then((response) => response.json())
                     .then((responseJson) => {
@@ -74,6 +74,7 @@ export default class Home extends React.Component {
         this.props.navigator.push({
             component: Warn,
         })
+        Constants.alarmSum=0;
     }
 
     render() {
@@ -85,33 +86,35 @@ export default class Home extends React.Component {
                     </TouchableOpacity>
                     <Text style={styles.topNameText}>首页</Text>
                     <TouchableOpacity style={styles.topImage} onPress={this.openWarn.bind(this)}>
-                        <Image style={{ width: 25, height: 25, marginRight: 10, }} source={require('../icons/home_nav_warn_icon.png')} />
+                        <Image style={{ width: 25, height: 25, marginRight: 10, }} source={require('../icons/home_nav_warn_icon.png')} >
+                            {Constants.alarmSum?<Text style={styles.alarmText}>{Constants.alarmSum}</Text>:null}
+                        </Image>
                     </TouchableOpacity>
                 </View>
                 <ScrollView>
-                <Weather navigator={this.props.navigator} />
-                <View style={[styles.line, { marginTop: 5, }]}>
-                    <View style={styles.linehelf}>
-                        <Image style={styles.lineImage} source={require('../icons/home1.png')} />
-                        <Text style={styles.lineText}>换热站数量<Text style={styles.linevalue}>{this.state.data&&this.state.data.allSatations?this.state.data.allSatations.stationCounts:""}</Text><Text style={{ fontSize: 13 }}>个</Text></Text>
+                    <Weather navigator={this.props.navigator} />
+                    <View style={[styles.line, { marginTop: 5, }]}>
+                        <View style={styles.linehelf}>
+                            <Image style={styles.lineImage} source={require('../icons/home1.png')} />
+                            <Text style={styles.lineText}>换热站数量<Text style={styles.linevalue}>{this.state.data && this.state.data.allSatations ? this.state.data.allSatations.stationCounts : ""}</Text><Text style={{ fontSize: 13 }}>个</Text></Text>
+                        </View>
+                        <View style={styles.linehelf}>
+                            <Image style={styles.lineImage} source={require('../icons/home2.png')} />
+                            <Text style={styles.lineText}>供热面积<Text style={styles.linevalue}>{this.state.data && this.state.data.allSatations ? this.state.data.allSatations.total_erea : ""}</Text><Text style={{ fontSize: 13 }}>万㎡</Text></Text>
+                        </View>
                     </View>
-                    <View style={styles.linehelf}>
-                        <Image style={styles.lineImage} source={require('../icons/home2.png')} />
-                        <Text style={styles.lineText}>供热面积<Text style={styles.linevalue}>{this.state.data&&this.state.data.allSatations?this.state.data.allSatations.total_erea:""}</Text><Text style={{ fontSize: 13 }}>万㎡</Text></Text>
+                    <View style={[styles.line, { marginTop: 1, }]}>
+                        <View style={styles.linehelf}>
+                            <Image style={styles.lineImage} source={require('../icons/home3.png')} />
+                            <Text style={styles.lineText}>昨日热量<Text style={styles.linevalue}>{this.state.data && this.state.data.allSatations ? this.state.data.allSatationEnergy.hot_energy : ""}</Text><Text style={{ fontSize: 13 }}>万GJ</Text></Text>
+                        </View>
+                        <View style={styles.linehelf}>
+                            <Image style={styles.lineImage} source={require('../icons/home4.png')} />
+                            <Text style={styles.lineText}>本周热量<Text style={styles.linevalue}>{this.state.data && this.state.data.allSatations ? this.state.data.weekDatas : ""}</Text><Text style={{ fontSize: 13 }}>万GJ</Text></Text>
+                        </View>
                     </View>
-                </View>
-                <View style={[styles.line, { marginTop: 1, }]}>
-                    <View style={styles.linehelf}>
-                        <Image style={styles.lineImage} source={require('../icons/home3.png')} />
-                        <Text style={styles.lineText}>昨日热量<Text style={styles.linevalue}>{this.state.data&&this.state.data.allSatations?this.state.data.allSatationEnergy.hot_energy:""}</Text><Text style={{ fontSize: 13 }}>万GJ</Text></Text>
-                    </View>
-                    <View style={styles.linehelf}>
-                        <Image style={styles.lineImage} source={require('../icons/home4.png')} />
-                        <Text style={styles.lineText}>本周热量<Text style={styles.linevalue}>{this.state.data&&this.state.data.allSatations?this.state.data.weekDatas:""}</Text><Text style={{ fontSize: 13 }}>万GJ</Text></Text>
-                    </View>
-                </View>
-                <HomeTab navigator={this.props.navigator} />
-                <FollowList navigator={this.props.navigator} />
+                    <HomeTab navigator={this.props.navigator} />
+                    <FollowList navigator={this.props.navigator} />
                 </ScrollView>
             </View>
 
@@ -164,6 +167,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flex: 1,
         alignItems: 'center',
+    },
+    alarmText:{
+        color:"#fff",
+        paddingLeft:5,
+        paddingRight:5,
+        textAlign:"center",
+        fontSize:10,
+        backgroundColor:"red",
+        borderRadius:10,
+        marginRight:-5,
+        alignSelf:"flex-end"
     }
 
 });

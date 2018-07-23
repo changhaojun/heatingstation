@@ -50,15 +50,22 @@ export default class Warn extends React.Component {
             fullname:"",
             company_code:"000005"
         };
-        this.getData();
         const _this = this;
-        AsyncStorage.getItem("fullname", function (errs, result) {_this.setState({fullname:result})});
-        AsyncStorage.getItem("company_code", function (errs, result) {_this.setState({company_code:result})});
+        AsyncStorage.getItem("fullname", function (errs, result) {
+            _this.setState({fullname:result});
+            AsyncStorage.getItem("company_code", function (errs, result) {
+                _this.setState({company_code:result});
+                _this.getData();
+            });
+        });
+        
     }
 
     getData() {
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         const _this = this;
+        
+        
         AsyncStorage.getItem("access_token", function (errs, result) {
             if (!errs) {
                 var uri=Constants.serverSite + "/v1_0_0/alarmHistory?pageNumber=" + load + "&pageSize=15&access_token=" + result + "&start_time=" + _this.state.startTime + "&end_time=" + _this.state.endTime+ "&company_code=" + _this.state.company_code;
@@ -121,7 +128,6 @@ export default class Warn extends React.Component {
     render() {
         return (
             <View style={styles.all}>
-                <StatusBar hidden={true}/>
                 <View style={styles.navView}>
                     <TouchableOpacity onPress={this.back.bind(this)}>
                         <Image style={{width: 25, height: 20, marginLeft: 10,}} resizeMode="contain" source={require('../icons/nav_back_icon.png')} />

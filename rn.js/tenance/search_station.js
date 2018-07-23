@@ -189,7 +189,7 @@ export default class WisdomHeating extends Component {
                                     <View style={[styles.listView, { height: 28, alignItems: "flex-end", }]}>
                                         <Text style={{ fontSize: 15, color: data.status === 1 ? '#0099ff' : "#919293", }} numberOfLines={1}>{data.station_name}</Text>
                                         <View style={{ flex: 1 }} />
-                                        <Text style={{ fontSize: 11, color: '#919293', marginRight: 40, marginBottom: 3, }}>{data.data ? data.data.data_time : null}</Text>
+                                        <Text style={{ fontSize: 11, color: '#919293', marginRight: 0, marginBottom: 3, }}>{data.data ? data.data.data_time : null}</Text>
                                     </View>
                                     <View style={styles.listView}>
                                         <View style={styles.selectItemView1}>

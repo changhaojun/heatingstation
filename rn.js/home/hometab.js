@@ -23,7 +23,7 @@ import {
     ListView,
     TouchableOpacity,
     ScrollView,
-    AlertIOS,
+    Alert,
 } from 'react-native';
 import Dimensions from 'Dimensions';
 import Constants from '../constants';
@@ -61,7 +61,7 @@ export default class StationTab extends React.Component {
                         }
                         else
                         {
-                            AlertIOS.alert(
+                            Alert.alert(
                                 '提示',
                                 '暂无热耗数据'
                             )

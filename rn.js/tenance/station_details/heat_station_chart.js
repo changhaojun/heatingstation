@@ -66,6 +66,7 @@ export default class DataList extends React.Component {
             xUnit: '时间',
             yUnit: '',
             yLabel: '',
+            prompt:"加载中……"
         };
 
         const _this = this;
@@ -90,13 +91,14 @@ export default class DataList extends React.Component {
                                 yArr.push(responseJson[i].data_value);
                             }
 
-                            yUnit = responseJson[0].data_unit;
+                            yUnit = responseJson[0].data_unit?responseJson[0].data_unit:"";
                         }
                         else {
                             Alert.alert(
                                 '',
                                 '暂无图表数据',
                             );
+                            _this.setState({prompt:"暂无数据"});
                         }
 
 
@@ -153,8 +155,8 @@ export default class DataList extends React.Component {
             yAxis: {
                 type: 'value',
                 scale:true,
-                axisLabel: {textStyle:{color:"#fff"}, formatter: '{value}' + this.state.yUnit},
-                name: this.props.tag_name + "/" + this.state.yUnit,
+                axisLabel: {textStyle:{color:"#fff"}, formatter: '{value}' + (this.state.yUnit?this.state.yUnit:"")},
+                name: this.props.tag_name + (this.state.yUnit?"/" + this.state.yUnit:""),
                 splitLine: {show: true,lineStyle:{color:"#118cbf"}},
                 axisLine:{lineStyle:{color:"#118cbf"}},
                 nameTextStyle:{color:"#fff"},
@@ -203,7 +205,7 @@ export default class DataList extends React.Component {
                         <Text style={styles.reText}>{this.props.station_name}</Text>
                     </TouchableOpacity>
                 <View style={styles.chartView}>
-                    <Echarts option={option} height={width} />
+                    {this.state.xArr.length?<Echarts option={option} height={width} />:<Text style={{ color:"#fff"}}>{this.state.prompt}</Text>}
                 </View>
             </View>
         )
@@ -222,7 +224,9 @@ const styles = StyleSheet.create({
     chartView: {
         width: height,
         height: width - 40,
-        backgroundColor: "#0071b2"
+        backgroundColor: "#0071b2",
+        alignItems:"center",
+        justifyContent:"center"
     },
     reText:{
         color:"#fff",

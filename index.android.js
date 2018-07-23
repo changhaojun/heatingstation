@@ -5,10 +5,9 @@
  */
 
 import React, { Component } from 'react';
-import { AppRegistry, StyleSheet, BackAndroid, ToastAndroid, Text, StatusBar, View, Alert, Modal } from 'react-native';
+import { AppRegistry, StyleSheet, PushNotificationIOS, BackAndroid, ToastAndroid, Text, StatusBar, View, Alert, Modal } from 'react-native';
 import { Navigator } from 'react-native-deprecated-custom-components'
 
-import JPushModule from 'jpush-react-native';
 import Login from './rn.js/login';
 import Orientation from 'react-native-orientation';
 import AppUpdate from 'react-native-appupdate';
@@ -38,15 +37,12 @@ export default class WisdomHeating extends Component {
             data: {},
             updateModal: false,
             downloaded: 0
+
         };
     }
+
     componentDidMount() {
         this.getEdition();
-        JPushModule.initPush();
-        JPushModule.setTags(["ert"], () => {
-            console.log('Set tags null is success');
-        });
-        JPushModule.addReceiveCustomMsgListener((message) => { });
     }
     getEdition() {
 
@@ -138,11 +134,11 @@ export default class WisdomHeating extends Component {
                     visible={this.state.updateModal}
                     onRequestClose={() => { }}>
                     <View style={{ backgroundColor: "#00000067", flex: 1, justifyContent: 'center', alignItems: 'center', }}>
-                        <View style={{ backgroundColor: "#fff", width: width - 80, height: 150, justifyContent: 'center',}}>
-                            <Text style={{ backgroundColor: "#0099FF", width: width - 80, height: 40,fontSize:17,color:"#fff", textAlignVertical: 'center', paddingLeft: 20 }}>版本更新</Text>
-                            <View style={{ flex:1, justifyContent: 'center', paddingLeft: 40 }}>
-                                <Text style={{marginTop:-15}}>下载中({this.state.downloaded}%)……</Text>
-                                <View style={{ width: width - 160, height: 3, backgroundColor: "#d2d2d2",marginTop:5 }}><View style={{ width: (width - 160) * this.state.downloaded / 100, height: 3, backgroundColor: "#fff222" }} /></View>
+                        <View style={{ backgroundColor: "#fff", width: width - 80, height: 150, justifyContent: 'center', }}>
+                            <Text style={{ backgroundColor: "#0099FF", width: width - 80, height: 40, fontSize: 17, color: "#fff", textAlignVertical: 'center', paddingLeft: 20 }}>版本更新</Text>
+                            <View style={{ flex: 1, justifyContent: 'center', paddingLeft: 40 }}>
+                                <Text style={{ marginTop: -15 }}>下载中({this.state.downloaded}%)……</Text>
+                                <View style={{ width: width - 160, height: 3, backgroundColor: "#d2d2d2", marginTop: 5 }}><View style={{ width: (width - 160) * this.state.downloaded / 100, height: 3, backgroundColor: "#fff222" }} /></View>
                             </View>
                         </View>
                     </View>

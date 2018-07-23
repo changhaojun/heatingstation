@@ -168,21 +168,22 @@ export default class ContrastAnalysis extends React.Component {
                     .then((responseJson) => {
                         console.log(responseJson);
                         var childCompany = _this.state.childCompany;
-                        //统一选中状态
-                        for (var j = 0; j < responseJson.station.length; j++) {
-                            responseJson.station[j].select = childCompany[i].select;
+                        if (responseJson.station) {
+                            //统一选中状态
+                            for (var j = 0; j < responseJson.station.length; j++) {
+                                responseJson.station[j].select = childCompany[i].select;
+                            }
+                            //统一选中个数
+                            var selStationSum = _this.state.selStationSum;
+                            if (childCompany[i].select) {
+                                selStationSum += responseJson.station.length;
+                            }
+                            childCompany[i].stations = responseJson.station;
+                            _this.setState({
+                                childCompany: childCompany,
+                                selStationSum: selStationSum
+                            })
                         }
-                        //统一选中个数
-                        var selStationSum = _this.state.selStationSum;
-                        if (childCompany[i].select) {
-                            selStationSum += responseJson.station.length;
-                        }
-                        childCompany[i].stations = responseJson.station;
-                        _this.setState({
-                            childCompany: childCompany,
-                            selStationSum: selStationSum
-                        })
-
                     })
                     .catch((error) => {
                         console.error(error);
@@ -348,7 +349,7 @@ export default class ContrastAnalysis extends React.Component {
                     </View> : null}
                 {!this.state.stationModal && !this.state.tagModal ?
                     <View>
-                        <View style={{flexDirection:"row",height:35,borderBottomWidth: 1, borderColor: "#e7e7e766",marginLeft:10,}} >
+                        <View style={{ flexDirection: "row", height: 35, borderBottomWidth: 1, borderColor: "#e7e7e766", marginLeft: 10, }} >
                             <View style={styles.contrastItem}>
                                 <Image style={styles.contrastImage} resizeMode="contain" source={require('./../icons/contrast_ico_bg.png')} >
                                     <Text style={styles.contrastImageText}>均</Text>
@@ -523,18 +524,18 @@ const styles = StyleSheet.create({
     contrastImage: {
         width: 20,
         height: 20,
-        alignItems:"center",
-        justifyContent:"center"
+        alignItems: "center",
+        justifyContent: "center"
     },
-    contrastItem:{
-        flex:1,
-        flexDirection:"row",
-        
-        alignItems:"center"
+    contrastItem: {
+        flex: 1,
+        flexDirection: "row",
+
+        alignItems: "center"
     },
-    contrastImageText:{
-        fontSize:10,
-        padding:0,
-        color:"#fff",
+    contrastImageText: {
+        fontSize: 10,
+        padding: 0,
+        color: "#fff",
     }
 });

@@ -12,33 +12,29 @@ import Home from './home/home.js';
 //import RunQuality from './temperatmap/runquality_map';
 import RunQuality from  "./contrast_analysis/contrast_analysis"
 import Maintenance from './tenance/maintenance';
-
-
 var Orientation = require('react-native-orientation');
 
 export default class Main extends React.Component {
 
-
     constructor(props) {
         super(props);
         this.state = {
-            name: "首页",
-            centerComponent: Home,
+            centerComponent: props.fromNoti?Maintenance:Home,
             image: require('./icons/ico_envelope.png'),
-            open:false,
 
-            homeView: styles.bottomViewItemClick,
-            homeImage: require('./icons/tab_icons/tab_home_pressed.png'),
-            homeText: styles.bottomItemTextClick,
+            homeView: props.fromNoti?styles.bottomViewItem:styles.bottomViewItemClick,
+            homeImage: props.fromNoti?require('./icons/tab_icons/tab_home_normal.png'):require('./icons/tab_icons/tab_home_pressed.png'),
+            homeText: props.fromNoti?styles.bottomItemText:styles.bottomItemTextClick,
 
             runqualityView: styles.bottomViewItem,
             runqualityImage: require('./icons/tab_icons/tab_runquality_normal.png'),
             runqualityText: styles.bottomItemText,
 
-            maintenanceView: styles.bottomViewItem,
-            maintenanceImage: require('./icons/tab_icons/tab_maintenance_normal.png'),
-            maintenanceText: styles.bottomItemText,
+            maintenanceView: props.fromNoti?styles.bottomViewItemClick:styles.bottomViewItem,
+            maintenanceImage: props.fromNoti?require('./icons/tab_icons/tab_maintenance_pressed.png'):require('./icons/tab_icons/tab_maintenance_normal.png'),
+            maintenanceText: props.fromNoti?styles.bottomItemTextClick:styles.bottomItemText,
         };
+        
     }
 
     original() {
@@ -54,15 +50,12 @@ export default class Main extends React.Component {
             maintenanceView: styles.bottomViewItem,
             maintenanceImage: require('./icons/tab_icons/tab_maintenance_normal.png'),
             maintenanceText: styles.bottomItemText,
-
-            image: null,
         }
     }
+    //首页按钮点击
     _homeClick() {
-
         this.setState(this.original);
         this.setState({ centerComponent: Home });
-        this.setState({ name: "首页" });
         this.setState({
             homeView: styles.bottomViewItemClick,
             homeImage: require('./icons/tab_icons/tab_home_pressed.png'),
@@ -71,10 +64,10 @@ export default class Main extends React.Component {
         });
     }
 
+    //对比分析点击
     _runqualityClick() {
         this.setState({ centerComponent: RunQuality });
         this.setState(this.original);
-        this.setState({ name: "运行质量" });
         this.setState({
             runqualityView: styles.bottomViewItemClick,
             runqualityImage: require('./icons/tab_icons/tab_runquality_pressed.png'),
@@ -82,17 +75,16 @@ export default class Main extends React.Component {
         });
     }
 
+    //运行维护点击
     _maintenanceClick() {
         this.setState(this.original);
         this.setState({ centerComponent: Maintenance });
-        this.setState({ name: "运行维护" });
         this.setState({
             maintenanceView: styles.bottomViewItemClick,
             maintenanceImage: require('./icons/tab_icons/tab_maintenance_pressed.png'),
             maintenanceText: styles.bottomItemTextClick,
         });
     }
-
 
     toNotice() {
         //跳转
@@ -102,23 +94,10 @@ export default class Main extends React.Component {
         })
     }
 
-    openLeft(){
-        this._drawer.open();
-    }
-
     render() {
         let defaultComponent = Home;
         return (
             <View style={styles.all} >
-                {/*<View style={styles.topNameView}>*/}
-                    {/*/!*<TouchableOpacity style={styles.topImage} onPress={this.openLeft.bind(this)}>*!/*/}
-                        {/*/!*<Image style={{ width: 20, height: 17 }} source={this.state.groupImage} />*!/*/}
-                    {/*/!*</TouchableOpacity>*!/*/}
-                    {/*<Text style={styles.topNameText}>{this.state.name}</Text>*/}
-                    {/*/!*<TouchableOpacity style={styles.topImage} onPress={this.toNotice.bind(this)}>*!/*/}
-                        {/*/!*<Image style={{ width: 20, height: 17 }} source={this.state.image} />*!/*/}
-                    {/*/!*</TouchableOpacity>*!/*/}
-                {/*</View>*/}
                 <View style={styles.topView}>
                     <this.state.centerComponent navigator={this.props.navigator}></this.state.centerComponent>
                 </View>
