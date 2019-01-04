@@ -1,9 +1,7 @@
 package com.wisdomheating;
-
+import android.content.Intent;
+import android.content.res.Configuration;
 import com.facebook.react.ReactActivity;
-import android.content.Intent; // <--- import
-import android.content.res.Configuration; // <--- import
-//import com.github.yamill.orientation.OrientationPackage;
 
 public class MainActivity extends ReactActivity {
 
@@ -15,7 +13,6 @@ public class MainActivity extends ReactActivity {
     protected String getMainComponentName() {
         return "WisdomHeating";
     }
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);

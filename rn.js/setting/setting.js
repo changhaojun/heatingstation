@@ -15,19 +15,19 @@ import {
     Text,
     Image,
     StyleSheet,
-    TouchableHighlight,
-    StatusBar,
     TouchableOpacity,
     AsyncStorage,
     Dimensions,
     Alert
 } from 'react-native';
+import JPushModule from 'jpush-react-native';
 const { width, height } = Dimensions.get('window');
 
 import InspectionWell from "./inspection_well"
 import AboutUS from './about_us';
 import Message from './message';
 import Login from '../login';
+import Constants from '../constants';
 
 export default class Setting extends React.Component {
 
@@ -57,6 +57,8 @@ export default class Setting extends React.Component {
                 exit: true
             }
         })
+        AsyncStorage.removeItem("access_token");
+        JPushModule.cleanTags(success => {})
     }
 
     goAboutUS() {
@@ -105,7 +107,7 @@ export default class Setting extends React.Component {
 
                     <View style={styles.lineView}>
                         <Image style={styles.imageItem} source={require('../icons/version_icon.png')} />
-                        <Text style={styles.textItem}>应用版本 V1.0</Text>
+                        <Text style={styles.textItem}>应用版本 V{Constants.version}</Text>
                     </View>
                     <TouchableOpacity style={styles.lineView} onPress={() => this.delCache()}>
                         <Image style={styles.imageItem} source={require('../icons/ico_clear.png')} />

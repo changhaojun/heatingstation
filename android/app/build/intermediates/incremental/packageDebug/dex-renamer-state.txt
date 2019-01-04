@@ -1,4 +1,0 @@
-#Fri Nov 03 14:19:49 CST 2017
-base.0=/Users/finfosoft/heatingstation/android/app/build/intermediates/transforms/dex/debug/folders/1000/1f/main
-renamed.0=classes.dex
-file.0=/Users/finfosoft/heatingstation/android/app/build/intermediates/transforms/dex/debug/folders/1000/1f/main/classes.dex

@@ -16,10 +16,11 @@ import {
     AsyncStorage,
     ScrollView,
     StyleSheet,
-    StatusBar,
     TouchableOpacity,
-    Dimensions
+    Dimensions,
+    ImageBackground
 } from 'react-native';
+
 
 import Weather from './weather';
 import FollowList from './follow_list';
@@ -27,6 +28,7 @@ import HomeTab from './hometab';
 import Setting from '../setting/setting';
 import Warn from './warn';
 import Constants from '../constants';
+import ScanningQR from './scanningQR';
 
 const { width, height } = Dimensions.get('window');
 
@@ -35,11 +37,12 @@ export default class Home extends React.Component {
         super(props);
         this.state = {
             data: null,
-            company_code: "000005"
+            company_code: "000005",
         };
         const _this = this;
         AsyncStorage.getItem("company_code", function (errs, result) {
             if (!errs) {
+              console.log(result)
                 _this.setState({ company_code: result })
             }
         });
@@ -62,6 +65,7 @@ export default class Home extends React.Component {
             }
         }
         )
+        
     }
 
     openSetting() {
@@ -73,8 +77,9 @@ export default class Home extends React.Component {
     openWarn() {
         this.props.navigator.push({
             component: Warn,
+            name:"Warn"
         })
-        Constants.alarmSum=0;
+        this.props.clearAlarm();
     }
 
     render() {
@@ -84,11 +89,17 @@ export default class Home extends React.Component {
                     <TouchableOpacity onPress={this.openSetting.bind(this)}>
                         <Image style={{ width: 25, height: 25, marginLeft: 10, }} source={require('../icons/home_nav_user_icon.png')} />
                     </TouchableOpacity>
+                    <View style={styles.topImage}>
+                        <Image style={{ width: 22, height: 22, marginLeft: 15, }} source={require('../icons/nav_flag.png')} />
+                    </View>
                     <Text style={styles.topNameText}>首页</Text>
+                    <TouchableOpacity style={styles.topImage} onPress={()=>this.props.navigator.push({component: ScanningQR})}>
+                        <Image style={{ width: 22, height: 22, marginRight: 15, }} source={require('../icons/icon_scanning.png')} />
+                    </TouchableOpacity>
                     <TouchableOpacity style={styles.topImage} onPress={this.openWarn.bind(this)}>
-                        <Image style={{ width: 25, height: 25, marginRight: 10, }} source={require('../icons/home_nav_warn_icon.png')} >
-                            {Constants.alarmSum?<Text style={styles.alarmText}>{Constants.alarmSum}</Text>:null}
-                        </Image>
+                        <ImageBackground style={{ width: 25, height: 25, marginRight: 10, }} source={require('../icons/home_nav_warn_icon.png')} >
+                            {this.props.alarm?<Text style={styles.alarmText}>{this.props.alarm}</Text>:null}
+                        </ImageBackground>
                     </TouchableOpacity>
                 </View>
                 <ScrollView>

@@ -19,30 +19,17 @@ import {
   StyleSheet,
   Platform,
   TouchableOpacity,
-  StatusBar,
   Switch,
   AsyncStorage,
   Dimensions,
-  AppState,
-  DeviceEventEmitter
+  Alert,
+  Keyboard
 } from 'react-native';
-var Notification = require('react-native').NativeModules.Notification;
-import Warn from './home/warn';
-import Toast from 'react-native-simple-toast';
+import JPushModule from 'jpush-react-native';
 import Constants from './constants';
 import Main from './main';
-import init from 'react_native_mqtt';
 
 const { width, height } = Dimensions.get('window');
-init({
-  size: 10000,
-  storageBackend: AsyncStorage,
-  defaultExpires: 1000 * 3600 * 24,
-  enableCache: true,
-  reconnect: true,
-  sync: {
-  }
-});
 export default class Login extends React.Component {
   // 初始化数据
   constructor(props) {
@@ -51,33 +38,11 @@ export default class Login extends React.Component {
       userName: null,
       passWord: null,
       remember: false,
-
+      autoLogin: false,
       company_id: null,
       access_token: null,
       refresh_token: null,
     };
-
-    // //监听通知栏点击事件
-    // DeviceEventEmitter.addListener("NOTIFICATION_CLICK",
-    //     (message) => {
-    //         console.log(message);
-    //         if (message.ident == "offline") {
-    //             console.log(message);
-    //             _this.props.navigator.push({
-    //                 component: Main,
-    //                 name: "Main",
-    //                 passProps: {
-    //                     fromNoti: true
-    //                 }
-    //             })
-    //         } else {
-    //             _this.props.navigator.push({
-    //                 component: Warn,
-    //                 name: "Warn"
-    //             })
-    //         }
-    //     });
-
     const _this = this;
     // 将用户名、密码从本地存储中提取出来，并更新状态
     AsyncStorage.getItem("userName", function (errs, result) {
@@ -86,69 +51,49 @@ export default class Login extends React.Component {
         AsyncStorage.getItem("passWord", function (errs, result) {
           if (!errs) {
             _this.setState({ passWord: result });
-            if (_this.state.userName !== null && _this.state.passWord !== null) {
-              _this.setState({ remember: true });
-              if (!props.exit) { _this.login() }//自动登录
-            }
           }
         });
       }
     });
+
+
   }
   //登录按钮事件
   login() {
+    Keyboard.dismiss();
     const navigator = this.props.navigator;
-    let url = Constants.resourceSite + "/v2/login"
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: this.state.userName,
-        password: this.state.passWord,
-      })
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        if (navigator && responseJson.code === 200) {
-          AsyncStorage.setItem("userName", this.state.userName, function (errs) { });
-          if (this.state.remember) {
-            AsyncStorage.setItem("passWord", this.state.passWord, function (errs) { });
+    Constants.login(this.state.userName, this.state.passWord, (result) => {
+      Constants.getUserInfo(result.access_token, (result) => {
+        //跳转
+        navigator.replace({
+          name: 'Main',
+          component: Main,
+        })
+        if (Platform.OS !== 'ios') {
+          if(result.company_code.length==6){
+            let tag=[]
+            for (let index = 1; index < 8; index++) {
+              tag.push(result.company_code+"00000"+index);
+            }
+            JPushModule.setTags(tag, () => { })
+          }else{
+            JPushModule.setTags([ result.company_code ], () => { })
           }
-          AsyncStorage.setItem("access_token", responseJson.result.access_token, function (errs) { });
-          AsyncStorage.setItem("fullname", responseJson.result.fullname, function (errs) { });
-
-          let url = Constants.resourceSite + "/v2/user?access_token="+responseJson.result.access_token
-          fetch(url)
-            .then((response) => response.json())
-            .then((responseJson) => {
-              AsyncStorage.setItem("company_location", responseJson.result.location, function (errs) { });
-              AsyncStorage.setItem("company_id", responseJson.result.company_object_id, function (errs) { });
-              AsyncStorage.setItem("company_code", responseJson.result.company_code, function (errs) { });
-
-              //跳转
-              navigator.replace({
-                name: 'Main',
-                component: Main,
-              })
-            });
-        } else {
-          Toast.showWithGravity("账号或密码错误", Toast.SHORT, Toast.CENTER)
         }
       })
-      .catch((e) => {
-        Toast.showWithGravity("网络连接错误,请检查您的的网络或联系我们", Toast.SHORT, Toast.CENTER)
-      });
+    }, () => Alert.alert('提示', '账号或密码错误'))
   }
 
-  remember(checked) {
-    this.setState({ remember: checked })
-    if (!checked) {
-      AsyncStorage.removeItem("passWord", function (errs) { });
-    }
-  }
+  // remember(checked) {
+  //   this.setState({ remember: checked })
+  //   if (!checked) {
+  //     AsyncStorage.removeItem("passWord");
+  //   } else {
+  //     AsyncStorage.setItem("userName", userName);
+  //     AsyncStorage.setItem("passWord", this.state.passWord);
+  //   }
+  // }
+
   render() {
     return (
       //  最外层主View
@@ -193,14 +138,25 @@ export default class Login extends React.Component {
             <View style={styles.underline}>
             </View>
           </View>
-          <View style={styles.switchView}>
-            <Switch
-              value={this.state.remember}
-              onTintColor={"#0099FF"}
-              onValueChange={(checked) => this.remember(checked)}>
-            </Switch>
-            <Text style={styles.rememberText}>记住密码</Text>
-          </View>
+          {/* <View style={{ flexDirection: "row", marginHorizontal: 30 }}>
+            <View style={styles.switchView}>
+              <Switch
+                value={this.state.remember}
+                trackColor={"#0099FF"}
+                onValueChange={(checked) => this.remember(checked)}>
+              </Switch>
+              <Text style={styles.rememberText}>记住密码</Text>
+            </View>
+            <View style={{ flex: 1 }} />
+            <View style={styles.switchView}>
+              <Switch
+                value={this.state.autoLogin}
+                trackColor={"#0099FF"}
+                onValueChange={(checked) => this.autoLogin(checked)}>
+              </Switch>
+              <Text style={styles.rememberText}>自动登录</Text>
+            </View>
+          </View>*/}
         </View>
 
         {/*底部是放置登录按钮和公司信息的View*/}
@@ -291,7 +247,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   switchView: {
-    marginLeft: 30,
     flexDirection: 'row',
     alignItems: "center",
     marginTop: 20,

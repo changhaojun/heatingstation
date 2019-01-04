@@ -99,7 +99,7 @@ export default class Main extends React.Component {
         return (
             <View style={styles.all} >
                 <View style={styles.topView}>
-                    <this.state.centerComponent navigator={this.props.navigator}></this.state.centerComponent>
+                    <this.state.centerComponent {...this.props}></this.state.centerComponent>
                 </View>
                 <View style={styles.bottomView}>
                     <TouchableOpacity activeOpacity={0.5} onPress={this._homeClick.bind(this)} >

@@ -24,6 +24,7 @@ import {
     TouchableOpacity,
     ScrollView,
     Alert,
+    Platform
 } from 'react-native';
 import Dimensions from 'Dimensions';
 import Constants from '../constants';
@@ -229,9 +230,10 @@ export default class StationTab extends React.Component {
     }
 
     onScroll(x) {
-        if (!(x % width)) {
-            this._switch(parseInt(x / width), true);
-        }
+      console.log(x)
+      if (!x % width||(x+10) % width<30) {
+        this._switch(parseInt((x+10) / width), true);
+      }
     }
 
     render() {
@@ -276,8 +278,8 @@ export default class StationTab extends React.Component {
                             }}
                         />
                     </View>
-                    <View style={styles.itemStyle}><Echarts option={this.getOption(this.state.data2,0)} height={160} /></View>
-                    <View style={styles.itemStyle}><Echarts option={this.getOption(this.state.data3,1)} height={160} /></View>
+                    <View style={styles.itemStyle}><Echarts option={this.getOption(this.state.data2,0)} width={width} height={160} /></View>
+                    <View style={styles.itemStyle}><Echarts option={this.getOption(this.state.data3,1)} width={width} height={160} /></View>
                 </ScrollView>
             </View>
         )

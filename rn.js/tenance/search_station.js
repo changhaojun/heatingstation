@@ -109,6 +109,9 @@ export default class WisdomHeating extends Component {
                         '提示',
                         '无此换热站',
                     );
+                    this.setState({
+                      loadShow: false,
+                  });
                 }
             })
             .catch((error) => {

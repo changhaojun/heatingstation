@@ -5,8 +5,7 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import Dimensions from 'Dimensions';
 import ArchivesInfo from './archives_info';
-import ArchivesParam from './archives_param';
-
+import StationDevice from './station_device'
 var { width, height } = Dimensions.get('window');
 
 export default class ArchivesClassification extends React.Component {
@@ -21,8 +20,8 @@ export default class ArchivesClassification extends React.Component {
     }
     toParam(){
         this.props.navigator.push({
-                        name: "ArchivesParam",
-                        component: ArchivesParam,
+                        name: "StationDevice",
+                        component: StationDevice,
                         passProps:{
                              station_id:this.props.station_id
                         }
@@ -38,7 +37,7 @@ export default class ArchivesClassification extends React.Component {
                     </TouchableOpacity>
                 <TouchableOpacity style={styles.lineView} onPress={()=>this.toParam()}>
                 <Image style={styles.img} source={require('../../../icons/station_param.png')} />
-                    <Text style={styles.nameText}>换热站参数</Text>
+                    <Text style={styles.nameText}>换热站设备</Text>
                     <Text style={styles.right}>›</Text>
                     </TouchableOpacity>
             </View>

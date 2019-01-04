@@ -1,9 +1,21 @@
 rootProject.name = 'WisdomHeating'
-include ':react-native-fs', ':react-native-notification', "app"
-project(':react-native-fs').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fs/android')
-include ':react-native-appupdate'
-project(':react-native-appupdate').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-appupdate/android')
+include ':react-native-video'
+project(':react-native-video').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-video/android-exoplayer')
+include ':jcore-react-native'
+project(':jcore-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/jcore-react-native/android')
 
+include ':jpush-react-native'
+project(':jpush-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/jpush-react-native/android')
+
+include ':react-native-fs'
+project(':react-native-fs').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fs/android')
 include ':react-native-orientation'
 project(':react-native-orientation').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-orientation/android')
+include ':react-native-camera'
+project(':react-native-camera').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-camera/android')
+include ':rn-roc-appupdate'
+project(':rn-roc-appupdate').projectDir = new File(rootProject.projectDir, '../node_modules/rn-roc-appupdate/android')
+include ':rn-roc-printqr'
+project(':rn-roc-printqr').projectDir = new File(rootProject.projectDir, '../node_modules/rn-roc-printqr/android')
 
+include ':app'

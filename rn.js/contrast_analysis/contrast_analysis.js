@@ -2,7 +2,7 @@
  * Created by Vector on 17/4/19. 个人中心的消息通知
  */
 import React from 'react';
-import { View, Text, Image, TextInput, Modal, ListView, AsyncStorage, StyleSheet, TouchableHighlight, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, Image, ImageBackground, Modal, ListView, AsyncStorage, StyleSheet, TouchableHighlight, ActivityIndicator, TouchableOpacity } from 'react-native';
 import Dimensions from 'Dimensions';
 var { width, height } = Dimensions.get('window');
 import Constants from '../constants';
@@ -351,27 +351,27 @@ export default class ContrastAnalysis extends React.Component {
                     <View>
                         <View style={{ flexDirection: "row", height: 35, borderBottomWidth: 1, borderColor: "#e7e7e766", marginLeft: 10, }} >
                             <View style={styles.contrastItem}>
-                                <Image style={styles.contrastImage} resizeMode="contain" source={require('./../icons/contrast_ico_bg.png')} >
+                                <ImageBackground style={styles.contrastImage} resizeMode="contain" source={require('./../icons/contrast_ico_bg.png')} >
                                     <Text style={styles.contrastImageText}>均</Text>
-                                </Image>
+                                </ImageBackground>
                                 <Text style={styles.toolbarText}>{this.state.contrastData ? this.state.contrastData.avg : "-"}</Text>
                             </View>
                             <View style={styles.contrastItem}>
-                                <Image style={styles.contrastImage} resizeMode="contain" source={require('./../icons/contrast_ico_bg.png')} >
+                                <ImageBackground style={styles.contrastImage} resizeMode="contain" source={require('./../icons/contrast_ico_bg.png')} >
                                     <Text style={styles.contrastImageText}>大</Text>
-                                </Image>
+                                </ImageBackground>
                                 <Text style={styles.toolbarText}>{this.state.contrastData ? this.state.contrastData.max : "-"}</Text>
                             </View>
                             <View style={styles.contrastItem}>
-                                <Image style={styles.contrastImage} resizeMode="contain" source={require('./../icons/contrast_ico_bg.png')} >
+                                <ImageBackground style={styles.contrastImage} resizeMode="contain" source={require('./../icons/contrast_ico_bg.png')} >
                                     <Text style={styles.contrastImageText}>小</Text>
-                                </Image>
+                                </ImageBackground>
                                 <Text style={styles.toolbarText}>{this.state.contrastData ? this.state.contrastData.min : "-"}</Text>
                             </View>
                             <View style={styles.contrastItem}>
-                                <Image style={styles.contrastImage} resizeMode="contain" source={require('./../icons/contrast_ico_bg.png')} >
+                                <ImageBackground style={styles.contrastImage} resizeMode="contain" source={require('./../icons/contrast_ico_bg.png')} >
                                     <Text style={styles.contrastImageText}>总</Text>
-                                </Image>
+                                </ImageBackground>
                                 <Text style={styles.toolbarText}>{this.state.contrastData ? this.state.contrastData.count : "-"}</Text>
                             </View>
                         </View>

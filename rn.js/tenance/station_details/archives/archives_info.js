@@ -4,7 +4,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet,ScrollView, TouchableOpacity,AsyncStorage } from 'react-native';
 import Dimensions from 'Dimensions';
-import ArchivesParam from './archives_param';
 import Constants from './../../../constants';
 
 var { width, height } = Dimensions.get('window');
@@ -31,17 +30,6 @@ export default class ArchivesInfo  extends React.Component {
         }
         )
     }
-
-    toParam(){
-        this.props.navigator.push({
-                        name: "ArchivesParam",
-                        component: ArchivesParam,
-                        passProps:{
-                             station_id:this.props.station_id
-                        }
-                    })
-    }
-
     render() {
         return (
             <View style={styles.all}>
@@ -147,8 +135,8 @@ const styles = StyleSheet.create({
     lineView: {
         width: width,
         height: 45,
-        borderBottomWidth: 0.2,
-        borderBottomColor: "#9f9f9f",
+        borderBottomWidth: 1,
+        borderBottomColor: "#9f9f9f88",
         flexDirection: 'row',
         //justifyContent: 'flex-end',//垂直居中
         alignItems: 'center',
@@ -156,17 +144,17 @@ const styles = StyleSheet.create({
     },
 
     nameText: {
-        height: 45,
+        //height: 45,
         width: 100,
-        borderRightWidth: 0.2,
-        borderColor: "#9f9f9f",
-        borderBottomWidth: 0.2,
+        borderRightWidth: 1,
+        borderColor: "#9f9f9f88",
+        borderBottomWidth: 1,
         color: "#323541",
         fontSize: 15,
         paddingRight: 10,
         textAlign: 'right',
         textAlignVertical:"center",
-        backgroundColor:"#f5f5f5"
+        //backgroundColor:"#f5f5f5"
     },
     right: {
         flex:1,
