@@ -5,8 +5,6 @@ import {
   Image,
   StyleSheet,
   AsyncStorage,
-  Dimensions,
-  Alert,
   Platform
 } from 'react-native';
 import Constants from './constants';
@@ -14,7 +12,6 @@ import Login from './login';
 import Main from './main';
 import JPushModule from 'jpush-react-native';
 
-const { width, height } = Dimensions.get('window');
 export default class Launch extends React.Component {
   // 初始化数据
   constructor(props) {
@@ -42,7 +39,6 @@ export default class Launch extends React.Component {
   }
   //登录按钮事件
   login(userName, passWord) {
-    console.log("d")
     const navigator = this.props.navigator;
     Constants.login(userName, passWord, (result) => {
       Constants.getUserInfo(result.access_token, (result) => {

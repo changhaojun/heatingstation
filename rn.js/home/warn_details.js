@@ -72,7 +72,7 @@ export default class WarnDetails extends React.Component {
     const _this = this;
     AsyncStorage.getItem("access_token", function (errs, result) {
       if (!errs) {
-        var uri = Constants.cameraSite+"/v2/alarmCarame/" + _this.props.data.alarm_camera_id + "?access_token="+result;
+        var uri = Constants.cameraSite + "/v2/alarmCarame/" + _this.props.data.alarm_camera_id + "?access_token=" + result;
         fetch(uri)
           .then((response) => response.json())
           .then((responseJson) => {
@@ -135,7 +135,7 @@ export default class WarnDetails extends React.Component {
       this.setState({ isFull: false, play: this.state.playFull, showPaused: false });
     } else {
       this.player.presentFullscreenPlayer();
-      if(Platform.OS !== 'ios'){
+      if (Platform.OS !== 'ios') {
         Orientation.lockToLandscape();
         StatusBar.setHidden(true);
         this.setState({ isFull: true, playFull: this.state.play, showPausedFull: false });
@@ -144,7 +144,7 @@ export default class WarnDetails extends React.Component {
     console.log(width, height)
   }
   render() {
-    let imgUrl = Constants.cameraSite+"/public/alarm_image/" + this.props.data.img_url;
+    let imgUrl = Constants.cameraSite + "/public/alarm_image/" + this.props.data.img_url;
     return (
       <View style={styles.all}>
         <View style={styles.navView}>
@@ -178,7 +178,7 @@ export default class WarnDetails extends React.Component {
                   </View>
                   <ImageBackground style={{ height: 40, width: width, flexDirection: "row", alignItems: "center", paddingHorizontal: 10, }} source={require('../icons/video_control.png')}>
                     <Text style={{ fontSize: 11, color: "#f0f1f1" }}>{moment(this.state.currentTime * 1000).format("mm:ss")}/{moment(this.state.duration * 1000).format("mm:ss")}</Text>
-                    <Slider style={{ flex: 1,height:10 }}
+                    <Slider style={{ flex: 1, height: 10 }}
                       maximumValue={this.state.duration}
                       //thumbImage={require('../icons/video_slider.png')}
                       onValueChange={(value) => { this.player.seek(value); this.clickVideo(); }}
@@ -262,14 +262,14 @@ export default class WarnDetails extends React.Component {
           </View>
         </ScrollView>
         <Modal
-          animationType={"none"}
+          animationType={"slide"}
           transparent={true}
           visible={this.state.chartModal}
           onRequestClose={() => { }}>
           <View style={{ backgroundColor: "#00000088", flex: 1, justifyContent: "flex-end", alignItems: 'center', }} >
-            <TouchableOpacity onPress={() => this.setState({ chartModal: false })} style={{ alignSelf: "flex-end", margin: 10 }}>
-              <Image style={{ width: 36, height: 36 }} resizeMode="contain" source={require('../icons/close.png')} />
-            </TouchableOpacity>
+            <View style={{ width: width, height: 45, flexDirection: "row", alignItems: "center", backgroundColor: "#00b5fc", paddingLeft: 30 }}>
+              <Text style={{ color: "#fff", textAlign: "center", flex: 1, fontSize: 17 }}>{this.state.tag_name}</Text>
+              <Text style={{ color: "#fff", fontSize: 25, marginRight: 10 }} onPress={() => this.setState({ chartModal: false })}>ㄨ</Text></View>
             <HeatStationChart station_id={this.props.data._id} tag_id={this.state.tag_id} tag_name={this.state.tag_name}></HeatStationChart>
           </View>
         </Modal>

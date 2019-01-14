@@ -1,12 +1,10 @@
-import { AsyncStorage, Alert } from 'react-native';
+import { AsyncStorage, Alert, Platform } from 'react-native';
 export default {
   serverSite: "http://114.215.46.56:18816",
   resourceSite: "http://114.215.46.56:17709",
   serverSite2: "http://114.215.46.56:17717",
   cameraSite: "http://114.215.46.56:17719",
-  //serverSite:"http://192.168.1.104:8088",   
-  //serverSite:'http://121.42.253.149:18816',
-  version: 1.15,
+  version: 1.16,
   alarmSum: 0,
   login(userName, passWord, success, fail) {
     AsyncStorage.setItem("userName", userName);
@@ -22,11 +20,11 @@ export default {
       body: JSON.stringify({
         username: userName,
         password: passWord,
+        platform: Platform.OS
       })
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log(responseJson)
         if (responseJson.code === 200) {
           AsyncStorage.setItem("access_token", responseJson.result.access_token, function (errs) { });
           AsyncStorage.setItem("fullname", responseJson.result.fullname, function (errs) { });
@@ -37,7 +35,7 @@ export default {
       })
       .catch((e) => {
         console.log(e)
-        Alert.alert('提示', "网络连接错误,请检查您的的网络或联系我们1")
+        Alert.alert('提示', "网络连接错误,请检查您的的网络或联系我们")
       });
   },
   getUserInfo(access_token, callback) {
@@ -47,11 +45,12 @@ export default {
       .then((response) => response.json())
       .then((responseJson) => {
         AsyncStorage.setItem("company_location", responseJson.result.location);
+        AsyncStorage.setItem("user_id", responseJson.result.user_id + "");
         AsyncStorage.setItem("company_id", responseJson.result.company_object_id);
         AsyncStorage.setItem("company_code", responseJson.result.company_code);
         callback && callback(responseJson.result)
       }).catch((e) => {
-        Alert.alert('提示', "网络连接错误,请检查您的的网络或联系我们2")
+        Alert.alert('提示', "网络连接错误,请检查您的的网络或联系我们")
       });
   }
 };

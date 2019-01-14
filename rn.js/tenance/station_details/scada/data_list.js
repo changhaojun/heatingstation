@@ -110,47 +110,47 @@ export default class DataList extends React.Component {
           data={this.state.groupList}
           //enableEmptySections={true}
           extraData={this.state}
-          renderItem={({item, index,separators}) => {
+          renderItem={({ item, index, separators }) => {
             return (
-              item.data.length ? 
-              <View >
-                <TouchableOpacity style={styles.groupView} onPress={() => { var list = this.state.groupList; list[ index ].show = !list[ index ].show; this.setState({ groupList: list }) }}>
-                  <Image style={{ width: 15, height: 15, }} resizeMode="contain" source={require('../../../icons/contrast_ico_bg.png')} />
-                  <Text style={{ fontSize: 15, paddingLeft: 5, height: 20, color: "#919293", flex: 1 }}>{item.group_name}</Text>
-                  <Image style={{ width: 18, height: 15, }} resizeMode="contain" source={!item.show ? require('../../../icons/contrast_ico_up.png') : require('../../../icons/contrast_ico_down.png')} />
-                </TouchableOpacity>
-                {!item.show ? <ListView
-                  initialListSize={200}
-                  dataSource={ds.cloneWithRows(item.data)}
-                  enableEmptySections={true}
-                  contentContainerStyle={styles.listView}
-                  renderRow={(rowData) => {
-                    return (
-                      <TouchableOpacity style={styles.item} onPress={this.pushToChart.bind(this, rowData.tag_id, rowData.tag_name)}>
-                        <View style={styles.line} />
-                        <View style={styles.itemContent} >
-                          <Text style={styles.value}>{rowData.data_value}{rowData.data_unit}</Text>
-                          <Text style={styles.text1}>{rowData.tag_name}</Text>
-                        </View>
-                      </TouchableOpacity>
-                    )
-                  }}
-                /> 
-                : null}
-              </View> 
-              : null
+              item.data.length ?
+                <View >
+                  <TouchableOpacity style={styles.groupView} onPress={() => { var list = this.state.groupList; list[ index ].show = !list[ index ].show; this.setState({ groupList: list }) }}>
+                    <Image style={{ width: 15, height: 15, }} resizeMode="contain" source={require('../../../icons/contrast_ico_bg.png')} />
+                    <Text style={{ fontSize: 15, paddingLeft: 5, height: 20, color: "#919293", flex: 1 }}>{item.group_name}</Text>
+                    <Image style={{ width: 18, height: 15, }} resizeMode="contain" source={!item.show ? require('../../../icons/contrast_ico_up.png') : require('../../../icons/contrast_ico_down.png')} />
+                  </TouchableOpacity>
+                  {!item.show ? <ListView
+                    initialListSize={200}
+                    dataSource={ds.cloneWithRows(item.data)}
+                    enableEmptySections={true}
+                    contentContainerStyle={styles.listView}
+                    renderRow={(rowData) => {
+                      return (
+                        <TouchableOpacity style={styles.item} onPress={this.pushToChart.bind(this, rowData.tag_id, rowData.tag_name)}>
+                          <View style={styles.line} />
+                          <View style={styles.itemContent} >
+                            <Text style={styles.value}>{rowData.data_value}{rowData.data_unit}</Text>
+                            <Text style={styles.text1}>{rowData.tag_name}</Text>
+                          </View>
+                        </TouchableOpacity>
+                      )
+                    }}
+                  />
+                    : null}
+                </View>
+                : null
             )
           }}
         />
         <Modal
-          animationType={"none"}
+          animationType={"slide"}
           transparent={true}
           visible={this.state.chartModal}
           onRequestClose={() => { }}>
-          <View style={{ backgroundColor: "#00000088", flex: 1, justifyContent:"flex-end", alignItems: 'center', }}>
-          <TouchableOpacity onPress={() => this.setState({ chartModal: false })} style={{ alignSelf: "flex-end", margin: 10 }}>
-              <Image style={{ width: 36, height: 36 }} resizeMode="contain" source={require('../../../icons/close.png')} />
-            </TouchableOpacity>
+          <View style={{ backgroundColor: "#00000088", flex: 1, justifyContent: "flex-end", alignItems: 'center', }}>
+            <View style={{ width: width, height: 45, flexDirection: "row", alignItems: "center", backgroundColor: "#00b5fc", paddingLeft: 30 }}>
+              <Text style={{ color: "#fff", textAlign: "center", flex: 1, fontSize: 17 }}>{this.state.tag_name}</Text>
+              <Text style={{ color: "#fff", fontSize: 25, marginRight: 10 }} onPress={() => this.setState({ chartModal: false })}>ㄨ</Text></View>
             <HeatStationChart station_id={this.props.station_id} tag_id={this.state.tag_id} tag_name={this.state.tag_name}></HeatStationChart>
           </View>
 

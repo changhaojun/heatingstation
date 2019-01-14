@@ -196,19 +196,19 @@ export default class WisdomHeating extends Component {
                                     </View>
                                     <View style={styles.listView}>
                                         <View style={styles.selectItemView1}>
-                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data ? data.data[this.state.tagList[0].abbre] : "-"}</Text>
+                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data&&data.data[this.state.tagList[0].abbre] ? data.data[this.state.tagList[0].abbre].toFixed(2) : "-"}</Text>
                                         </View>
                                         <View style={styles.selectItemView}>
-                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data ? data.data[this.state.tagList[1].abbre] : "-"}</Text>
+                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data&&data.data[this.state.tagList[1].abbre] ? data.data[this.state.tagList[1].abbre].toFixed(2) : "-"}</Text>
                                         </View>
                                         <View style={styles.selectItemView}>
-                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data ? data.data[this.state.tagList[2].abbre] : "-"}</Text>
+                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data&&data.data[this.state.tagList[2].abbre] ? data.data[this.state.tagList[2].abbre].toFixed(2) : "-"}</Text>
                                         </View>
                                         <View style={styles.selectItemView}>
-                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data ? data.data[this.state.tagList[3].abbre] : "-"}</Text>
+                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data&&data.data[this.state.tagList[3].abbre] ? data.data[this.state.tagList[3].abbre].toFixed(2) : "-"}</Text>
                                         </View>
                                         <View style={styles.selectItemView}>
-                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data ? data.data[this.state.tagList[4].abbre] : "-"}</Text>
+                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data&&data.data[this.state.tagList[4].abbre] ? data.data[this.state.tagList[4].abbre].toFixed(2) : "-"}</Text>
                                         </View>
                                     </View>
                                 </TouchableOpacity>
