@@ -92,11 +92,12 @@ export default class Maintenance extends React.Component {
 
   }
 
-  gotoHeatStation(company_code) {
+  gotoHeatStation(company_code,company_name) {
     this.props.navigator.push({
       component: HeatStation,
       passProps: {
         company_code: company_code,
+        company_name: company_name,
       }
     })
   }
@@ -132,7 +133,7 @@ export default class Maintenance extends React.Component {
             enableEmptySections={true}
             renderRow={(rowData) => {
               return (
-                <TouchableOpacity underlayColor="#ECEDEE" onPress={this.gotoHeatStation.bind(this, rowData.company_code)}>
+                <TouchableOpacity underlayColor="#ECEDEE" onPress={()=>this.gotoHeatStation(rowData.company_code,rowData.company_name)}>
                   <ImageBackground style={styles.listItemView} resizeMode="contain" source={require('../icons/bg_company.png')}>
                     <ImageBackground style={styles.listItemIconView} resizeMode="contain" source={require('../icons/company_icon.png')}>
                       <Text style={{ fontSize: 16, color: '#fff', marginTop: -28, }}>{rowData.company_name.substr(0, 2)}</Text>

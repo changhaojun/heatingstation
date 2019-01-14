@@ -21,7 +21,6 @@ import {
 } from 'react-native';
 import Echarts from 'native-echarts';
 import Constants from '../../constants';
-import Orientation from 'react-native-orientation';
 import moment from 'moment';
 const Alert = Platform.select({
   ios: () => require('AlertIOS'),
@@ -52,7 +51,7 @@ export default class DataList extends React.Component {
     };
     this.getData();
   }
-  getData(){
+  getData() {
     const _this = this;
     AsyncStorage.getItem("access_token", function (errs, result) {
       if (!errs) {
@@ -70,7 +69,7 @@ export default class DataList extends React.Component {
             if (responseJson.length > 0) {
               responseJson.pop()
               for (var i = 0; i < responseJson.length; i++) {
-                xArr.push(responseJson[ i ].create_date.split(" ")[ 1 ]);
+                xArr.push(moment(responseJson[ i ].create_date).format("HH:mm"));
                 yArr.push(responseJson[ i ].data_value);
               }
               yUnit = responseJson[ 0 ].data_unit ? responseJson[ 0 ].data_unit : "";
@@ -123,7 +122,7 @@ export default class DataList extends React.Component {
         type: 'value',
         scale: true,
         axisLabel: { textStyle: { color: "#7f8da5" }, formatter: '{value}' },
-        name: this.props.tag_name + (this.state.yUnit ? "/" + this.state.yUnit : ""),
+        name:  this.state.yUnit ? this.state.yUnit : "",
         splitLine: { show: true, lineStyle: { color: "#7f8da5" } },
         axisLine: { lineStyle: { color: "#7f8da5" } },
         nameTextStyle: { color: "#000" },
@@ -165,9 +164,11 @@ export default class DataList extends React.Component {
     };
 
     return (
+      <View>
         <View style={styles.chartView}>
           {this.state.xArr.length ? <Echarts option={option} height={width * 9 / 16} /> : <Text style={{ color: "#000" }}>{this.state.prompt}</Text>}
         </View>
+      </View>
     )
   }
 }

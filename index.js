@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AppRegistry, StyleSheet, AsyncStorage, BackHandler, NavigatorIOS, Platform, ToastAndroid, Text, StatusBar, View, Alert, Modal } from 'react-native';
+import { AppRegistry, NetInfo, StyleSheet, AsyncStorage, BackHandler, NavigatorIOS, Platform, ToastAndroid, Text, StatusBar, View, Alert, Modal } from 'react-native';
 import { Navigator } from 'react-native-deprecated-custom-components'
 
 import Login from './rn.js/login';
@@ -39,7 +39,7 @@ export default class WisdomHeating extends Component {
   }
   componentDidMount() {
     if (Platform.OS !== 'ios') {
-      this.getEdition();
+      this.checkUpdate(true);
       const _this = this;
       JPushModule.initPush();
       JPushModule.notifyJSDidLoad((resultCode) => { });
@@ -76,8 +76,8 @@ export default class WisdomHeating extends Component {
       })
     }
   }
-
-  getEdition() {
+  // noUpdateShow为true时不显示无更新提示
+  checkUpdate(noUpdateShow) {
     var uri = Constants.serverSite + "/v1_0_0/appVersion";
     fetch(uri)
       .then((response) => response.json())
@@ -85,26 +85,31 @@ export default class WisdomHeating extends Component {
         if (Constants.version != responseJson.version_number) {
           const appUpdate = new AppUpdate({
             apkUrl: responseJson.download_address,
-            needUpdateApp: (needUpdate) => {
-            },
             downloadApkStart: () => { this.setState({ updateModal: true }) },
             downloadApkProgress: (progress) => { this.setState({ downloaded: progress }) },
             downloadApkEnd: () => { this.setState({ updateModal: false }) },
             onError: () => { console.log("downloadApkError") }
           });
-          if (responseJson.force) {
-            appUpdate.downloadApk();
-          } else {
+          NetInfo.getConnectionInfo().then((connectionInfo) => {
+            let net = connectionInfo.type == 'wifi' ? 'wifi' : '流量';
             Alert.alert(
-              '更新提示',
+              responseJson.force ? "重要更新" : "更新提示" + '（当前处于' + net + '环境）',
               responseJson.version_introduce,
               [
-                { text: '取消', onPress: () => { } },
-                { text: '更新', onPress: () => appUpdate.downloadApk() }
-              ]
+                { text: '下次再说', onPress: () => { } },
+                { text: '立即更新', onPress: () => appUpdate.downloadApk() }
+              ],
+              { cancelable: false }
+            );
+          });
+
+        } else {
+          if (!noUpdateShow) {
+            Alert.alert(
+              '提示',
+              "当前已是最新版本",
             );
           }
-
         }
 
       })
@@ -116,11 +121,38 @@ export default class WisdomHeating extends Component {
         );
       });
   }
+  saveLog(router) {
+    AsyncStorage.getItem("user_id", (errs, user_id) => {
+      console.log(errs, user_id)
+      if (!errs && user_id) {
+        let url = Constants.resourceSite + "/v2/logResource";
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            "system_id": 10,
+            "user_id": user_id,
+            "url": router,
+            "type": 1,
+          })
+        })
+          .then((response) => response.json())
+          .then((responseJson) => {
+            console.log(responseJson)
+          })
+      }
+    });
+  }
   render() {
     return (
-      <View style={{ flex: 1, marginTop: Platform.OS !== 'ios' ? 0 : 20 }}>
+      <View style={{
+        flex: 1, marginTop: Platform.OS !== 'ios' ? 0 : 20
+      }}>
         {/*状态栏*/}
-        <StatusBar
+        < StatusBar
           hidden={false}  //status显示与隐藏
           //translucent={true} //设置status栏是否透明效果,仅支持安卓
           barStyle='default' //设置状态栏文字效果,仅支持iOS,枚举类型:default黑light-content白
@@ -129,7 +161,7 @@ export default class WisdomHeating extends Component {
           backgroundColor={"#434b59"}
         />
         {/* {Platform.OS !== 'ios' ? */}
-        <Navigator
+        < Navigator
           initialRoute={{ name: "Launch", component: Launch }}
           configureScene={(route) => {
             return Navigator.SceneConfigs.FadeAndroid;
@@ -137,9 +169,14 @@ export default class WisdomHeating extends Component {
           renderScene={(route, navigator) => {
             let Component = route.component;
             _navigator = navigator;
-            return <Component {...route.passProps} navigator={navigator} alarm={this.state.alarm} clearAlarm={() => { this.setState({ alarm: 0 }); if (Platform.OS !== 'ios') JPushModule.clearAllNotifications(); }} />
+            return <Component {...route.passProps}
+              navigator={navigator}
+              alarm={this.state.alarm}
+              clearAlarm={() => { this.setState({ alarm: 0 }); if (Platform.OS !== 'ios') JPushModule.clearAllNotifications(); }}
+              checkUpdate={() => this.checkUpdate()} />
           }
           }
+          onDidFocus={(router) => this.saveLog(router.component.displayName)}
         />
         {/* : <NavigatorIOS
             initialRoute={{
@@ -171,7 +208,7 @@ export default class WisdomHeating extends Component {
             </View>
           </View>
         </Modal>
-      </View>
+      </View >
     );
   }
 }

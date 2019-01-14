@@ -105,10 +105,10 @@ export default class Setting extends React.Component {
                         </View>
                     </TouchableOpacity>
 
-                    <View style={styles.lineView}>
+                    <TouchableOpacity style={styles.lineView}  onPress={()=>this.props.checkUpdate()}>
                         <Image style={styles.imageItem} source={require('../icons/version_icon.png')} />
-                        <Text style={styles.textItem}>应用版本 V{Constants.version}</Text>
-                    </View>
+                        <Text style={styles.textItem} >检查更新（当前版本 V{Constants.version}）</Text>
+                    </TouchableOpacity>
                     <TouchableOpacity style={styles.lineView} onPress={() => this.delCache()}>
                         <Image style={styles.imageItem} source={require('../icons/ico_clear.png')} />
                         <Text style={styles.textItem}>清除缓存</Text>
