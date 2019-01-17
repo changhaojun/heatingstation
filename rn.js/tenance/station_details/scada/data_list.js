@@ -129,7 +129,7 @@ export default class DataList extends React.Component {
                         <TouchableOpacity style={styles.item} onPress={this.pushToChart.bind(this, rowData.tag_id, rowData.tag_name)}>
                           <View style={styles.line} />
                           <View style={styles.itemContent} >
-                            <Text style={styles.value}>{rowData.data_value}{rowData.data_unit}</Text>
+                            <Text style={styles.value}>{rowData.data_value?rowData.data_value:'-'}{rowData.data_unit}</Text>
                             <Text style={styles.text1}>{rowData.tag_name}</Text>
                           </View>
                         </TouchableOpacity>

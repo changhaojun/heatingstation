@@ -40,7 +40,8 @@ fView.fn=fView.prototype={
 			if(el.data("type")=="text"){
 				for(var i=0;i<data.length;i++){
 					if(tag==data[i].tag_id){
-						el.attr({text:data[i].tag_name+":"+data[i].data_value+data[i].data_unit});
+            var value=data[i].data_value?data[i].data_value:"-";
+						el.attr({text:data[i].tag_name+":"+value+data[i].data_unit});
 					}
 				}
 			}
