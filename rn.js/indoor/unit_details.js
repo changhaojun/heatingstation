@@ -62,7 +62,6 @@ export default class UnitDetails extends React.Component {
   getHeatUserData() {
     this.setState({ refreshing: true })
     let unit_id = this.props.unitId ? this.props.unitId : 1;
-    unit_id=1
     let _this = this;
     http://121.42.253.149:18859/app/mock/29/GET//v2/community/building/unit/:id
     AsyncStorage.getItem("access_token", function (errs, result) {
