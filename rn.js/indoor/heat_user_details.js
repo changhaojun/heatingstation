@@ -14,6 +14,7 @@ import {
   ImageBackground,
   ScrollView
 } from 'react-native';
+import IndoorChart from './indoor_chart'
 import Constants from './../constants';
 import Dimensions from 'Dimensions';
 const { width, height } = Dimensions.get('window');
@@ -24,8 +25,37 @@ export default class HeatUserDetails extends React.Component {
     super(props);
     this.state = {
       modal: false,
-      info: [ { name: "房间号", value: "301" }, { name: "联系电话", value: "13453453343" }, { name: "建筑面积", value: "102㎡" }, { name: "用户环境", value: "低区" }, { name: "是否复式", value: "是" }, { name: "缴费情况", value: "已缴费" } ]
+      user_name:"",
+      value:props.value,
+      info: []
     };
+  }
+  componentDidMount() {
+    this.getInfo();
+  }
+  getInfo() {
+    let _this=this;
+    AsyncStorage.getItem("access_token", function (errs, result) {
+      if (!errs) {
+        let uri = Constants.indoorSite+"/v2/community/building/unit/heatUser/"+this.props.heat_unit_id+"?access_token="+result;
+        console.log(uri)
+        fetch(uri)
+          .then((response) => response.json())
+          .then((responseJson) => {
+            console.log(responseJson)
+            if (responseJson.code == 200) { 
+              let info=[];
+              info.push({ name: "房间号", value: responseJson.result.user_number });
+              info.push({ name: "联系电话", value: responseJson.result.phone });
+              info.push({ name: "建筑面积", value: responseJson.result.house_area+"㎡" });
+              info.push({ name: "用户环境", value: responseJson.result.water_loop });
+              info.push({ name: "是否复式", value: responseJson.result.duplex });
+              info.push({ name: "缴费情况", value: responseJson.result.already_cost?"已缴费":"未缴费" });
+              _this.setState({user_name:responseJson.result.user_name,info:info})
+            }
+          })
+      }
+    })
   }
   render() {
     return (
@@ -34,30 +64,30 @@ export default class HeatUserDetails extends React.Component {
           <TouchableOpacity onPress={() => this.props.navigator.pop()}>
             <Image style={{ width: 25, height: 20, marginLeft: 15, }} resizeMode="contain" source={require('../icons/nav_back_icon.png')} />
           </TouchableOpacity>
-          <Text style={styles.topNameText}>dsds</Text>
-          <View style={{ width: 40}} />
+          <Text style={styles.topNameText}>{this.props.user_number}</Text>
+          <View style={{ width: 40 }} />
         </View>
-        <Text style={{ backgroundColor: "#434b59", textAlign: "center", width: width, height: 25, color: "#FFFFFF", fontSize: 12 }}>大夏龙雀公馆1号楼</Text>
+        <Text style={{ backgroundColor: "#434b59", textAlign: "center", width: width, height: 25, color: "#FFFFFF", fontSize: 12 }}>{this.props.addr}</Text>
         <ScrollView>
           <ImageBackground style={{ width: width, height: width * 0.42, marginTop: 15, flexDirection: "row", alignItems: "center", paddingBottom: 35 }} resizeMode="contain" source={require('../icons/indoor_bg.png')}>
             <Image style={{ width: 51, height: 51, marginLeft: 50 }} resizeMode="contain" source={require('../icons/indoor_portrait.png')} />
             <View style={{ marginLeft: 13, flex: 1 }}>
-              <Text style={{ fontSize: 15, color: "#fff" }}>叶一水</Text>
+              <Text style={{ fontSize: 15, color: "#fff" }}>{this.state.user_name}</Text>
               <Text style={{ fontSize: 12, color: "#ffffffdd" }}>户主</Text>
             </View>
             <View style={{ marginRight: 41, alignItems: "center" }}>
-              <Text style={{ fontSize: 36, color: "#fff" }}>19<Text style={{ fontSize: 17 }}>℃</Text></Text>
+              <Text style={{ fontSize: 36, color: "#fff" }}>{this.state.value?this.state.value:"-"}<Text style={{ fontSize: 17 }}>℃</Text></Text>
               <Text style={{ fontSize: 12, color: "#ffffffdd" }}>室内温度</Text>
             </View>
           </ImageBackground>
-          <View style={{ flexDirection: "row", alignItems: "center" ,marginBottom:13}}>
+          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 13 }}>
             <View style={{ width: 3, height: 14, backgroundColor: "#2A9ADC", marginLeft: 12 }} />
             <Text style={{ fontSize: 14, color: "#333333", marginLeft: 9 }}>温度变化曲线</Text>
           </View>
           <View style={{ height: 243, width: width, backgroundColor: "#fff", marginBottom: 23 }}>
-
+          <IndoorChart data_id={this.state.data_id} ></IndoorChart>
           </View>
-          <View style={{ flexDirection: "row", alignItems: "center",marginBottom:13 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 13 }}>
             <View style={{ width: 3, height: 14, backgroundColor: "#2A9ADC", marginLeft: 12 }} />
             <Text style={{ fontSize: 14, color: "#333333", marginLeft: 9 }}>基本信息</Text>
           </View>
@@ -70,7 +100,7 @@ export default class HeatUserDetails extends React.Component {
               </View>}
             ItemSeparatorComponent={() => <View style={{ flex: 1, height: 1, backgroundColor: "#DADFE4", marginLeft: 12 }} />}
           />
-          <View style={{height:20}}/>
+          <View style={{ height: 20 }} />
         </ScrollView>
       </View>
 
