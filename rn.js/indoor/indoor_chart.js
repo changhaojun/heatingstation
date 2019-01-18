@@ -20,7 +20,7 @@ import {
   Dimensions
 } from 'react-native';
 import Echarts from 'native-echarts';
-//import Constants from './../constants';
+import Constants from './../constants';
 import moment from 'moment';
 // const Alert = Platform.select({
 //   ios: () => require('AlertIOS'),
@@ -31,10 +31,10 @@ const { width, height } = Dimensions.get('window');
 
 
 var d = new Date();
-var start_time = moment(d).format("YYYY$MM$DD$HH:mm:ss");
+var start_time = moment(d).format("YYYY-MM-DD HH:mm:ss");
 var start_time_stamp = d.getTime();
-var end_time_stamp = new Date(start_time_stamp - 4 * 3600 * 1000);
-var end_time = moment(end_time_stamp).format("YYYY$MM$DD$HH:mm:ss");
+var end_time_stamp = new Date(start_time_stamp - 24 * 3600 * 1000);
+var end_time = moment(end_time_stamp).format("YYYY-MM-DD HH:mm:ss");
 
 export default class DataList extends React.Component {
 
@@ -52,7 +52,7 @@ export default class DataList extends React.Component {
     const _this = this;
     AsyncStorage.getItem("access_token", function (errs, result) {
       if (!errs) {
-        var uri = Constants.indoorSite+"/v2/historyData/"+this.props.data_id+"?access_token="+result;
+        var uri = Constants.indoorSite+"/v2/historyData/"+_this.props.data_id+"?access_token="+result+"&start="+end_time+"&end="+start_time;
         console.log(uri);
         fetch(uri)
           .then((response) => response.json())
@@ -94,7 +94,7 @@ export default class DataList extends React.Component {
       },
       grid: {
         left: 10,
-        right: 10,
+        right: 20,
         top: 20,
         bottom: 0,
         containLabel: true,

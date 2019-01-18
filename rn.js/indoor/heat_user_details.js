@@ -37,7 +37,7 @@ export default class HeatUserDetails extends React.Component {
     let _this=this;
     AsyncStorage.getItem("access_token", function (errs, result) {
       if (!errs) {
-        let uri = Constants.indoorSite+"/v2/community/building/unit/heatUser/"+this.props.heat_unit_id+"?access_token="+result;
+        let uri = Constants.indoorSite+"/v2/community/building/unit/heatUser/"+_this.props.heat_user_id+"?access_token="+result;
         console.log(uri)
         fetch(uri)
           .then((response) => response.json())
@@ -85,7 +85,7 @@ export default class HeatUserDetails extends React.Component {
             <Text style={{ fontSize: 14, color: "#333333", marginLeft: 9 }}>温度变化曲线</Text>
           </View>
           <View style={{ height: 243, width: width, backgroundColor: "#fff", marginBottom: 23 }}>
-          <IndoorChart data_id={this.state.data_id} ></IndoorChart>
+          <IndoorChart data_id={this.props.data_id} ></IndoorChart>
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 13 }}>
             <View style={{ width: 3, height: 14, backgroundColor: "#2A9ADC", marginLeft: 12 }} />

@@ -22,10 +22,9 @@ export default class UnitDetails extends React.Component {
 
   constructor(props) {
     super(props);
-    
-    AsyncStorage.setItem("access_token",'5c3fdd6f1bc8da000726791b' )
     this.state = {
       modal: false,
+      refreshing:false,
       legend: [ { color: "#3C8CED", text: "＜16℃" },
       { color: "#FFFAF3", text: "16℃~18℃" },
       { color: "#FEF5E6", text: "18℃~22℃" },
@@ -61,12 +60,14 @@ export default class UnitDetails extends React.Component {
     this.getHeatUserData();
   }
   getHeatUserData() {
-    let unit_id=this.props.unit_id?this.props.unit_id:1
+    this.setState({ refreshing: true })
+    let unit_id = this.props.unitId ? this.props.unitId : 1;
+    unit_id=1
     let _this = this;
     http://121.42.253.149:18859/app/mock/29/GET//v2/community/building/unit/:id
     AsyncStorage.getItem("access_token", function (errs, result) {
       if (!errs) {
-        let uri = Constants.indoorSite+"/v2/community/building/unit/"+unit_id+"?access_token="+result;
+        let uri = Constants.indoorSite + "/v2/community/building/unit/" + unit_id + "?access_token=" + result;
         console.log(uri)
         fetch(uri)
           .then((response) => response.json())
@@ -83,7 +84,7 @@ export default class UnitDetails extends React.Component {
                   }
                 }
               }
-              let uri = Constants.indoorSite+"/v2/community/building/unit/"+unit_id+"/house?allHouse=1&access_token="+result;
+              let uri = Constants.indoorSite + "/v2/community/building/unit/" + unit_id + "/house?allHouse=1&access_token=" + result;
               console.log(uri)
               fetch(uri)
                 .then((response) => response.json())
@@ -100,7 +101,7 @@ export default class UnitDetails extends React.Component {
                     if (data.low && data.low.length) {
                       stateData.push({ title: { name: "低区", flow: flow.low }, data: _this.arrangeData(data.low) });
                     }
-                    _this.setState({ data: stateData });
+                    _this.setState({ data: stateData, refreshing: false, });
                   }
                 })
                 .catch((error) => {
@@ -163,12 +164,13 @@ export default class UnitDetails extends React.Component {
           component: HeatUserDetails, passProps: {
             heat_user_id: data[ index ].heat_user_id,
             user_number: data[ index ].user_number,
-            value:data[ index ].data_value,
-            addr:this.props.communityName+this.props.buildingName+this.props.unitName+"单元"
+            value: data[ index ].data_value,
+            addr: this.props.communityName + this.props.buildName + this.props.unitName + "单元",
+            data_id: data[ index ].data_id
           }
         })}
         style={{
-          width: (width - 65) / 4, height: 40, borderColor: "#E0E2EA55",
+          width: data.length < 5 ? (width - 65) / data.length : (width - 65) / 4 - 5, height: 40, borderColor: "#E0E2EA55",
           borderRightWidth: index == data.length - 1 ? 0 : 1, backgroundColor: bgColor,
         }}>
         <Image style={{ width: 13, height: 13, marginLeft: 6, marginTop: 6, }} resizeMode="contain"
@@ -193,6 +195,8 @@ export default class UnitDetails extends React.Component {
         <Text style={{ backgroundColor: "#434b59", textAlign: "center", width: width, height: 25, color: "#FFFFFF", fontSize: 12 }}>{this.props.communityName}{this.props.buildName}</Text>
         <ScrollView horizontal={true}>
           <SectionList
+            onRefresh={() => this.getHeatUserData()}
+            refreshing={this.state.refreshing}
             renderItem={({ item, index, section }) =>
               <View style={{ flexDirection: "row" }}>
                 <Text style={{ width: 63, height: 40, backgroundColor: "#4B4F5A", textAlign: "center", textAlignVertical: "center", fontSize: 14, color: "#fff" }}>{item.layer}楼</Text>

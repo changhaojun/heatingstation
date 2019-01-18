@@ -123,7 +123,6 @@ export default class WisdomHeating extends Component {
   }
   saveLog(router) {
     AsyncStorage.getItem("user_id", (errs, user_id) => {
-      console.log(errs, user_id)
       if (!errs && user_id) {
         let url = Constants.resourceSite + "/v2/logResource";
         fetch(url, {
@@ -141,7 +140,6 @@ export default class WisdomHeating extends Component {
         })
           .then((response) => response.json())
           .then((responseJson) => {
-            console.log(responseJson)
           })
       }
     });
