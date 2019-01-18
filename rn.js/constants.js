@@ -1,6 +1,7 @@
 import { AsyncStorage, Alert, Platform } from 'react-native';
 export default {
   serverSite: "http://114.215.46.56:18816",
+  serverSite3:"http://121.42.253.149:18859/app/mock/29/GET/",
   resourceSite: "http://114.215.46.56:17709",
   serverSite2: "http://114.215.46.56:17717",
   cameraSite: "http://114.215.46.56:17719",

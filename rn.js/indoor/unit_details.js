@@ -72,12 +72,12 @@ export default class UnitDetails extends React.Component {
           <TouchableOpacity onPress={() => this.props.navigator.pop()}>
             <Image style={{ width: 25, height: 20, marginLeft: 15, marginRight: 30 }} resizeMode="contain" source={require('../icons/nav_back_icon.png')} />
           </TouchableOpacity>
-          <Text style={styles.topNameText}>dsds</Text>
+          <Text style={styles.topNameText}>{this.props.unitName}单元</Text>
           <TouchableOpacity style={styles.toolbar} onPress={() => this.setState({ modal: true })}>
             <Text style={styles.toolbarText}>温度说明</Text>
           </TouchableOpacity>
         </View>
-        <Text style={{ backgroundColor: "#434b59", textAlign: "center", width: width, height: 25, color: "#FFFFFF", fontSize: 12 }}>大夏龙雀公馆1号楼</Text>
+        <Text style={{ backgroundColor: "#434b59", textAlign: "center", width: width, height: 25, color: "#FFFFFF", fontSize: 12 }}>{this.props.communityName}{this.props.buildName}</Text>
         <ScrollView horizontal={true}>
           <SectionList
             renderItem={({ item, index, section }) =>
