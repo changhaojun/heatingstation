@@ -12,6 +12,7 @@ import Home from './home/home.js';
 //import RunQuality from './temperatmap/runquality_map';
 import RunQuality from  "./contrast_analysis/contrast_analysis"
 import Maintenance from './tenance/maintenance';
+import Indoor from './indoor/company_list';
 var Orientation = require('react-native-orientation');
 
 export default class Main extends React.Component {
@@ -29,6 +30,10 @@ export default class Main extends React.Component {
             runqualityView: styles.bottomViewItem,
             runqualityImage: require('./icons/tab_icons/tab_runquality_normal.png'),
             runqualityText: styles.bottomItemText,
+             
+            indoorView: styles.bottomViewItem,
+            indoorImage: require('./icons/tab_icons/tab_indoor.png'),
+            indoorText: styles.bottomItemText,
 
             maintenanceView: props.fromNoti?styles.bottomViewItemClick:styles.bottomViewItem,
             maintenanceImage: props.fromNoti?require('./icons/tab_icons/tab_maintenance_pressed.png'):require('./icons/tab_icons/tab_maintenance_normal.png'),
@@ -50,6 +55,10 @@ export default class Main extends React.Component {
             maintenanceView: styles.bottomViewItem,
             maintenanceImage: require('./icons/tab_icons/tab_maintenance_normal.png'),
             maintenanceText: styles.bottomItemText,
+
+            indoorView: styles.bottomViewItem,
+            indoorImage: require('./icons/tab_icons/tab_indoor.png'),
+            indoorText: styles.bottomItemText,
         }
     }
     //首页按钮点击
@@ -85,7 +94,16 @@ export default class Main extends React.Component {
             maintenanceText: styles.bottomItemTextClick,
         });
     }
-
+    //点击户内系统
+    _indoor(){
+        this.setState(this.original);
+        this.setState({ centerComponent: Indoor });
+        this.setState({
+            indoorView: styles.bottomViewItemClick,
+            indoorImage: require('./icons/tab_icons/tab_indoored.png'),
+            indoorText: styles.bottomItemTextClick,
+        });
+    }
     toNotice() {
         //跳转
         this.props.navigator.push({
@@ -112,6 +130,12 @@ export default class Main extends React.Component {
                         <View style={this.state.maintenanceView}>
                             <Image style={styles.bottomItemImage} source={this.state.maintenanceImage} />
                             <Text style={this.state.maintenanceText}>运行维护</Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity activeOpacity={0.5} onPress={this._indoor.bind(this)}  >
+                        <View style={this.state.indoorView}>
+                            <Image style={styles.bottomItemImage} source={this.state.indoorImage} resizeMode="contain"/>
+                            <Text style={this.state.indoorText}>户内系统</Text>
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity activeOpacity={0.5} onPress={this._runqualityClick.bind(this)}  >
@@ -170,7 +194,7 @@ const styles = StyleSheet.create({
     bottomViewItem: {
         paddingTop: 5,
         alignItems: 'center',
-        width: width / 3,
+        width: width / 4,
         height: 60,
         backgroundColor: "#ffffff",
     },
@@ -188,7 +212,7 @@ const styles = StyleSheet.create({
     bottomViewItemClick: {
         paddingTop: 5,
         alignItems: 'center',
-        width: width / 3,
+        width: width / 4,
         height: 60,
         backgroundColor: "#ffffff",
     },

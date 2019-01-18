@@ -17,14 +17,14 @@ import {
 import Constants from './../constants';
 import Dimensions from 'Dimensions';
 const { width, height } = Dimensions.get('window');
-const zimu = [ "#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" ];
+const zimu = ["#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 
 
 var getSectionData = (dataBlob, sectionID) => {
   return sectionID;
 };
 var getRowData = (dataBlob, sectionID, rowID) => {
-  return dataBlob[ sectionID ][ rowID ];
+  return dataBlob[sectionID][rowID];
 };
 const ds = new ListView.DataSource({
   getRowData: getRowData,
@@ -73,7 +73,7 @@ export default class HeatStationMaintenance extends React.Component {
             if (!selTag) {
               selTag = {};
               for (let index = 0; index < 5; index++) {
-                selTag[ responseJson[ index ].tag_id ] = responseJson[ index ]
+                selTag[responseJson[index].tag_id] = responseJson[index]
               }
             }
             _this.setState({ tagList: responseJson, selTag: selTag })
@@ -86,15 +86,16 @@ export default class HeatStationMaintenance extends React.Component {
         fetch(uri)
           .then((response) => response.json())
           .then((responseJson) => {
+            console.log(responseJson)
             // 提取在线设备 和 掉线设备 并存放到对应的数组中
             // 点击切换时调用
             let onLineArr = [];
             let offLineArr = [];
             for (let i = 0; i < responseJson.length; i++) {
-              if (responseJson[ i ].status === 1) {
-                onLineArr.push(responseJson[ i ]);
+              if (responseJson[i].status === 1) {
+                onLineArr.push(responseJson[i]);
               } else {
-                offLineArr.push(responseJson[ i ])
+                offLineArr.push(responseJson[i])
               }
             }
             // 更新状态机
@@ -138,16 +139,17 @@ export default class HeatStationMaintenance extends React.Component {
       var rowid = [];
       var rowdata = [];
       for (var i = 0; i < allData.length; i++) {
-        if (allData[ i ].index.toUpperCase() === zimu[ j ] || zimu[ j ] == "#" && (allData[ i ].index.toUpperCase() > "Z" || allData[ i ].index.toUpperCase() < "A")) {
-          rowdata.push(allData[ i ]);
+        // console.log(allData[i])
+        if (allData[i].index.toUpperCase() === zimu[j] || zimu[j] == "#" && (allData[i].index.toUpperCase() > "Z" || allData[i].index.toUpperCase() < "A")) {
+          rowdata.push(allData[i]);
           rowid.push(num);
           num++;
         }
       }
       if (rowdata.length > 0) {
         row.push(rowid);
-        data[ zimu[ j ] ] = rowdata;
-        section.push(zimu[ j ]);
+        data[zimu[j]] = rowdata;
+        section.push(zimu[j]);
       }
     }
     this.setState({
@@ -162,12 +164,12 @@ export default class HeatStationMaintenance extends React.Component {
   toS(data) {
     let h = 0;
     for (let i = 0; i < zimu.length; i++) {
-      if (data === zimu[ i ]) {
+      if (data === zimu[i]) {
         this.refs.ListView.scrollTo({ x: 0, y: h, animated: true });
       } else {
-        if (this.state.data[ zimu[ i ] ]) {
+        if (this.state.data[zimu[i]]) {
           h = h + 19;
-          for (let j = 0; j < this.state.data[ zimu[ i ] ].length; j++) {
+          for (let j = 0; j < this.state.data[zimu[i]].length; j++) {
             h = h + 59;
           }
         }
@@ -176,17 +178,17 @@ export default class HeatStationMaintenance extends React.Component {
   }
   clickTag(tag) {
     let selTag = this.state.selTag;
-    if (selTag[ tag.tag_id ]) {
-      delete selTag[ tag.tag_id ];
+    if (selTag[tag.tag_id]) {
+      delete selTag[tag.tag_id];
     } else {
       if (Object.keys(selTag).length < 5) {
-        selTag[ tag.tag_id ] = tag;
+        selTag[tag.tag_id] = tag;
       } else {
         Alert.alert("提示", "最多只能选择5个标签");
       }
     }
     this.setState({ selTag: selTag });
-    AsyncStorage.setItem("sel_tag",JSON.stringify(selTag))
+    AsyncStorage.setItem("sel_tag", JSON.stringify(selTag))
 
   }
   getTableHeader() {
@@ -194,7 +196,7 @@ export default class HeatStationMaintenance extends React.Component {
     let i = 0;
     for (const key in this.state.selTag) {
       layout.push(<View style={i ? styles.selectItemView : styles.selectItemView1}>
-        <Text style={styles.titleText}>{this.state.selTag[ key ].tag_name}</Text>
+        <Text style={styles.titleText}>{this.state.selTag[key].tag_name}</Text>
       </View>)
       i++;
     }
@@ -205,7 +207,7 @@ export default class HeatStationMaintenance extends React.Component {
     let i = 0;
     for (const key in this.state.selTag) {
       layout.push(<View style={i ? styles.selectItemView : styles.selectItemView1}>
-        <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data && data.data[ this.state.selTag[ key ].abbre ] ? data.data[ this.state.selTag[ key ].abbre ].toFixed(2) : "-"}</Text>
+        <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data && data.data[this.state.selTag[key].abbre] ? data.data[this.state.selTag[key].abbre].toFixed(2) : "-"}</Text>
       </View>)
       i++;
     }
@@ -233,7 +235,7 @@ export default class HeatStationMaintenance extends React.Component {
             renderRow={data => (
               <TouchableOpacity style={styles.tagListView} onPress={() => { this.clickTag(data) }}>
                 <Text style={styles.tagListText}>{data.tag_name}</Text>
-                <Image style={{ width: 20, height: 20, marginRight: 20 }} resizeMode="contain" source={this.state.selTag[ data.tag_id ] ? require('./../icons/check_pre.png') : require('./../icons/check_nor.png')} />
+                <Image style={{ width: 20, height: 20, marginRight: 20 }} resizeMode="contain" source={this.state.selTag[data.tag_id] ? require('./../icons/check_pre.png') : require('./../icons/check_nor.png')} />
               </TouchableOpacity>
             )}
             renderSeparator={() => (
@@ -272,7 +274,7 @@ export default class HeatStationMaintenance extends React.Component {
                   dataSource={this.state.dataSource}
                   renderRow={data => (
                     <TouchableOpacity underlayColor="rgba(77,190,255,0.5)" onPress={this.openScada.bind(this, data.station_name, data.station_id)}>
-                      <View style={[ styles.listView, { height: 28, alignItems: "flex-end", } ]}>
+                      <View style={[styles.listView, { height: 28, alignItems: "flex-end", }]}>
                         <Text style={{ fontSize: 15, color: data.status === 1 ? '#0099ff' : "#919293", }} numberOfLines={1}>{data.station_name}</Text>
                         <View style={{ flex: 1 }} />
                         <Text style={{ fontSize: 11, color: '#919293', marginRight: 0, marginBottom: 3, }}>{data.data ? data.data.data_time : null}</Text>
@@ -352,7 +354,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   titleView: {
-    width: width-35,
+    width: width - 35,
     height: 30,
     backgroundColor: '#ffffff',
     flexDirection: 'row',
@@ -361,7 +363,7 @@ const styles = StyleSheet.create({
     marginRight: 25,
   },
   listView: {
-    width: width-35,
+    width: width - 35,
     height: 30,
     backgroundColor: '#ffffff',
     flexDirection: 'row',
