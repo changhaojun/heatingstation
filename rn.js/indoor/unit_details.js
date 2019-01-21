@@ -4,10 +4,7 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  ActivityIndicator,
   StyleSheet,
-  Modal,
-  Alert,
   SectionList,
   AsyncStorage,
   FlatList,
@@ -23,8 +20,7 @@ export default class UnitDetails extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      modal: false,
-      refreshing:false,
+      refreshing: false,
       legend: [ { color: "#3C8CED", text: "＜16℃" },
       { color: "#FFFAF3", text: "16℃~18℃" },
       { color: "#FEF5E6", text: "18℃~22℃" },
@@ -184,14 +180,24 @@ export default class UnitDetails extends React.Component {
       <View style={styles.all}>
         <View style={styles.navView}>
           <TouchableOpacity onPress={() => this.props.navigator.pop()}>
-            <Image style={{ width: 25, height: 20, marginLeft: 15, marginRight: 30 }} resizeMode="contain" source={require('../icons/nav_back_icon.png')} />
+            <Image style={{ width: 25, height: 20, marginLeft: 15 }} resizeMode="contain" source={require('../icons/nav_back_icon.png')} />
           </TouchableOpacity>
           <Text style={styles.topNameText}>{this.props.unitName}单元</Text>
-          <TouchableOpacity style={styles.toolbar} onPress={() => this.setState({ modal: true })}>
-            <Text style={styles.toolbarText}>温度说明</Text>
-          </TouchableOpacity>
+          <View style={{width:40}} />
         </View>
         <Text style={{ backgroundColor: "#434b59", textAlign: "center", width: width, height: 25, color: "#FFFFFF", fontSize: 12 }}>{this.props.communityName}{this.props.buildName}</Text>
+        <View style={{width:width,height:37,backgroundColor:"#fff"}}>
+          <FlatList
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          data={this.state.legend}
+          renderItem={({ item }) =>
+            <View style={{ flexDirection: "row", margin: 13,marginRight:7, alignItems: "center" }}>
+              <View style={{ width: 12, height: 12, backgroundColor: item.color, marginRight: 5, borderRadius: 2 }} />
+              <Text style={{ color: "#666666", fontSize: 12 }}>{item.text}</Text>
+            </View>}
+        />
+        </View>
         <ScrollView horizontal={true}>
           <SectionList
             onRefresh={() => this.getHeatUserData()}
@@ -220,32 +226,6 @@ export default class UnitDetails extends React.Component {
             keyExtractor={(item, index) => item + index}
           />
         </ScrollView>
-        <Modal
-          animationType={"none"}
-          transparent={true}
-          visible={this.state.modal}
-          onRequestClose={() => { }}>
-          <View style={{ backgroundColor: "#00000040", flex: 1, justifyContent: "center", alignItems: 'center', }}>
-            <View style={{ width: width - 60, height: 170, backgroundColor: "#fff" }}>
-              <View style={{ width: width - 60, height: 45, flexDirection: "row", alignItems: "center", backgroundColor: "#00b5fc", paddingLeft: 30 }}>
-                <Text style={{ color: "#fff", textAlign: "center", flex: 1, fontSize: 17 }}>温度说明</Text>
-                <Text style={{ color: "#fff", fontSize: 25, marginRight: 10 }} onPress={() => this.setState({ modal: false })}>ㄨ</Text>
-              </View>
-              <View style={{ paddingHorizontal: 30, paddingVertical: 20 }}>
-                <FlatList
-                  numColumns={3}
-                  data={this.state.legend}
-                  renderItem={({ item }) =>
-                    <View style={{ flexDirection: "row", margin: 13, alignItems: "center" }}>
-                      <View style={{ width: 12, height: 12, backgroundColor: item.color, marginRight: 5, borderRadius: 2 }} />
-                      <Text style={{ color: "#666666", fontSize: 12 }}>{item.text}</Text>
-                    </View>}
-                />
-              </View>
-            </View>
-          </View>
-
-        </Modal>
       </View>
 
     )
@@ -270,11 +250,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: "#ffffff",
     fontSize: 19,
-  },
-  toolbar: {
-    flexDirection: "row",
-    height: 40,
-    alignItems: "center",
   },
   toolbarText: {
     color: "#2EDDDB",
