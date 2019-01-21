@@ -213,12 +213,10 @@ export default class UnitDetails extends React.Component {
                 <View style={{ flex: 1, paddingLeft: 20, justifyContent: "center" }}>
                   <Text style={{ color: "#2E94DD" }}>{title.name}</Text>
                 </View>
-                <View style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-                  <Image style={{ width: 12, height: 12, marginRight: 5 }} resizeMode="contain" source={require('../icons/indoor_valve.png')} />
-                  <Text style={{ color: "#333333" }}>楼前阀   </Text>
+                <View style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent:"flex-end",paddingRight:12 }}>
+                  <Text style={{ color: "#333333" }}>瞬时热量   </Text>
                   <Text style={{ color: "#2E94DD" }}>{title.flow}GJ/h</Text>
                 </View>
-                <View style={{ flex: 1 }} />
               </View>
             )}
             ItemSeparatorComponent={() => <View style={{ flex: 1, height: 1, backgroundColor: "#E0E2EA33" }} />}
