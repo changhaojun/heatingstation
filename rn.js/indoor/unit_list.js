@@ -19,10 +19,11 @@ export default class VillageList extends React.Component {
         var _this = this;
         AsyncStorage.getItem("access_token",  (errs, result)=> {
             if (!errs) {
-                var uri =`${Constants.serverSite3}/v2/community/building/${_this.props.buildId}/unit?access_token=${result}&user_total=1`
+                var uri =`${Constants.indoorSite}/v2/community/building/${_this.props.buildId}/unit?access_token=${result}&user_total=1&avg_temperat=1&room_temperat=1`
                 fetch(uri)
                   .then((response) => response.json())
                   .then((responseJson) => {
+                      console.log(responseJson)
                     if (responseJson.result.length > 0) {
                       _this.setState({
                         unitList: responseJson.result,
@@ -65,12 +66,7 @@ export default class VillageList extends React.Component {
                     <View style={{ width: width - 80, flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
                         <Text style={{ fontSize: 20, color: "#fff" }}>{this.props.buildName}</Text>
                         <Text style={{ fontSize: 14, color: "#ddd" }}>{this.props.communityName}</Text>
-
                     </View>
-                    {/* <TouchableOpacity style={{ flexDirection: 'row', position: "absolute", right: 10 }}>
-                        <Image style={{ width: 15, height: 15, marginTop: 2 }} resizeMode="contain" source={require('../icons/icon_leveling.png')} />
-                        <Text style={{ fontSize: 15, color: "#2EDDDB" }}>一键调平</Text>
-                    </TouchableOpacity> */}
                 </View>
                 {this.state.unitList.length > 0 ?
                     <ListView
@@ -86,23 +82,64 @@ export default class VillageList extends React.Component {
                                             <View style={{ flexDirection: "row",marginLeft:20,alignItems:"center" }}> 
                                                 <View style={styles.innerBox}>
                                                     <View style={styles.outBox}>
-                                                    <Text style={{ fontSize: 16, color: '#fff' }}>{rowData.unit_number}单元</Text>
+                                                        <Text style={{ fontSize: 14, color: '#fff' }}>{rowData.unit_number}单元</Text>
                                                     </View>
-                                                </View> 
+                                                </View>                                      
+                                            </View>
+                                            <View style={{flexDirection:"column",alignItems:"center"}}>
+                                                <View style={{ flexDirection: "row",  marginRight: 10,width:width-100, justifyContent:"space-between",alignItems:"center" }}>     
+                                                    {
+                                                        rowData.status === 0 ?
+                                                        <Text style={{marginLeft:20,color:"#FD8F38",fontSize:20}}>{rowData.avg_temperat}<Text  style={{fontSize:14}}>℃</Text></Text>:
+                                                        rowData.status === 1 ?
+                                                        <Text style={{marginLeft:20,color:"#2C96DD",fontSize:20}}>{rowData.avg_temperat}<Text  style={{fontSize:14}}>℃</Text></Text> :
+                                                        <Text style={{marginLeft:20,color:"#D6243C",fontSize:20}}>{rowData.avg_temperat}<Text  style={{fontSize:14}}>℃</Text></Text>
+                                                    }
+                                                    <View style={{flexDirection:"row"}}>
+                                                        <Text style={{fontSize:16,color:"#999999"}}>{rowData.user_total}户</Text>
+                                                        <Image  style={{ width: 25, height: 20, marginLeft: 10, }} resizeMode="contain" source={require('../icons/icon-right.png')}></Image>
+                                                    </View>
+                                                    
+                                                </View>
+                                                <View style={{height:5,width:width-130,backgroundColor: "#eee",borderRadius:5,flexDirection:"row",marginTop:10}}>
+                                                    {
+                                                        (rowData.room_temperat.tepid===0||rowData.room_temperat.tepid===null)&&(rowData.room_temperat.hot===0||rowData.room_temperat.hot===null)?
+                                                        <Text style={{height:5,width:(rowData.room_temperat.cold/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))*(width-130),backgroundColor: "#2DBAE4",borderRadius:5}}></Text>:
+                                                        <Text style={{height:5,width:(rowData.room_temperat.cold/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))*(width-130),backgroundColor: "#2DBAE4",borderBottomLeftRadius:5,borderTopLeftRadius:5}}></Text>
+                                                    }
+                                                    {
+                                                        rowData.room_temperat.cold ===0 &&rowData.room_temperat.hot===0?
+                                                        <Text  style={{height:5,width:(rowData.room_temperat.tepid/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))*(width-130),backgroundColor: "#FD8F38",alignItems:"center",borderRadius:5}}></Text> :
+                                                        <Text  style={{height:5,width:(rowData.room_temperat.tepid/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))*(width-130),backgroundColor: "#FD8F38",alignItems:"center"}}></Text>                                               
+                                                    }
+                                                    {
+                                                        rowData.room_temperat.cold ===0 &&rowData.room_temperat.tepid===0?
+                                                        <Text style={{height:5,width:(rowData.room_temperat.hot/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))*(width-130),backgroundColor: "#D6243C",borderRadius:5}}></Text>:
+                                                        <Text style={{height:5,width:(rowData.room_temperat.hot/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))*(width-130),backgroundColor: "#D6243C",borderBottomRightRadius:5,borderTopRightRadius:5}}></Text>    
+                                                    } 
+                                                </View>
                                                 {
-                                                    rowData.status === 0 ?
-                                                    <Text style={{marginLeft:20,color:"#FD8F38",fontSize:16}}>{rowData.avg_temp}℃</Text>:
-                                                    rowData.status === 1 ?
-                                                    <Text style={{marginLeft:20,color:"#2C96DD",fontSize:16}}>{rowData.avg_temp}℃</Text> :
-                                                    <Text style={{marginLeft:20,color:"#D6243C",fontSize:16}}>{rowData.avg_temp}℃</Text>
+                                                   rowData.user_total !==0?
+                                                    <View style={{flexDirection:"row",marginLeft:10,justifyContent:"space-between",marginRight:10,width:width-130}}>
+                                                        <View style={{flexDirection:"row"}}>
+                                                            <Text style={{color:"#2DBAE4",marginTop:1,fontSize:12}}>{rowData.room_temperat.cold}户,</Text>
+                                                            <Text style={{color:"#2DBAE4",fontSize:12,marginTop:1}}>{isNaN(rowData.room_temperat.cold/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))?0: (rowData.room_temperat.cold/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot)).toFixed(2)}%</Text>
+                                                        </View>
+                                                        <View style={{flexDirection:"row"}}>
+                                                            <Text style={{color:"#FD8F38",marginTop:1,fontSize:12}}>{rowData.room_temperat.tepid}户,</Text>
+                                                            <Text style={{color:"#FD8F38",fontSize:12,marginTop:1}}>{isNaN(rowData.room_temperat.tepid/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))?0:(rowData.room_temperat.tepid/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot)).toFixed(2)}%</Text>
+                                                        </View>
+                                                        <View style={{flexDirection:"row"}}>
+                                                            <Text style={{color:"#D6243C",marginTop:1,fontSize:12,textAlign:"right"}}>{rowData.room_temperat.hot}户,</Text>
+                                                            <Text style={{color:"#D6243C",fontSize:12,marginTop:1}}>{isNaN(rowData.room_temperat.hot/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))?0:(rowData.room_temperat.hot/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot)).toFixed(2)}%</Text>
+                                                        </View>
+                                                    </View>:null
                                                 }
+                                                
                                             </View>
-                                            <View style={{ flexDirection: "row",  marginRight: 20, justifyContent:"space-between",alignItems:"center" }}>
                                             
-                                                <Text style={{fontSize:16,color:"#999999"}}>{rowData.user_total}户</Text>
-                                                <Image  style={{ width: 25, height: 20, marginLeft: 10, }} resizeMode="contain" source={require('../icons/icon-right.png')}></Image>
-                                            </View>
                                         </View>
+                                       
                                     </ImageBackground>
                                 </TouchableOpacity>
                             )
@@ -136,12 +173,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     listItemView: {
-        width: width-10,
-        height: 80,
-        flexDirection: 'row',
+        width: width-20,
+        height: 90,
+        flexDirection: 'column',
         marginBottom: 10,
         borderRadius: 10,
-        marginLeft:5,
+        marginLeft:10,
+        marginTop:-5
         // backgroundColor: "#444",
        
       },

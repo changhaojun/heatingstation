@@ -122,7 +122,7 @@ export default class Main extends React.Component {
                 <View style={styles.bottomView}>
                     <TouchableOpacity activeOpacity={0.5} onPress={this._homeClick.bind(this)} >
                         <View style={this.state.homeView} >
-                            <Image style={styles.bottomItemImage} source={this.state.homeImage} />
+                            <Image style={styles.bottomItemImage} source={this.state.homeImage} resizeMode="contain"/>
                             <Text style={this.state.homeText}>首页</Text>
                         </View>
                     </TouchableOpacity>
