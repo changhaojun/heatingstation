@@ -8,11 +8,13 @@ import {
   SectionList,
   AsyncStorage,
   FlatList,
-  ScrollView
+  ScrollView,
+  DeviceEventEmitter
 } from 'react-native';
 import Constants from './../constants';
 import HeatUserDetails from './heat_user_details';
 import Dimensions from 'Dimensions';
+import UnitList from "./unit_list"
 const { width, height } = Dimensions.get('window');
 
 export default class UnitDetails extends React.Component {
@@ -51,11 +53,21 @@ export default class UnitDetails extends React.Component {
         // }
       ],
     };
+
   }
   componentDidMount() {
     this.getHeatUserData();
   }
+  componentWillMount() {
+    this.setTitle = DeviceEventEmitter.addListener('refresh', ()=>{
+      this.getHeatUserData()
+    });
+  }
+  componentWillUnmount(){
+    this.setTitle.remove();
+  }
   getHeatUserData() {
+    console.log("进来了")
     this.setState({ refreshing: true })
     let unit_id = this.props.unitId ? this.props.unitId : 1;
     let _this = this;
@@ -161,8 +173,12 @@ export default class UnitDetails extends React.Component {
             user_number: data[ index ].user_number,
             value: data[ index ].data_value,
             addr: this.props.communityName + this.props.buildName + this.props.unitName + "单元",
-            data_id: data[ index ].data_id
-          }
+            data_id: data[ index ].data_id,
+            props:this.props,
+            heat_user_device_id:data[ index ].heat_user_device_id
+            // callback:this.getHeatUserData,
+          },
+          
         })}
         style={{
           width: data.length < 5 ? (width - 65) / data.length : (width - 65) / 4 - 5, height: 40, borderColor: "#E0E2EA55",
@@ -174,6 +190,19 @@ export default class UnitDetails extends React.Component {
       </TouchableOpacity>)
     }
     return layout;
+  }
+  popUnitList(){
+    console.log(this.props.buildId)
+    this.props.navigator.push({
+      name: 'UnitList',
+      component: UnitList,
+      passProps: {
+        buildName: this.props.buildName,
+        buildId: this.props.buildId,
+        communityName:this.props.communityName,
+       
+    }
+    })
   }
   render() {
     return (

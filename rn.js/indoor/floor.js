@@ -94,6 +94,7 @@ export default class VillageList extends React.Component {
                     label: {
                         normal: {
                             show: false,
+
                             position: 'center'
                         },
                         emphasis: {
@@ -176,12 +177,12 @@ export default class VillageList extends React.Component {
                                             <Text style={{height:5,width:(rowData.room_temperat.cold/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))*(width/2-40),backgroundColor: "#2DBAE4",borderBottomLeftRadius:5,borderTopLeftRadius:5}}></Text>
                                         }
                                         {
-                                            rowData.room_temperat.cold ===0 &&rowData.room_temperat.hot===0?
+                                            (rowData.room_temperat.cold ===0 ||rowData.room_temperat.cold ===null) &&(rowData.room_temperat.hot===0 ||rowData.room_temperat.hot===null)?
                                             <Text  style={{height:5,width:(rowData.room_temperat.tepid/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))*(width/2-40),backgroundColor: "#FD8F38",alignItems:"center",borderRadius:5}}></Text> :
                                             <Text  style={{height:5,width:(rowData.room_temperat.tepid/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))*(width/2-40),backgroundColor: "#FD8F38",alignItems:"center"}}></Text>                                               
                                         }
                                         {
-                                            rowData.room_temperat.cold ===0 &&rowData.room_temperat.tepid===0?
+                                            (rowData.room_temperat.cold ===0 ||rowData.room_temperat.cold ===null) &&(rowData.room_temperat.tepid===0 ||rowData.room_temperat.tepid===null)?
                                             <Text style={{height:5,width:(rowData.room_temperat.hot/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))*(width/2-40),backgroundColor: "#D6243C",borderRadius:5}}></Text>:
                                             <Text style={{height:5,width:(rowData.room_temperat.hot/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))*(width/2-40),backgroundColor: "#D6243C",borderBottomRightRadius:5,borderTopRightRadius:5}}></Text>    
                                         }  
