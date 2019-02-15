@@ -74,7 +74,7 @@ export default class HeatUserDetails extends React.Component {
     }else{
       Alert.alert('提示','已绑定过设备',[
         {text: '确定'},
-        {text: '取消绑定',onPress:()=>{
+        {text: '解除绑定',onPress:()=>{
           let uri = `http://114.215.46.56:17739/v1/device/relieve`;
           console.log(this.props.heat_user_device_id,this.props.heat_user_id )
            fetch(uri,{
