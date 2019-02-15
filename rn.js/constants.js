@@ -5,7 +5,8 @@ export default {
   resourceSite: "http://114.215.46.56:17709",
   serverSite2: "http://114.215.46.56:17717",
   cameraSite: "http://114.215.46.56:17719",
-  indoorSite: "http://192.168.1.133:7001",
+  // indoorSite: "http://192.168.1.133:7001",
+  indoorSite:"http://114.215.46.56:17741",
   version: 1.16,
   alarmSum: 0,
   login(userName, passWord, success, fail) {

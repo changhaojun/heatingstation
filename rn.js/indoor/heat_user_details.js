@@ -12,11 +12,13 @@ import {
   AsyncStorage,
   FlatList,
   ImageBackground,
-  ScrollView
+  ScrollView,
+  DeviceEventEmitter
 } from 'react-native';
 import IndoorChart from './indoor_chart'
 import Constants from './../constants';
 import Dimensions from 'Dimensions';
+import Scan from './scan';
 const { width, height } = Dimensions.get('window');
 
 export default class HeatUserDetails extends React.Component {
@@ -27,13 +29,15 @@ export default class HeatUserDetails extends React.Component {
       modal: false,
       user_name:"",
       value:props.value,
-      info: []
+      info: [],
+      heat_user_device_id:this.props.heat_user_device_id
     };
   }
   componentDidMount() {
     this.getInfo();
   }
   getInfo() {
+    
     let _this=this;
     AsyncStorage.getItem("access_token", function (errs, result) {
       if (!errs) {
@@ -57,7 +61,54 @@ export default class HeatUserDetails extends React.Component {
       }
     })
   }
+  Scan(){
+    if(!this.state.heat_user_device_id){
+      this.props.navigator.push({
+          name: 'Scan',
+          component: Scan,
+          passProps:{
+            heat_user_id:this.props.heat_user_id,
+            props:this.props.props
+          }
+      })
+    }else{
+      Alert.alert('提示','已绑定过设备',[
+        {text: '确定'},
+        {text: '解除绑定',onPress:()=>{
+          let uri = `http://114.215.46.56:17739/v1/device/relieve`;
+          console.log(this.props.heat_user_device_id,this.props.heat_user_id )
+           fetch(uri,{
+               method: 'POST',
+               headers: {
+                 'Accept': 'application/json',
+                 'Content-Type': 'application/json',
+               },
+               body: JSON.stringify({
+                   heat_user_device_id: this.props.heat_user_device_id,
+                   heat_user_id: this.props.heat_user_id 
+               })
+             }).then((response) => response.json())
+               .then((responseJson) => {
+                 console.log(responseJson)
+                 if(responseJson.code===200){
+                  Alert.alert(
+                    '提示',
+                    '成功取消绑定'
+                  )
+                  DeviceEventEmitter.emit('refresh')
+                  this.state.heat_user_device_id=null;
+                 }
+               })
+               .catch((e) => {
+                 console.log(e)
+                 Alert.alert('提示', "网络连接错误,请检查您的的网络或联系我们")
+               });
+        }}
+      ])
+    }
+  }
   render() {
+   
     return (
       <View style={styles.all}>
         <View style={styles.navView}>
@@ -66,6 +117,9 @@ export default class HeatUserDetails extends React.Component {
           </TouchableOpacity>
           <Text style={styles.topNameText}>{this.props.user_number}</Text>
           <View style={{ width: 40 }} />
+          <TouchableOpacity onPress={() =>this.Scan()}>
+           <Image style={{ width: 25, height: 20, marginRight: 15, }} resizeMode="contain" source={require('../icons/scan.jpg')} />
+          </TouchableOpacity>
         </View>
         <Text style={{ backgroundColor: "#434b59", textAlign: "center", width: width, height: 25, color: "#FFFFFF", fontSize: 12 }}>{this.props.addr}</Text>
         <ScrollView>

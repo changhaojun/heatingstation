@@ -60,14 +60,17 @@ export default class Maintenance extends React.Component {
     AsyncStorage.getItem("company_code", function (errs, result) {
       if (!errs) {
         _this.setState({ company_code: result });
-        var uri = Constants.serverSite + "/v1_0_0/stationOnline?access_token=" + _this.state.access_token + "&company_code=" + _this.state.company_code + "&company_id=" + _this.state.company_id;
+
+        var uri =  `${Constants.indoorSite}/v2/company?access_token=${_this.state.access_token}&company_code=${result}` 
+        console.log(uri)
         fetch(uri)
           .then((response) => response.json())
           .then((responseJson) => {
-            if (responseJson.length > 0) {
+            console.log(responseJson)
+            if (responseJson.result.length > 0) {
               _this.setState({
-                data: responseJson,
-                dataSource: ds.cloneWithRows(responseJson),
+                data: responseJson.result,
+                dataSource: ds.cloneWithRows(responseJson.result),
               });
             }
             else {
@@ -113,7 +116,7 @@ export default class Maintenance extends React.Component {
             renderRow={(rowData) => {
               return (
                 <TouchableOpacity underlayColor="#ECEDEE" onPress={()=>this.gotoVillageList(rowData.company_code,rowData.company_name)}>
-                  <ImageBackground style={styles.listItemView} resizeMode="contain" source={require('../icons/bg_company.png')}>
+                  <ImageBackground style={styles.listItemView} resizeMode="cover" source={require('../icons/bg_company.png')}>
                     <ImageBackground style={styles.listItemIconView} resizeMode="contain" source={require('../icons/company_icon.png')}>
                       <Text style={{ fontSize: 16, color: '#fff', marginTop: -28, }}>{rowData.company_name.substr(0, 2)}</Text>
                     </ImageBackground>
@@ -132,7 +135,7 @@ export default class Maintenance extends React.Component {
                           <Text style={styles.listItemTextLeft}>供热面积</Text>
                         </View>
                         <View style={styles.listItemTextView2}>
-                          <Text style={styles.listItemTextRight}>{rowData.onLine}/{rowData.station_count}</Text>
+                          <Text style={styles.listItemTextRight}>{rowData.station_count? rowData.station_count : "-"}</Text>
                           <Text style={styles.listItemTextLeft}>换热站数量</Text>
                         </View>          
                       </View>

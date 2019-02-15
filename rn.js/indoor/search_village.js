@@ -1,10 +1,8 @@
 /**
  * Created by vector on 2017/11/15.
  *
- * 换热站搜索页面
+ * 小区搜索页面
  */
-
-
 import React, { Component } from 'react';
 import {
     StyleSheet,
@@ -21,8 +19,8 @@ import {
     Image
 } from 'react-native';
 const { width, height } = Dimensions.get('window');
-import Constants from './../constants';
-import StationDetails from './station_details/station_tab';
+import Constants from '../constants';
+import Floor from './floor'
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 export default class WisdomHeating extends Component {
     constructor(props) {
@@ -35,7 +33,6 @@ export default class WisdomHeating extends Component {
             loadShow: false,
             historySearch: [],
         }
-
         const _this = this;
         AsyncStorage.getItem("company_code", function (errs, result) {
             if (!errs) {
@@ -44,7 +41,8 @@ export default class WisdomHeating extends Component {
                 })
             }
         });
-        AsyncStorage.getItem("history_search_station", function (errs, result) {
+        AsyncStorage.getItem("history_search_village", function (errs, result) {
+            console.log(result)
             if (!errs && result && result.length > 0) {
                 _this.setState({ historySearch: result.split(",") })
             }
@@ -55,17 +53,6 @@ export default class WisdomHeating extends Component {
                 _this.setState({
                     access_token: result
                 })
-                var uri = Constants.serverSite + "/v1_0_0/tags?access_token=" + result + "&level=2";
-                console.log(uri)
-                fetch(uri)
-                    .then((response) => response.json())
-                    .then((responseJson) => {
-                        console.log(responseJson);
-                        _this.setState({ tagList: responseJson })
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                    });
             }
 
         }
@@ -76,12 +63,12 @@ export default class WisdomHeating extends Component {
 
 
     getDataFromApi(text) {
+        // console.log(text)
         if (text) {
             this.setState({ searchValue: text })
         } else {
             text = this.state.searchValue;
         }
-
         var data = this.state.historySearch;
         for (var i = 0; i < data.length; i++) {
             if (data[i] == text) { data.splice(i, 1) }
@@ -89,19 +76,18 @@ export default class WisdomHeating extends Component {
         if (text) { data.unshift(text); }
 
         if (data.length > 15) { data.pop() }
-        AsyncStorage.setItem("history_search_station", data.join(","), function (errs) { });
-
+        console.log(data)
+        AsyncStorage.setItem("history_search_village", data.join(","), function (errs) { });
         this.setState({ loadShow: true, });
-        var uri = Constants.serverSite + "/v1_0_0/stationAllDatas?tag_id=10,11,12,20,16&access_token=" +
-            this.state.access_token + "&company_code=" + this.state.company_code + "&name=" + "{'station_name':'" + text + "'}";
+        var uri =`${Constants.indoorSite}/v2/community?access_token=${this.state.access_token}&company_code=${this.state.company_code}&user_total=1&keyword=${text}&avg_temperat=1` 
         fetch(uri)
             .then((response) => response.json())
             .then((responseJson) => {
-                console.log(responseJson);
-                if (responseJson.length > 0) {
+                // console.log(responseJson)
+                if (responseJson.result.rows.length > 0) {
                     this.setState({
                         loadShow: false,
-                        dataSource: responseJson,
+                        dataSource: responseJson.result.rows,
                     });
                 } else {
                     Alert.alert(
@@ -127,24 +113,28 @@ export default class WisdomHeating extends Component {
 
     }
 
-    openScada(name, id) {
+    goFloor(communityId,communityName,avg_temp){
         this.props.navigator.push({
-            component: StationDetails,
+            component: Floor,
             passProps: {
-                station_name: name,
-                station_id: id,
+                communityId: communityId,
+                communityName: communityName,
+                avg_temp:avg_temp
             }
         })
     }
-
-
+    clear(){
+        this.setState({
+            searchValue:""
+        })
+    }
     render() {
         return (
             <View style={styles.all}>
                 <View style={styles.navView}>
-                    <View style={{ width: width - 50, height: 30, borderRadius: 5, backgroundColor: 'rgb(255,255,255)', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                    <View style={{ width: width - 50, height: 30, borderRadius: 20, backgroundColor: 'rgb(255,255,255)', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                         <TextInput
-                            placeholder="输入你要查询的换热站名称"
+                            placeholder="输入你要查询的小区名"
                             placeholderTextColor="rgba(0,0,0,0.7)"
                             onChangeText={(searchValue) => this.setState({ searchValue: searchValue.replace(/(^\s*)|(\s*$)/g, "") })}
                             returnKeyType={"search"}
@@ -152,63 +142,43 @@ export default class WisdomHeating extends Component {
                             style={styles.searchInput}
                             underlineColorAndroid="transparent"
                             autoFocus={true}
+                            clearTextOnFocus={true}
                             value={this.state.searchValue}
                         >
-                        </TextInput>
+                       </TextInput>
+                        {
+                            this.state.searchValue.length>0 ?
+                            <TouchableOpacity style={styles.clearBox} onPress={()=>{this.clear()}}>
+                                <Image style={{ width: 15, height: 15 }} resizeMode="center" source={require('../icons/cancel_icon.png')}/>
+                            </TouchableOpacity>  :null
+                        }         
                     </View>
                     <Text style={{ color: "#ffffff", marginLeft: 10 }} onPress={this.pop.bind(this)}>
                         {Platform.OS === 'ios' || this.state.searchValue.length < 1 ? "取消" : "搜索"}
                     </Text>
                 </View>
-
-                {this.state.dataSource.length ?
                     <View style={{ width: width, }}>
-                        <View style={styles.titleView}>
-
-                            <View style={styles.selectItemView1}>
-                                <Text style={styles.titleText}>{this.state.tagList ? this.state.tagList[0].tag_name : ""}</Text>
-                            </View>
-                            <View style={styles.selectItemView}>
-                                <Text style={styles.titleText}>{this.state.tagList ? this.state.tagList[1].tag_name : ""}</Text>
-                            </View>
-                            <View style={styles.selectItemView}>
-                                <Text style={styles.titleText}>{this.state.tagList ? this.state.tagList[2].tag_name : ""}</Text>
-                            </View>
-                            <View style={styles.selectItemView}>
-                                <Text style={styles.titleText}>{this.state.tagList ? this.state.tagList[3].tag_name : ""}</Text>
-                            </View>
-                            <View style={styles.selectItemView}>
-                                <Text style={styles.titleText}>{this.state.tagList ? this.state.tagList[4].tag_name : ""}</Text>
-                            </View>
-                        </View>
+            
                         <ListView
                             ref="ListView"
                             showsVerticalScrollIndicator={false}
                             enableEmptySections={true}
                             dataSource={ds.cloneWithRows(this.state.dataSource)}
                             renderRow={data => (
-                                <TouchableOpacity underlayColor="rgba(77,190,255,0.5)" onPress={this.openScada.bind(this, data.station_name, data.station_id)}>
-                                    <View style={[styles.listView, { height: 28, alignItems: "flex-end", }]}>
-                                        <Text style={{ fontSize: 15, color: data.status === 1 ? '#0099ff' : "#919293", }} numberOfLines={1}>{data.station_name}</Text>
-                                        <View style={{ flex: 1 }} />
-                                        <Text style={{ fontSize: 11, color: '#919293', marginRight: 0, marginBottom: 3, }}>{data.data ? data.data.data_time : null}</Text>
-                                    </View>
-                                    <View style={styles.listView}>
-                                        <View style={styles.selectItemView1}>
-                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data && data.data[this.state.tagList[0].abbre] ? data.data[this.state.tagList[0].abbre].toFixed(2) : "-"}</Text>
+                                <TouchableOpacity onPress={()=>{this.goFloor(data.community_id,data.community_name,data.avg_temp)}}>
+                                    <View style={[styles.listView, { height: 58, alignItems: "center",justifyContent:"space-between"}]}>
+                                        <View style={{flexDirection:"row",alignItems:"center"}}>
+                                            <Image style={{ width: 25, height: 25, marginLeft: 10,marginRight:10 }} resizeMode="contain" source={data.status===1? require('../icons/icon_normal.png'):data.status===2?require('../icons/icon_low.png'):require('../icons/icon_high.png')}  />
+                                            <Text style={{ fontSize: 15, color: "#333333" }}>{data.community_name}</Text>
                                         </View>
-                                        <View style={styles.selectItemView}>
-                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data && data.data[this.state.tagList[1].abbre] ? data.data[this.state.tagList[1].abbre].toFixed(2) : "-"}</Text>
-                                        </View>
-                                        <View style={styles.selectItemView}>
-                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data && data.data[this.state.tagList[2].abbre] ? data.data[this.state.tagList[2].abbre].toFixed(2) : "-"}</Text>
-                                        </View>
-                                        <View style={styles.selectItemView}>
-                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data && data.data[this.state.tagList[3].abbre] ? data.data[this.state.tagList[3].abbre].toFixed(2) : "-"}</Text>
-                                        </View>
-                                        <View style={styles.selectItemView}>
-                                            <Text style={data.status === 1 ? styles.listText : styles.listWarnText}>{data.data && data.data[this.state.tagList[4].abbre] ? data.data[this.state.tagList[4].abbre].toFixed(2) : "-"}</Text>
-                                        </View>
+                                        {
+                                            data.status ===1?
+                                            <Text style={{marginRight:40,color:"#FB9823"}}>{data.avg_temperat}℃</Text>:
+                                            data.status ===2? 
+                                            <Text style={{marginRight:40,color:"#2E93DD"}}>{data.avg_temperat}℃</Text>:
+                                            <Text style={{marginRight:40,color:"#D6243C"}}>{data.avg_temperat}℃</Text> 
+                                        }
+                                    
                                     </View>
                                 </TouchableOpacity>
                             )}
@@ -217,7 +187,6 @@ export default class WisdomHeating extends Component {
                             )}
                         />
                     </View>
-                    : null}
                 {!this.state.loadShow && !this.state.dataSource.length ? 
                     <ListView
                     showsVerticalScrollIndicator={false}
@@ -331,5 +300,15 @@ const styles = StyleSheet.create({
         width: 15,
         height: 15,
         marginLeft: 15
+    },
+    clearBox:{
+        width:20,
+        height:20,
+        borderRadius: 20,
+        backgroundColor: "#aaa",
+        justifyContent: 'center',
+        alignItems: 'center',
+        position:"absolute",
+        right:10
     }
 });

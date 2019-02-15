@@ -6,6 +6,7 @@ import { View, Text, Image, StyleSheet, AsyncStorage, ListView, TouchableOpacity
 import Dimensions from 'Dimensions';
 import Constants from '../constants';
 import Floor from './floor';
+import SearchVillage from './search_village';
 var { width, height } = Dimensions.get('window');
 const zimu = ["#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 var getSectionData = (dataBlob, sectionID) => {
@@ -28,6 +29,7 @@ export default class VillageList extends React.Component {
             company_code:"",
             allData:"",
             dataSource: ds.cloneWithRows({}, [], []),
+            room_temperat:""
         }
         var _this = this;
         AsyncStorage.getItem("company_code",(errs, result)=> {
@@ -37,10 +39,12 @@ export default class VillageList extends React.Component {
         })
         AsyncStorage.getItem("access_token", (errs, result)=> {
             if (!errs) {
-                var uri =`${Constants.serverSite3}/v2/community?access_token=${result}&company_code=${this.state.company_code}&user_total=1`                
+                var uri =`${Constants.indoorSite}/v2/community?access_token=${result}&company_code=${this.state.company_code}&user_total=1&avg_temperat=1&room_temperat=1`  
+                console.log(uri)              
                 fetch(uri)
                   .then((response) => response.json())
                   .then((responseJson) => {
+                      console.log(responseJson)
                     if (responseJson.result.rows.length > 0) {
                       _this.setState({
                         allData: responseJson.result.rows,
@@ -106,13 +110,22 @@ export default class VillageList extends React.Component {
           }
         }
       }
-    goFloor(communityId,communityName){
+    goFloor(communityId,communityName,avg_temp,room_temperat,status){
+        console.log(status)
         this.props.navigator.push({
             component: Floor,
             passProps: {
                 communityId: communityId,
                 communityName: communityName,
+                avg_temp:avg_temp,
+                room_temperat:room_temperat,
+                status:status
             }
+        })
+    }
+    searchVillage(){
+        this.props.navigator.push({
+            component: SearchVillage,
         })
     }
     render() {
@@ -122,7 +135,7 @@ export default class VillageList extends React.Component {
                     <TouchableOpacity onPress={()=>this.props.navigator.pop()}>
                         <Image style={{ width: 10, height: 20, marginLeft: 10,marginRight:10 }} resizeMode="contain" source={require('../icons/nav_back_icon.png')} />
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.5}>
+                    <TouchableOpacity activeOpacity={0.5} onPress={()=>{this.searchVillage()}}>
                         <View style={{ width: width - 100, height: 30, marginTop: 0, borderRadius: 20, backgroundColor: 'rgb(255,255,255)', marginLeft: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }}>
                         <Image style={{ width: 15, height: 15, marginLeft: 10,marginRight:10 }} resizeMode="contain" source={require('../icons/search.png')} ></Image>
                         <Text style={{ fontSize: 15, color: "rgba(0,0,0,0.3)" }}>搜索</Text>
@@ -139,7 +152,7 @@ export default class VillageList extends React.Component {
                         showsVerticalScrollIndicator={false}
                         dataSource={this.state.dataSource}
                         renderRow={data => (
-                            <TouchableOpacity onPress={()=>{this.goFloor(data.community_id,data.community_name)}}>
+                            <TouchableOpacity onPress={()=>{this.goFloor(data.community_id,data.community_name,data.avg_temperat,data.room_temperat,data.status)}}>
                                 <View style={[styles.listView, { height: 58, alignItems: "center",justifyContent:"space-between"}]}>
                                     <View style={{flexDirection:"row",alignItems:"center"}}>
                                         <Image style={{ width: 25, height: 25, marginLeft: 10,marginRight:10 }} resizeMode="contain" source={data.status===1? require('../icons/icon_normal.png'):data.status===2?require('../icons/icon_low.png'):require('../icons/icon_high.png')}  />
@@ -147,10 +160,10 @@ export default class VillageList extends React.Component {
                                     </View>
                                     {
                                         data.status ===1?
-                                         <Text style={{marginRight:40,color:"#FB9823"}}>{data.avg_temp}℃</Text>:
+                                         <Text style={{marginRight:40,color:"#FB9823"}}>{data.avg_temperat}℃</Text>:
                                         data.status ===2? 
-                                        <Text style={{marginRight:40,color:"#2E93DD"}}>{data.avg_temp}℃</Text>:
-                                        <Text style={{marginRight:40,color:"#D6243C"}}>{data.avg_temp}℃</Text> 
+                                        <Text style={{marginRight:40,color:"#2E93DD"}}>{data.avg_temperat}℃</Text>:
+                                        <Text style={{marginRight:40,color:"#D6243C"}}>{data.avg_temperat}℃</Text> 
                                     }
                                    
                                 </View>
