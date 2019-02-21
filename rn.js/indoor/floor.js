@@ -205,7 +205,7 @@ export default class VillageList extends React.Component {
                                                 <View style={{ flexDirection: "row", paddingLeft: 10, paddingRight: 10, height: 25, backgroundColor: "#fff", width: width / 2 - 20, borderBottomRightRadius: 15, borderBottomLeftRadius: 15 }}>
                                                     {
                                                         rowData.room_temperat.cold ?
-                                                            <View style={{ width: (rowData.room_temperat.cold / (rowData.room_temperat.cold + rowData.room_temperat.tepid + rowData.room_temperat.hot)) * (width / 2 - 40) + 10 }}>
+                                                            <View style={{ width: (rowData.room_temperat.cold / (rowData.room_temperat.cold + rowData.room_temperat.tepid + rowData.room_temperat.hot)) * (width / 2 - 40) + 15 }}>
                                                                 <Text style={{ color: "#2DBAE4", marginTop: 1, fontSize: 12 }}>{rowData.room_temperat.cold}户</Text>
                                                                 {/* <Text style={{color:"#2DBAE4",fontSize:12,marginTop:-3}}>{isNaN(rowData.room_temperat.cold/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))?0: (rowData.room_temperat.cold/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot)).toFixed(2)}%</Text> */}
                                                             </View>
@@ -213,7 +213,7 @@ export default class VillageList extends React.Component {
                                                     }
                                                     {
                                                         rowData.room_temperat.tepid ?
-                                                            <View style={{ width: (rowData.room_temperat.tepid / (rowData.room_temperat.cold + rowData.room_temperat.tepid + rowData.room_temperat.hot)) * (width / 2 - 40) + 10 }}>
+                                                            <View style={{ width: (rowData.room_temperat.tepid / (rowData.room_temperat.cold + rowData.room_temperat.tepid + rowData.room_temperat.hot)) * (width / 2 - 40) + 15 }}>
                                                                 <Text style={{ color: "#FD8F38", marginTop: 1, fontSize: 12, width: 20 }}>{rowData.room_temperat.tepid}户</Text>
                                                                 {/* <Text style={{color:"#FD8F38",fontSize:12,marginTop:-3}}>{isNaN(rowData.room_temperat.tepid/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))?0:(rowData.room_temperat.tepid/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot)).toFixed(2)}%</Text> */}
                                                             </View>

@@ -30,11 +30,7 @@ import moment from 'moment';
 const { width, height } = Dimensions.get('window');
 
 
-var d = new Date();
-var start_time = moment(d).format("YYYY-MM-DD HH:mm:ss");
-var start_time_stamp = d.getTime();
-var end_time_stamp = new Date(start_time_stamp - 24 * 3600 * 1000);
-var end_time = moment(end_time_stamp).format("YYYY-MM-DD HH:mm:ss");
+
 
 export default class DataList extends React.Component {
 
@@ -44,15 +40,30 @@ export default class DataList extends React.Component {
       xArr: [],
       yArr: [],
       yLabel: '',
-      prompt: "加载中……"
+      prompt: "加载中……",
+      end_time:"",
+      start_time:""
     };
-    this.getData();
+    
+  }
+  componentDidMount(){
+    this.getData(); 
+    this.getDate();
+  }
+  getDate(){
+    var d = new Date();
+    this.state.start_time = moment(d).format("YYYY-MM-DD HH:mm:ss");
+    var start_time_stamp = d.getTime();
+    var end_time_stamp = new Date(start_time_stamp - 24 * 3600 * 1000);
+    this.state.end_time = moment(end_time_stamp).format("YYYY-MM-DD HH:mm:ss");
   }
   getData() {
+    console.log('获取历史数据')
     const _this = this;
+    this.getDate();
     AsyncStorage.getItem("access_token", function (errs, result) {
       if (!errs) {
-        var uri = Constants.indoorSite+"/v2/historyData/"+_this.props.data_id+"?access_token="+result+"&start="+end_time+"&end="+start_time;
+        var uri = Constants.indoorSite+"/v2/historyData/"+_this.props.data_id+"?access_token="+result+"&start="+_this.state.end_time+"&end="+_this.state.start_time;
         console.log(uri);
         fetch(uri)
           .then((response) => response.json())
