@@ -103,9 +103,9 @@ export default class Maintenance extends React.Component {
             <View style={{ width: width - 50, height: 30, marginTop: 10, borderRadius: 5, marginLeft: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontSize: 20, color: "#fff" }}>分户系统</Text>
             </View>
-          <TouchableOpacity onPress={() => { this.props.navigator.push({ component: Abnormal }) }}>
+          {/* <TouchableOpacity onPress={() => { this.props.navigator.push({ component: Abnormal }) }}>
             <Image style={{ marginTop: 15, width: 25, height: 20,marginRight:10}} resizeMode="contain" source={require('../icons/abnormal_icon.png')} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         {this.state.data.length > 0 ?
           <ListView
