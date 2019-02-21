@@ -37,7 +37,7 @@ export default class HeatUserDetails extends React.Component {
     this.getInfo();
   }
   getInfo() {
-    
+    console.log(111)
     let _this=this;
     AsyncStorage.getItem("access_token", function (errs, result) {
       if (!errs) {
@@ -138,8 +138,8 @@ export default class HeatUserDetails extends React.Component {
             <View style={{ width: 3, height: 14, backgroundColor: "#2A9ADC", marginLeft: 12 }} />
             <Text style={{ fontSize: 14, color: "#333333", marginLeft: 9 }}>温度变化曲线</Text>
           </View>
-          <View style={{ height: 243, width: width, backgroundColor: "#fff", marginBottom: 23 }}>
-          <IndoorChart data_id={this.props.data_id} ></IndoorChart>
+            <View style={{ height: 243, width: width, backgroundColor: "#fff", marginBottom: 23 }}>
+            <IndoorChart data_id={this.props.data_id} ></IndoorChart>
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 13 }}>
             <View style={{ width: 3, height: 14, backgroundColor: "#2A9ADC", marginLeft: 12 }} />

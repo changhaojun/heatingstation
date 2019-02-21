@@ -61,7 +61,7 @@ export default class Maintenance extends React.Component {
       if (!errs) {
         _this.setState({ company_code: result });
 
-        var uri =  `${Constants.indoorSite}/v2/company?access_token=${_this.state.access_token}&company_code=${result}` 
+        var uri =  `${Constants.indoorSite}/v2/company?access_token=${_this.state.access_token}&company_code=${result}&avg_temperat=1&area=1` 
         console.log(uri)
         fetch(uri)
           .then((response) => response.json())
@@ -103,9 +103,9 @@ export default class Maintenance extends React.Component {
             <View style={{ width: width - 50, height: 30, marginTop: 10, borderRadius: 5, marginLeft: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontSize: 20, color: "#fff" }}>分户系统</Text>
             </View>
-          <TouchableOpacity onPress={() => { this.props.navigator.push({ component: Abnormal }) }}>
+          {/* <TouchableOpacity onPress={() => { this.props.navigator.push({ component: Abnormal }) }}>
             <Image style={{ marginTop: 15, width: 25, height: 20,marginRight:10}} resizeMode="contain" source={require('../icons/abnormal_icon.png')} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         {this.state.data.length > 0 ?
           <ListView
@@ -127,17 +127,17 @@ export default class Maintenance extends React.Component {
                       </View>
                       <View style={{ flexDirection: "row", marginTop: 20, marginRight:10}}>
                         <View style={styles.listItemTextView2}>
-                          <Text style={styles.listItemTextRight}>{rowData.avg_temp ? rowData.avg_temp : "-"}</Text>
+                          <Text style={styles.listItemTextRight}>{rowData.avg_temperat ? rowData.avg_temperat : "-"}</Text>
                           <Text style={styles.listItemTextLeft}>平均温度(℃)</Text>
                         </View>
                         <View style={styles.listItemTextView2}>
-                          <Text style={styles.listItemTextRight}>{rowData.heat_area ? rowData.heat_area : "-"}</Text>
-                          <Text style={styles.listItemTextLeft}>供热面积</Text>
+                          <Text style={styles.listItemTextRight}>{rowData.area ? rowData.area : "-"}</Text>
+                          <Text style={styles.listItemTextLeft}>房间面积(万㎡)</Text>
                         </View>
-                        <View style={styles.listItemTextView2}>
+                        {/* <View style={styles.listItemTextView2}>
                           <Text style={styles.listItemTextRight}>{rowData.station_count? rowData.station_count : "-"}</Text>
                           <Text style={styles.listItemTextLeft}>换热站数量</Text>
-                        </View>          
+                        </View>           */}
                       </View>
                     </View>
                   </ImageBackground>
