@@ -69,7 +69,7 @@ export default class DataList extends React.Component {
               });
             }
             else {
-              _this.setState({ prompt: "暂无数据" });
+              _this.setState({ prompt: "暂无历史数据" });
             }
             
           })

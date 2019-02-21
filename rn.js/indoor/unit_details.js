@@ -208,7 +208,7 @@ export default class UnitDetails extends React.Component {
     return (
       <View style={styles.all}>
         <View style={styles.navView}>
-          <TouchableOpacity onPress={() => this.props.navigator.pop()}>
+          <TouchableOpacity onPress={() => {this.props.navigator.pop();DeviceEventEmitter.emit('refreshUnit')}}>
             <Image style={{ width: 25, height: 20, marginLeft: 15 }} resizeMode="contain" source={require('../icons/nav_back_icon.png')} />
           </TouchableOpacity>
           <Text style={styles.topNameText}>{this.props.unitName}单元</Text>
@@ -221,7 +221,7 @@ export default class UnitDetails extends React.Component {
           showsHorizontalScrollIndicator={false}
           data={this.state.legend}
           renderItem={({ item }) =>
-            <View style={{ flexDirection: "row", margin: 13,marginRight:7, alignItems: "center" }}>
+            <View style={{ flexDirection: "row", margin: 13,marginRight:3, alignItems: "center" }}>
               <View style={{ width: 12, height: 12, backgroundColor: item.color, marginRight: 5, borderRadius: 2 }} />
               <Text style={{ color: "#666666", fontSize: 12 }}>{item.text}</Text>
             </View>}

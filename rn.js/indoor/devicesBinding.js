@@ -16,18 +16,22 @@ export default class DevicesBinding extends React.Component {
     super(props);
     this.state={
       number:0,
-      fail:true,
+      fail:1,
       access_token:null,
-      client:null
+      client:null,
+      success:false
     }
     AsyncStorage.getItem("access_token", (errs, result)=> {
-      this.state.access_token=result
-         this.waitResponse();
+      this.state.access_token=result    
     })
-    this.getPer();
+    // 
    
   }
-  async waitResponse(){
+  componentDidMount(){
+    this.waitResponse();
+    this.getPer();
+  }
+  waitResponse(){
     let uri = `http://114.215.46.56:17739/v1/device/add`;
    console.log(this.props.data.deviceId,this.props.heat_user_id,this.props.data.type)
     fetch(uri,{
@@ -46,18 +50,25 @@ export default class DevicesBinding extends React.Component {
           console.log(responseJson)
           if(responseJson.code===200){
             clearInterval(Hstimer);
-            Alert.alert('提示', "绑定成功",[
-              {text: '确定', onPress: () => {
-                this.props.navigator.popN(2)
-                DeviceEventEmitter.emit('refresh')
-              }}
-            ])
+            this.setState({
+              fail:3
+            })
+            // Alert.alert('提示', "绑定成功",[
+            //   {text: '确定', onPress: () => {
+            //     this.props.navigator.popN(2)
+               
+            //   }}
+            // ])
           }
         })
         .catch((e) => {
           console.log(e)
           Alert.alert('提示', "网络连接错误,请检查您的的网络或联系我们")
         });
+  }
+  bindSuccess(){
+    this.props.navigator.popN(2)
+    DeviceEventEmitter.emit('refresh')
   }
   getPer(){
     let time = 0;
@@ -69,7 +80,7 @@ export default class DevicesBinding extends React.Component {
         if(time > 100) {
             clearInterval(Hstimer);
             this.setState({
-              fail:false,
+              fail:2,
               number:0
             })
         }
@@ -81,7 +92,7 @@ export default class DevicesBinding extends React.Component {
  }
  againLink(){
   this.setState({
-    fail:true
+    fail:1
   })
   this.getPer()
   if(this.props.data.type==='HSH01'){
@@ -92,7 +103,7 @@ export default class DevicesBinding extends React.Component {
     return (
       <View style={styles.container}>
       {
-        this.state.fail ?
+        this.state.fail ===1 ?
         <View>
             <View style={{width:width,height:300}}>
               <Image source={require('../images/facility_img_loading.png')} style={{resizeMode:"center",width:width,height:height/1.5}}/>
@@ -107,18 +118,31 @@ export default class DevicesBinding extends React.Component {
             <Text style={{textAlign:"center",color:"#aaa",fontSize:12}}>请勿断电或者关闭APP,并保持网络畅通</Text>
             <Text style={{textAlign:"center",color:"#aaa",fontSize:12}}>(绑定需3-5分钟，请耐心等待)</Text>
         </View>  :
+         this.state.fail ===2 ?
         <View>
             <View style={{width:width,height:230}}>
               <Image source={require('../images/facility_ico_failure.png')} style={{resizeMode:"center",width:width,height:height/2}}/>
             </View>
             <Text style={{textAlign:"center",color:"#fff"}}>设备连接失败</Text>
             <Text style={{textAlign:"center",color:"#aaa",fontSize:12}}>请确认您的网络是否良好</Text>
-            <View style={{flexDirection:"row",justifyContent:"center",marginTop:20}}>
-              <Button raised primary text="再次尝试" style={{container:{borderRadius:20,height:40,backgroundColor:"#3994ea",width:width/2-40,marginRight:20}}} onPress={()=>this.againLink()}/> 
-                <Button raised  text="重新添加" style={{container:{borderRadius:20,height:40,backgroundColor:"#fff",width:width/2-40},text:{color:"#3994ea"}}} onPress={()=>this.againAdd()}/> 
-                
+            <View style={{flexDirection:"row",justifyContent:"space-between",marginTop:20,paddingLeft:65,paddingRight:65}}>
+              <Button  title="再次尝试" color="#3994ea" onPress={()=>this.againLink()}/> 
+              <Button   title="重新添加" color="#aaa"  onPress={()=>this.againAdd()}/>          
             </View>
+        </View>:
+        <View style={styles.container}>
+            <View style={styles.ImageStyle}>
+                <Image source={require('../images/facility_ico_succeed.png')} style={{resizeMode:"center",width:width,height:140}}/>
+                <Text style={styles.textTip}>绑定成功！</Text>
+                <Text style={styles.textTipTwo}>
+                    恭喜您！设备绑定成功！
+                </Text>
+                </View>
+                <View style={styles.bottom}>
+                  <Button  title="完成"  color="#3994ea" onPress={()=>this.bindSuccess()}/>
+                </View>
         </View>
+
       }
       </View>
     );
@@ -138,5 +162,25 @@ const styles = StyleSheet.create({
     width:width,
     top:height/3.5
     // backgroundColor: "#eee",
+  },
+  ImageStyle:{
+    height:300,
+    width:width,
+    // backgroundColor: "#999",
+  },
+  textTip:{
+    textAlign:"center",
+    color:"#fff"
+  },
+  textTipTwo:{
+    textAlign:"center",
+    marginTop:5,
+    paddingLeft:10,
+    paddingRight:10
+  },
+  bottom:{
+    height:60,
+    paddingLeft:10,
+    paddingRight:10
   }
 });
