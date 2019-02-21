@@ -2,31 +2,35 @@
  * 换热站tab框架页面
  */
 import React from 'react';
-import { View, Text, Image, StyleSheet, AsyncStorage, ListView, TouchableOpacity, ScrollView, ToastAndroid ,ActivityIndicator,ImageBackground,Alert} from 'react-native';
+import { View, Text, Image, StyleSheet, AsyncStorage, ListView, TouchableOpacity, ScrollView, ToastAndroid ,ActivityIndicator,ImageBackground,Alert, DeviceEventEmitter} from 'react-native';
 import Dimensions from 'Dimensions';
 import Constants from '../constants';
 import UnitDetail from './unit_details';
 var { width, height } = Dimensions.get('window');
-
+const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 export default class VillageList extends React.Component {
     constructor(props) {
         super(props);
-        const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+        
         this.state = {
             unitList: "",
             dataSource: ds.cloneWithRows([]),
         }
         var _this = this;
+      this.getUnit()
+    }
+    getUnit(){
+        console.log('获取单元列表')
         AsyncStorage.getItem("access_token",  (errs, result)=> {
             if (!errs) {
-                var uri =`${Constants.indoorSite}/v2/community/building/${_this.props.buildId}/unit?access_token=${result}&user_total=1&avg_temperat=1&room_temperat=1`
+                var uri =`${Constants.indoorSite}/v2/community/building/${this.props.buildId}/unit?access_token=${result}&user_total=1&avg_temperat=1&room_temperat=1`
                console.log(uri)
                 fetch(uri)
                   .then((response) => response.json())
                   .then((responseJson) => {
                       console.log(responseJson)
                     if (responseJson.result.length > 0) {
-                      _this.setState({
+                      this.setState({
                         unitList: responseJson.result,
                         dataSource: ds.cloneWithRows(responseJson.result),
                       });
@@ -44,7 +48,7 @@ export default class VillageList extends React.Component {
                   });
             }
         }
-        )
+        )  
     }
     goUnitDetail(unitId,unitName){
         this.props.navigator.push({
@@ -58,11 +62,19 @@ export default class VillageList extends React.Component {
             }
           })
     }
+    componentWillMount() {
+        this.setTitle = DeviceEventEmitter.addListener('refreshUnit', ()=>{
+            this.getUnit()
+        });
+      }
+      componentWillUnmount(){
+        this.setTitle.remove();
+      }
     render() {
         return (
             <View style={styles.all}>
                 <View style={styles.navView}>
-                    <TouchableOpacity onPress={() => this.props.navigator.pop()}>
+                    <TouchableOpacity onPress={() =>{this.props.navigator.pop();DeviceEventEmitter.emit('refreshFloor')}}>
                         <Image style={{ width: 25, height: 20, marginLeft: 10, }} resizeMode="contain" source={require('../icons/nav_back_icon.png')} />
                     </TouchableOpacity>
                     <View style={{ width: width - 80, flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
@@ -91,10 +103,10 @@ export default class VillageList extends React.Component {
                                             <View style={{flexDirection:"column",alignItems:"center"}}>
                                                 <View style={{ flexDirection: "row",  marginRight: 10,width:width-100, justifyContent:"space-between",alignItems:"center" }}>     
                                                     {
-                                                        rowData.status === 0 ?
-                                                        <Text style={{marginLeft:20,color:"#FD8F38",fontSize:20}}>{rowData.avg_temperat}<Text  style={{fontSize:14}}>℃</Text></Text>:
                                                         rowData.status === 1 ?
-                                                        <Text style={{marginLeft:20,color:"#2C96DD",fontSize:20}}>{rowData.avg_temperat}<Text  style={{fontSize:14}}>℃</Text></Text> :
+                                                        <Text style={{marginLeft:20,color:"#2C96DD",fontSize:20}}>{rowData.avg_temperat}<Text  style={{fontSize:14}}>℃</Text></Text>:
+                                                        rowData.status === 2 ?
+                                                        <Text style={{marginLeft:20,color:"#FD8F38",fontSize:20}}>{rowData.avg_temperat}<Text  style={{fontSize:14}}>℃</Text></Text> :
                                                         <Text style={{marginLeft:20,color:"#D6243C",fontSize:20}}>{rowData.avg_temperat}<Text  style={{fontSize:14}}>℃</Text></Text>
                                                     }
                                                     <View style={{flexDirection:"row"}}>
@@ -122,18 +134,32 @@ export default class VillageList extends React.Component {
                                                 </View>
                                                 {
                                                    rowData.user_total !==0?
-                                                    <View style={{flexDirection:"row",marginLeft:10,justifyContent:"space-between",marginRight:10,width:width-130}}>
-                                                        <View style={{flexDirection:"row"}}>
-                                                            <Text style={{color:"#2DBAE4",marginTop:1,fontSize:12}}>{rowData.room_temperat.cold}户,</Text>
-                                                            <Text style={{color:"#2DBAE4",fontSize:12,marginTop:1}}>{isNaN(rowData.room_temperat.cold/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))?0: (rowData.room_temperat.cold/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot)).toFixed(2)}%</Text>
+                                                    <View style={{flexDirection:"row",paddingRight:10,height:10,backgroundColor:"#fff",width:width-130,borderBottomRightRadius:15,borderBottomLeftRadius:15}}>
+                                                        <View >
+                                                            {
+                                                                rowData.room_temperat.cold?
+                                                                <Text style={{color:"#2DBAE4",marginTop:1,fontSize:12}}>{rowData.room_temperat.cold}户</Text>
+                                                                :null
+                                                            }
+                                                            
+                                                            {/* <Text style={{color:"#2DBAE4",fontSize:12,marginTop:-3}}>{isNaN(rowData.room_temperat.cold/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))?0: (rowData.room_temperat.cold/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot)).toFixed(2)}%</Text> */}
                                                         </View>
-                                                        <View style={{flexDirection:"row"}}>
-                                                            <Text style={{color:"#FD8F38",marginTop:1,fontSize:12}}>{rowData.room_temperat.tepid}户,</Text>
-                                                            <Text style={{color:"#FD8F38",fontSize:12,marginTop:1}}>{isNaN(rowData.room_temperat.tepid/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))?0:(rowData.room_temperat.tepid/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot)).toFixed(2)}%</Text>
+                                                        <View style={{width:(rowData.room_temperat.tepid/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))*(width-130)+10}}>
+                                                            {
+                                                                rowData.room_temperat.tepid?
+                                                                <Text style={{color:"#FD8F38",marginTop:1,fontSize:12}}>{rowData.room_temperat.tepid}户</Text>:
+                                                                null
+                                                            }
+                                                            
+                                                            {/* <Text style={{color:"#FD8F38",fontSize:12,marginTop:-3}}>{isNaN(rowData.room_temperat.tepid/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))?0:(rowData.room_temperat.tepid/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot)).toFixed(2)}%</Text> */}
                                                         </View>
-                                                        <View style={{flexDirection:"row"}}>
-                                                            <Text style={{color:"#D6243C",marginTop:1,fontSize:12,textAlign:"right"}}>{rowData.room_temperat.hot}户,</Text>
-                                                            <Text style={{color:"#D6243C",fontSize:12,marginTop:1}}>{isNaN(rowData.room_temperat.hot/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))?0:(rowData.room_temperat.hot/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot)).toFixed(2)}%</Text>
+                                                        <View>
+                                                        {
+                                                            rowData.room_temperat.hot?
+                                                            <Text style={{color:"#D6243C",marginTop:1,fontSize:12}}>{rowData.room_temperat.hot}户</Text>:
+                                                            null
+                                                        }
+                                                            {/* <Text style={{color:"#D6243C",fontSize:12,marginTop:-3}}>{isNaN(rowData.room_temperat.hot/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot))?0:(rowData.room_temperat.hot/(rowData.room_temperat.cold+rowData.room_temperat.tepid+rowData.room_temperat.hot)).toFixed(2)}%</Text> */}
                                                         </View>
                                                     </View>:null
                                                 }

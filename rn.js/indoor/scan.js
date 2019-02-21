@@ -43,11 +43,10 @@ var { width, height } = Dimensions.get('window');
   onBarCodeRead = (result) => {
     if(this.state.show){
       this.state.show =false;
-      const {data} = result;
-      const datas = JSON.parse(data);
-      if(data){
+      const {data} = result; 
+      if(data.includes("type")&&data.includes("deviceId")){
+          const datas = JSON.parse(data);
           if(datas.type==='HSH01'){
-              console.log(this.props.props)
             this.props.navigator.replace({
                 name: 'DevicesBinding',
                 component: DevicesBinding,
@@ -59,20 +58,15 @@ var { width, height } = Dimensions.get('window');
             })
           }
       }else {
-        Alert.alert(
-            '提示',
-            '扫描失败'
-            [{text:'确定'}]
-        )
+          Alert.alert('提示', "扫描失败,请扫描 绑定设备 的二维码",[{text: '确定', onPress: () => {
+                this.props.navigator.popN(1)
+          }}])
     }
-    }
-           
+    }       
   };
-
   render() {
       return (
           <View style={styles.container}>
-              
               <RNCamera
                   ref={ref => {
                       this.camera = ref;
