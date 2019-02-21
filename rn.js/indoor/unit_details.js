@@ -92,7 +92,6 @@ export default class UnitDetails extends React.Component {
                 }
               }
               let uri = Constants.indoorSite + "/v2/community/building/unit/" + unit_id + "/house?allHouse=1&access_token=" + result;
-              console.log(uri)
               fetch(uri)
                 .then((response) => response.json())
                 .then((responseJson) => {
@@ -121,15 +120,17 @@ export default class UnitDetails extends React.Component {
     );
   }
   arrangeData(data) {
-    data.sort((a, b) => {
-      if (Number.parseInt(a.user_number) > Number.parseInt(b.user_number)) {
-        return 1;
-      } else if (Number.parseInt(a.user_number) < Number.parseInt(b.user_number)) {
-        return -1
-      } else {
-        return 0;
-      }
-    });
+    console.log(data)
+    // data.sort()
+    // data.sort((a, b) => {
+    //   if (Number.parseInt(a.user_number) > Number.parseInt(b.user_number)) {
+    //     return -1;
+    //   } else if (Number.parseInt(a.user_number) < Number.parseInt(b.user_number)) {
+    //     return 1
+    //   } else {
+    //     return 0;
+    //   }
+    // });
     let reData = [];
     let dataOne = null;
     for (let index = 0; index < data.length; index++) {
