@@ -120,17 +120,6 @@ export default class UnitDetails extends React.Component {
     );
   }
   arrangeData(data) {
-    console.log(data)
-    // data.sort()
-    // data.sort((a, b) => {
-    //   if (Number.parseInt(a.user_number) > Number.parseInt(b.user_number)) {
-    //     return -1;
-    //   } else if (Number.parseInt(a.user_number) < Number.parseInt(b.user_number)) {
-    //     return 1
-    //   } else {
-    //     return 0;
-    //   }
-    // });
     let reData = [];
     let dataOne = null;
     for (let index = 0; index < data.length; index++) {
@@ -193,7 +182,6 @@ export default class UnitDetails extends React.Component {
     return layout;
   }
   popUnitList(){
-    console.log(this.props.buildId)
     this.props.navigator.push({
       name: 'UnitList',
       component: UnitList,
