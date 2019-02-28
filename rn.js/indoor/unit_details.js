@@ -74,12 +74,12 @@ export default class UnitDetails extends React.Component {
     http://121.42.253.149:18859/app/mock/29/GET//v2/community/building/unit/:id
     AsyncStorage.getItem("access_token", function (errs, result) {
       if (!errs) {
-        let uri = Constants.indoorSite + "/v2/community/building/unit/" + unit_id + "?access_token=" + result;
-        console.log(uri)
+        let uri = Constants.serverSite3 + "/v2/community/building/unit/" + unit_id + "?access_token=" + result;
+        console.log('111::', uri)
         fetch(uri)
           .then((response) => response.json())
           .then((responseJson) => {
-            console.log(responseJson)
+            console.log('responseJson:::', responseJson)
             if (responseJson.code == 200) {
               let flow = {}
               for (const key in responseJson.result) {
@@ -91,12 +91,14 @@ export default class UnitDetails extends React.Component {
                   }
                 }
               }
-              let uri = Constants.indoorSite + "/v2/community/building/unit/" + unit_id + "/house?allHouse=1&access_token=" + result;
+              let uri = Constants.serverSite3 + "/v2/community/building/unit/" + unit_id + "/house?allHouse=1&access_token=" + result;
+              console.log('uri::', uri)
               fetch(uri)
                 .then((response) => response.json())
                 .then((responseJson) => {
+                  console.log('2222:', responseJson);
                   if (responseJson.code == 200) {
-                    let data = responseJson.result;
+                    let data = responseJson.result.result;
                     let stateData = [];
                     if (data.all && data.all.length) {
                       stateData.push({ title: { name: "全部", flow: flow.all }, data: _this.arrangeData(data.all) });
@@ -108,6 +110,8 @@ export default class UnitDetails extends React.Component {
                       stateData.push({ title: { name: "低区", flow: flow.low }, data: _this.arrangeData(data.low) });
                     }
                     _this.setState({ data: stateData, refreshing: false, });
+                    console.log('data:::', data);
+                    console.log('stateData:::', stateData);
                   }
                 })
                 .catch((error) => {
@@ -151,18 +155,19 @@ export default class UnitDetails extends React.Component {
   // { color: "#FDD597", text: "22℃~25℃" },
   // { color: "#FA2C3A", text: "＞25℃" } ],
   getHeatUserBox(data) {
+    console.log('++++:', data)
     let layout = [];
     for (let index = 0; index < data.length; index++) {
       let bgColor = "";
-      if (!data[ index ].data_value) {
+      if (!data[ index ].temp) {
         bgColor = "#eee";
-      } else if (data[ index ].data_value < 16) {
+      } else if (data[ index ].temp.datas.data_value < 16) {
         bgColor = "#3C8CED";
-      } else if (16 <= data[ index ].data_value && 18 > data[ index ].data_value) {
+      } else if (16 <= data[ index ].temp.datas.data_value && 18 > data[ index ].temp.datas.data_value) {
         bgColor = "#FFFAF3";
-      } else if (18 <= data[ index ].data_value && 22 > data[ index ].data_value) {
+      } else if (18 <= data[ index ].temp.datas.data_value && 22 > data[ index ].temp.datas.data_value) {
         bgColor = "#FEF5E6";
-      } else if (22 <= data[ index ].data_value && 25 > data[ index ].data_value) {
+      } else if (22 <= data[ index ].temp.datas.data_value && 25 > data[ index ].temp.datas.data_value) {
         bgColor = "#FDD597";
       } else {
         bgColor = "#FA2C3A";
@@ -172,7 +177,7 @@ export default class UnitDetails extends React.Component {
           component: HeatUserDetails, passProps: {
             heat_user_id: data[ index ].heat_user_id,
             user_number: data[ index ].user_number,
-            value: data[ index ].data_value,
+            value: data[ index ].temp.datas.data_value,
             addr: this.props.communityName + this.props.buildName + this.props.unitName + "单元",
             data_id: data[ index ].data_id,
             props:this.props,
@@ -185,9 +190,16 @@ export default class UnitDetails extends React.Component {
           width: data.length < 5 ? (width - 65) / data.length : (width - 65) / 4 - 5, height: 40, borderColor: "#E0E2EA55",
           borderRightWidth: index == data.length - 1 ? 0 : 1, backgroundColor: bgColor,
         }}>
-        <Image style={{ width: 13, height: 13, marginLeft: 6, marginTop: 6, }} resizeMode="contain"
-          source={data[ index ].heat_user_device_id ? require('../icons/indoor_thermometer.png') : require('../icons/nav_flag.png')} />
-        <Text style={{ color: "#555555", fontSize: 14, textAlign: "center", marginTop: -8, }}>{data[ index ].user_number}</Text>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
+          <Image style={{ width: 13, height: 13, marginLeft: 6, marginTop: 6, }} resizeMode="contain"
+            source={data[ index ].valves ? ((data[ index ].temp && data[ index ].temp.datas.data_value >=25) ? require('../icons/icon_fa_.png') : require('../icons/icon_fa.png')) : require('../icons/nav_flag.png')} />
+          {
+            data[ index ].temp && data[ index ].temp.datas.data_value >=25 ? 
+              <Text style={{ color: "#ffffff", fontSize: 14, textAlign: "center", marginTop: 10, }}>{data[ index ].user_number}</Text> : 
+              <Text style={{ color: "#555555", fontSize: 14, textAlign: "center", marginTop: 10, }}>{data[ index ].user_number}</Text>
+          }
+          <Image style={{width: 13, height: 13, marginRight: 6, marginTop: 6}} resizeMode="contain"
+            source={data[ index ].temp ? (data[ index ].temp.datas.data_value >=25 ? require('../icons/icon_wendu_.png') : require('../icons/icon_wendu.png')) : require('../icons/nav_flag.png')} /></View>
       </TouchableOpacity>)
     }
     return layout;
