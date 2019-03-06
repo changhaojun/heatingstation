@@ -18,7 +18,6 @@ import UnitList from "./unit_list"
 const { width, height } = Dimensions.get('window');
 
 export default class UnitDetails extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -28,30 +27,10 @@ export default class UnitDetails extends React.Component {
       { color: "#FEF5E6", text: "18℃~22℃" },
       { color: "#FDD597", text: "22℃~25℃" },
       { color: "#FA2C3A", text: "＞25℃" } ],
-      data: [
-        // {
-        //   title: { name: "一区", flow: 32 }, data: [
-        //     { layer: 1, heatUser: [ { id: 1, number: 101 }, { id: 1, number: 102 }, { id: 1, number: 103 }, { id: 1, number: 104 } ] },
-        //     { layer: 2, heatUser: [ { id: 1, number: 201 }, { id: 1, number: 202 }, { id: 1, number: 203 }, { id: 1, number: 204 } ] },
-        //     { layer: 3, heatUser: [ { id: 1, number: 301 }, { id: 1, number: 302 }, { id: 1, number: 303 }, { id: 1, number: 304 } ] },
-        //     { layer: 4, heatUser: [ { id: 1, number: 401 }, { id: 1, number: 402 }, { id: 1, number: 403 }, { id: 1, number: 404 } ] },
-        //     { layer: 5, heatUser: [ { id: 1, number: 501 }, { id: 1, number: 502 }, { id: 1, number: 503 }, { id: 1, number: 504 } ] },
-        //     { layer: 6, heatUser: [ { id: 1, number: 601 }, { id: 1, number: 602 }, { id: 1, number: 603 }, { id: 1, number: 604 } ] },
-        //     { layer: 7, heatUser: [ { id: 1, number: 701 }, { id: 1, number: 702 }, { id: 1, number: 703 }, { id: 1, number: 704 } ] },
-        //     { layer: 8, heatUser: [ { id: 1, number: 801 }, { id: 1, number: 802 }, { id: 1, number: 803 }, { id: 1, number: 804 } ] }, ]
-        // },
-        // {
-        //   title: { name: "二区", flow: 35 }, data: [
-        //     { layer: 9, heatUser: [ { id: 1, number: 101 }, { id: 1, number: 102 }, { id: 1, number: 103 }, { id: 1, number: 104 } ] },
-        //     { layer: 10, heatUser: [ { id: 1, number: 201 }, { id: 1, number: 202 }, { id: 1, number: 203 }, { id: 1, number: 204 } ] },
-        //     { layer: 11, heatUser: [ { id: 1, number: 301 }, { id: 1, number: 302 }, { id: 1, number: 303 }, { id: 1, number: 304 } ] },
-        //     { layer: 12, heatUser: [ { id: 1, number: 401 }, { id: 1, number: 402 }, { id: 1, number: 403 }, { id: 1, number: 404 } ] },
-        //     { layer: 13, heatUser: [ { id: 1, number: 501 }, { id: 1, number: 502 }, { id: 1, number: 503 }, { id: 1, number: 504 } ] },
-        //     { layer: 14, heatUser: [ { id: 1, number: 601 }, { id: 1, number: 602 }, { id: 1, number: 603 }, { id: 1, number: 604 } ] },
-        //     { layer: 15, heatUser: [ { id: 1, number: 701 }, { id: 1, number: 702 }, { id: 1, number: 703 }, { id: 1, number: 704 } ] },
-        //     { layer: 16, heatUser: [ { id: 1, number: 801 }, { id: 1, number: 802 }, { id: 1, number: 803 }, { id: 1, number: 804 } ] }, ]
-        // }
-      ],
+      data: [],
+
+      relieveAlert: false,
+      succText: ''
     };
 
   }
@@ -59,8 +38,17 @@ export default class UnitDetails extends React.Component {
     this.getHeatUserData();
   }
   componentWillMount() {
-    this.setTitle = DeviceEventEmitter.addListener('refresh', ()=>{
-      this.getHeatUserData()
+    this.setTitle = DeviceEventEmitter.addListener('refresh', (value)=>{
+      this.getHeatUserData();
+      if(value && value.showAlert) {
+        this.setState({
+          relieveAlert: true,
+          succText: '绑定成功'
+        });
+        setTimeout(() => {
+          this.setState({relieveAlert: false});
+        }, 5000);
+      }
     });
   }
   componentWillUnmount(){
@@ -75,11 +63,9 @@ export default class UnitDetails extends React.Component {
     AsyncStorage.getItem("access_token", function (errs, result) {
       if (!errs) {
         let uri = Constants.serverSite3 + "/v2/community/building/unit/" + unit_id + "?access_token=" + result;
-        console.log('111::', uri)
         fetch(uri)
           .then((response) => response.json())
           .then((responseJson) => {
-            console.log('responseJson:::', responseJson)
             if (responseJson.code == 200) {
               let flow = {}
               for (const key in responseJson.result) {
@@ -96,9 +82,8 @@ export default class UnitDetails extends React.Component {
               fetch(uri)
                 .then((response) => response.json())
                 .then((responseJson) => {
-                  console.log('2222:', responseJson);
                   if (responseJson.code == 200) {
-                    let data = responseJson.result.result;
+                    let data = responseJson.result;
                     let stateData = [];
                     if (data.all && data.all.length) {
                       stateData.push({ title: { name: "全部", flow: flow.all }, data: _this.arrangeData(data.all) });
@@ -110,8 +95,7 @@ export default class UnitDetails extends React.Component {
                       stateData.push({ title: { name: "低区", flow: flow.low }, data: _this.arrangeData(data.low) });
                     }
                     _this.setState({ data: stateData, refreshing: false, });
-                    console.log('data:::', data);
-                    console.log('stateData:::', stateData);
+                    console.log('data:::', _this.state.data);
                   }
                 })
                 .catch((error) => {
@@ -144,51 +128,103 @@ export default class UnitDetails extends React.Component {
   // { color: "#FDD597", text: "22℃~25℃" },
   // { color: "#FA2C3A", text: "＞25℃" } ],
   getHeatUserBox(data) {
-    console.log('++++:', data)
     let layout = [];
     for (let index = 0; index < data.length; index++) {
       let bgColor = "";
+      let voltage = null;
       if (!data[ index ].temp) {
         bgColor = "#eee";
-      } else if (data[ index ].temp.datas.data_value < 16) {
+      } else if (data[index].temp.datas[0].data_value < 16) {
         bgColor = "#3C8CED";
-      } else if (16 <= data[ index ].temp.datas.data_value && 18 > data[ index ].temp.datas.data_value) {
+      } else if (16 <= data[index].temp.datas[0].data_value && 18 > data[index].temp.datas[0].data_value) {
         bgColor = "#FFFAF3";
-      } else if (18 <= data[ index ].temp.datas.data_value && 22 > data[ index ].temp.datas.data_value) {
+      } else if (18 <= data[index].temp.datas[0].data_value && 22 > data[index].temp.datas[0].data_value) {
         bgColor = "#FEF5E6";
-      } else if (22 <= data[ index ].temp.datas.data_value && 25 > data[ index ].temp.datas.data_value) {
+      } else if (22 <= data[index].temp.datas[0].data_value && 25 > data[index].temp.datas[0].data_value) {
         bgColor = "#FDD597";
       } else {
         bgColor = "#FA2C3A";
       }
+      let params = {
+        heat_user_id: data[index].heat_user_id,
+        user_number: data[index].user_number,
+        addr: this.props.communityName + this.props.buildName + this.props.unitName + "单元",
+        value: null,
+        temp_data_id: null,
+        valves_data_id: null,
+        props:this.props,
+        heat_user_device_temp_id: null,
+        heat_user_device_valves_id: null,
+        valves_datas: null,
+        valves_device_object_id: ''
+      }
+      if(data[index].temp) {
+        let datas =  data[index].temp.datas[0];
+        params.value = datas.data_value;
+        params.temp_data_id = datas.data_id;
+        params.heat_user_device_temp_id = data[index].temp.heat_user_device_id;
+      }
+      if(data[index].valves) {
+        let valves = data[index].valves;
+        params.heat_user_device_valves_id = valves.heat_user_device_id;
+        params.valves_device_object_id = valves.device_object_id;
+        params.valves_datas = valves.datas;
+        valves.datas.forEach((data,index) => {
+          if(data.tag_name === '电动阀电压') {
+            voltage = data.data_value;
+          }
+          if(data.tag_name === '电动阀开度') {
+            params.valves_data_id = data.data_id;
+          }
+        })
+      }
       layout.push(<TouchableOpacity
         onPress={() => this.props.navigator.push({
-          component: HeatUserDetails, passProps: {
-            heat_user_id: data[ index ].heat_user_id,
-            user_number: data[ index ].user_number,
-            value: data[ index ].temp.datas.data_value,
-            addr: this.props.communityName + this.props.buildName + this.props.unitName + "单元",
-            data_id: data[ index ].data_id,
-            props:this.props,
-            heat_user_device_id:data[ index ].heat_user_device_id
-            // callback:this.getHeatUserData,
-          },
-          
+          component: HeatUserDetails, 
+          passProps: params
+          // passProps: {
+          //   heat_user_id: data[ index ].heat_user_id,
+          //   user_number: data[ index ].user_number,
+          //   addr: this.props.communityName + this.props.buildName + this.props.unitName + "单元",
+          //   value: data[ index ].temp.datas[0].data_value,
+          //   data_id: data[ index ].data_id,
+          //   props:this.props,
+          //   heat_user_device_id:data[ index ].heat_user_device_id
+          // },
         })}
         style={{
           width: data.length < 5 ? (width - 65) / data.length : (width - 65) / 4 - 5, height: 40, borderColor: "#E0E2EA55",
           borderRightWidth: index == data.length - 1 ? 0 : 1, backgroundColor: bgColor,
         }}>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
-          <Image style={{ width: 13, height: 13, marginLeft: 6, marginTop: 6, }} resizeMode="contain"
-            source={data[ index ].valves ? ((data[ index ].temp && data[ index ].temp.datas.data_value >=25) ? require('../icons/icon_fa_.png') : require('../icons/icon_fa.png')) : require('../icons/nav_flag.png')} />
-          {
-            data[ index ].temp && data[ index ].temp.datas.data_value >=25 ? 
-              <Text style={{ color: "#ffffff", fontSize: 14, textAlign: "center", marginTop: 10, }}>{data[ index ].user_number}</Text> : 
-              <Text style={{ color: "#555555", fontSize: 14, textAlign: "center", marginTop: 10, }}>{data[ index ].user_number}</Text>
-          }
-          <Image style={{width: 13, height: 13, marginRight: 6, marginTop: 6}} resizeMode="contain"
-            source={data[ index ].temp ? (data[ index ].temp.datas.data_value >=25 ? require('../icons/icon_wendu_.png') : require('../icons/icon_wendu.png')) : require('../icons/nav_flag.png')} /></View>
+        <View style={{flexDirection: 'column'}}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
+            <Image style={{ width: 13, height: 13, marginLeft: 6, marginTop: 6, }} resizeMode="contain"
+              source={data[index].valves ? ((data[index].temp && data[index].temp.datas[0].data_value >=25) ? require('../icons/icon_fa_.png') : require('../icons/icon_fa.png')) : require('../icons/nav_flag.png')} />
+            {
+              data[index].temp && data[index].temp.datas[0].data_value >=25 ? 
+                <Text style={{ color: "#ffffff", fontSize: 14, textAlign: "center", marginTop: 10, }}>{data[index].user_number}</Text> : 
+                <Text style={{ color: "#555555", fontSize: 14, textAlign: "center", marginTop: 10, }}>{data[index].user_number}</Text>
+            }
+            <Image style={{width: 13, height: 13, marginRight: 6, marginTop: 6}} resizeMode="contain"
+              source={data[index].temp ? (data[index].temp.datas[0].data_value >=25 ? require('../icons/icon_wendu_.png') : require('../icons/icon_wendu.png')) : require('../icons/nav_flag.png')} />
+          </View>
+          <View style={{marginTop: -8}}>
+            <Image style={{ width: 13, height: 10, marginLeft: 6, marginTop: 6, }} resizeMode="contain"
+              source={
+                data[index].valves && voltage===0 && data[index].temp && data[index].temp.datas[0].data_value>=25 ?
+                  require('../icons/wudian_.png') :
+                  data[index].valves && voltage===0 ? 
+                    require('../icons/wudian.png') : 
+                    data[index].valves && voltage>0 && voltage<=30 && data[index].temp && 22 <= data[index].temp.datas[0].data_value && 25 > data[index].temp.datas[0].data_value ? 
+                      require('../icons/didian.png') : 
+                      data[index].valves && voltage>0 && voltage<=30 ? 
+                        require('../icons/didian.png') :
+                        data[index].valves && voltage>30 ?
+                          require('../icons/mandian.png') :
+                          require('../icons/nav_flag.png')
+              } />
+          </View>
+        </View>
       </TouchableOpacity>)
     }
     return layout;
@@ -200,8 +236,7 @@ export default class UnitDetails extends React.Component {
       passProps: {
         buildName: this.props.buildName,
         buildId: this.props.buildId,
-        communityName:this.props.communityName,
-       
+        communityName:this.props.communityName
     }
     })
   }
@@ -245,7 +280,8 @@ export default class UnitDetails extends React.Component {
                 </View>
                 <View style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent:"flex-end",paddingRight:12 }}>
                   <Text style={{ color: "#333333" }}>瞬时热量   </Text>
-                  <Text style={{ color: "#2E94DD" }}>{title.flow}GJ/h</Text>
+                  <Text style={{ color: "#2E94DD" }}>-- GJ/h</Text>
+                  {/* <Text style={{ color: "#2E94DD" }}>{title.flow}GJ/h</Text> */}
                 </View>
               </View>
             )}
@@ -254,8 +290,16 @@ export default class UnitDetails extends React.Component {
             keyExtractor={(item, index) => item + index}
           />
         </ScrollView>
+        {
+          this.state.relieveAlert ?
+            <View style={{backgroundColor: 'rgba(0, 0, 0, 0.3)', width: width, height: height, position: 'absolute'}}>
+              <View style={{backgroundColor: '#fff', borderRadius: 4, height: 100, width: 120, flexDirection: 'column', alignSelf: 'center', justifyContent: 'space-evenly', alignItems: 'center', marginTop: height/2-50}}>
+                <Image style={{ width: 30, height: 30 }} resizeMode="contain" source={require('../icons/su.png')} />
+                <Text>{this.state.succText}</Text>
+              </View>
+            </View> : <View></View>
+        }
       </View>
-
     )
   }
 }

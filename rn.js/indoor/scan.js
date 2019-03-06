@@ -19,6 +19,8 @@ var { width, height } = Dimensions.get('window');
       this.state = {
           show:true,
           moveAnim: new Animated.Value(0),
+
+          alertText: ''
       };
   }
 
@@ -39,31 +41,83 @@ var { width, height } = Dimensions.get('window');
       });
     }
   };
-  //  识别二维码
-  onBarCodeRead = (result) => {
-    if(this.state.show){
-      this.state.show =false;
-      const {data} = result; 
-      if(data.includes("type")&&data.includes("deviceId")){
-          const datas = JSON.parse(data);
-          if(datas.type==='HSH01'){
-            this.props.navigator.replace({
-                name: 'DevicesBinding',
-                component: DevicesBinding,
-                passProps:{
-                    data:datas,
-                    heat_user_id:this.props.heat_user_id,
-                    props:this.props.props
-                }
-            })
-          }
-      }else {
-          Alert.alert('提示', "扫描失败,请扫描 绑定设备 的二维码",[{text: '确定', onPress: () => {
-                this.props.navigator.popN(1)
-          }}])
+  componentWillMount() {
+    if(this.props.device_type === 'temp') {
+        this.setState({alertText: '扫描失败,请扫描 绑定温度计设备 的二维码'});
+    }else {
+        this.setState({alertText: '扫描失败,请扫描 绑定户内阀设备 的二维码'})
     }
-    }       
-  };
+  }
+    //  识别二维码
+    onBarCodeRead = (result) => {
+        if(this.state.show){
+            this.state.show =false;
+            const {data} = result; 
+            console.log('-sdagafdhran----------------:', data);
+            console.log(this.props.device_type)
+            
+            if(data.includes("type")&&data.includes("deviceId")){
+                const datas = JSON.parse(data);
+                console.log('-----------------:', datas);
+                if(this.props.device_type === 'temp') {
+                    if((datas.deviceType && datas.deviceType===1) || !datas.deviceType) {
+                        this.props.navigator.replace({
+                            name: 'DevicesBinding',
+                            component: DevicesBinding,
+                            passProps:{
+                                data:datas,
+                                heat_user_id:this.props.heat_user_id,
+                                props:this.props.props,
+                                device_type: this.props.device_type
+                            }
+                        })
+                    }else {
+                        Alert.alert('提示', this.state.alertText, [{text: '确定', onPress: () => {
+                            this.props.navigator.popN(1)
+                        }}])
+                    }
+                }
+                if(this.props.device_type === 'valves') {
+                    if(datas.deviceType ===2) {
+                        this.props.navigator.replace({
+                            name: 'DevicesBinding',
+                            component: DevicesBinding,
+                            passProps:{
+                                data:datas,
+                                heat_user_id:this.props.heat_user_id,
+                                props:this.props.props,
+                                device_type: this.props.device_type
+                            }
+                        })
+                    }else {
+                        Alert.alert('提示', this.state.alertText, [{text: '确定', onPress: () => {
+                            this.props.navigator.popN(1)
+                        }}])
+                    }
+                }
+                // if(datas.device_type && (datas.device_type !== 1 || datas.device_type !== 2)) {
+                //     Alert.alert('提示', this.state.alertText, [{text: '确定', onPress: () => {
+                //         this.props.navigator.popN(1)
+                //     }}])
+                // }else {
+                    // this.props.navigator.replace({
+                    //     name: 'DevicesBinding',
+                    //     component: DevicesBinding,
+                    //     passProps:{
+                    //         data:datas,
+                    //         heat_user_id:this.props.heat_user_id,
+                    //         props:this.props.props,
+                    //         device_type: this.props.device_type
+                    //     }
+                    // })
+                // }
+            }else {
+                Alert.alert('提示', this.state.alertText, [{text: '确定', onPress: () => {
+                    this.props.navigator.popN(1)
+                }}])
+            } 
+        }       
+    };
   render() {
       return (
           <View style={styles.container}>

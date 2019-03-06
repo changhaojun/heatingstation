@@ -44,9 +44,8 @@ export default class DataList extends React.Component {
       end_time:"",
       start_time:""
     };
-    
   }
-  componentDidMount(){
+  componentWillMount(){
     this.getData(); 
     this.getDate();
   }
@@ -56,14 +55,14 @@ export default class DataList extends React.Component {
     var start_time_stamp = d.getTime();
     var end_time_stamp = new Date(start_time_stamp - 24 * 3600 * 1000);
     this.state.end_time = moment(end_time_stamp).format("YYYY-MM-DD HH:mm:ss");
+    console.log(this.state.start_time, this.state.end_time);
   }
   getData() {
     console.log('获取历史数据')
     const _this = this;
-    this.getDate();
     AsyncStorage.getItem("access_token", function (errs, result) {
       if (!errs) {
-        var uri = Constants.indoorSite+"/v2/historyData/"+_this.props.data_id+"?access_token="+result+"&start="+_this.state.end_time+"&end="+_this.state.start_time;
+        var uri = Constants.serverSite3+"/v2/historyData/"+_this.props.data_id+"?access_token="+result+"&start="+_this.state.end_time+"&end="+_this.state.start_time;
         console.log(uri);
         fetch(uri)
           .then((response) => response.json())
@@ -161,11 +160,11 @@ export default class DataList extends React.Component {
 
       } ]
     };
-console.log(option)
+    // console.log(option)
     return (
       <View>
         <View style={styles.chartView}>
-          {this.state.xArr.length ? <Echarts option={option} height={225} /> : <Text style={{ color: "#000" }}>{this.state.prompt}</Text>}
+          {this.state.xArr.length ? <Echarts option={option} height={205} /> : <Text style={{ color: "#000" }}>{this.state.prompt}</Text>}
         </View>
       </View>
     )
