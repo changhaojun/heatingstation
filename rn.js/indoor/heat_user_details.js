@@ -21,6 +21,7 @@ import Constants from './../constants';
 import Dimensions from 'Dimensions';
 import Scan from './scan';
 import ValvesHitory from './valves_history';
+import moment from 'moment';
 const { width, height } = Dimensions.get('window');
 
 export default class HeatUserDetails extends React.Component {
@@ -29,47 +30,63 @@ export default class HeatUserDetails extends React.Component {
     this.state = {
       modal: false,
       user_name:"",
-      value:props.value,
       info: [],
       heat_user_device_temp_id:this.props.heat_user_device_temp_id,
-      heat_user_device_valves_id: this.props.heat_user_device_valves_id,
-      valves_device_object_id: this.props.valves_device_object_id,
+      heat_user_device_valve_id: this.props.heat_user_device_valve_id,
+      valve_device_object_id: this.props.valve_device_object_id,
 
       showList: false,
-      valves_opening: null,
-      valves_voltage: null,
-      voltage_describe: '',
+      temp_value: this.props.temp_value,
+      valve_value: this.props.valve_value,
+      valve_voltage: this.props.valve_voltage,
+      valve_voltage_describe: '',
       showAlert: false,
       alertText: '',
-      deviceType: '',
+      deviceType: null,
       relieveAlert: false,
-      succText: ''
+      succText: '',
+      bindType: null,
+
+      xArrTemp: [],
+      yArrTemp: [],
+      xArrValve: [],
+      yArrValve: [],
+      promptTemp: '加载中……',
+      promptValve: '加载中……',
+      end_time:"",
+      start_time:""
     };
-    console.log('this.props::::', this.props)
+    console.log('this.props:', this.props)
   }
   componentDidMount() {
     this.getInfo();
+    this.getDate();
+    this.getDatas();
   }
   componentWillMount() {
-    if(this.props.heat_user_device_valves_id) {
-      const data = this.props.valves_datas;
-      console.log(this.props.valves_datas);
-      data.forEach(data => {
-        if(data.tag_name === '电动阀开度') {
-          this.setState({valves_opening: data.data_value});
-        }
-        if(data.tag_name === '电动阀电压') {
-          this.setState({valves_voltage: data.data_value});
-          if(data.data_value === 0) {
-            this.setState({voltage_describe: ''});
-          }else if(data.data_value>0 && data.data_value<=30) {
-            this.setState({voltage_describe: '低电量'});
-          }else {
-            this.setState({voltage_describe: ''});
-          }
-        }
-      })
+    this.setTitle = DeviceEventEmitter.addListener('refresh_', (value)=>{
+      if(value) {
+        this.getDevice(value.bindType);
+        this.setState({
+          relieveAlert: true,
+          succText: '绑定成功'
+        });
+        setTimeout(() => {
+          this.setState({relieveAlert: false});
+        }, 3000);
+      }
+    })
+
+    if(this.state.valve_voltage !== null && this.state.valve_voltage < 0.2) {
+      this.setState({valve_voltage_describe: ''});
+    }else if(this.state.valve_voltage >= 0.2 && this.state.valve_voltage < 0.8) {
+      this.setState({valve_voltage_describe: '低电量'});
+    }else if(this.state.valve_voltage >= 0.8) {
+      this.setState({valve_voltage_describe: '电量充足'});
     }
+  }
+  componentWillUnmount(){
+    this.setTitle.remove();
   }
 
   getInfo() {
@@ -96,9 +113,6 @@ export default class HeatUserDetails extends React.Component {
       }
     })
   }
-  // showList() {
-  //   this.setState({showList: !this.state.showList});
-  // }
   hideList() {
     if(this.state.showList) {
       this.setState({showList: false});
@@ -106,7 +120,7 @@ export default class HeatUserDetails extends React.Component {
   }
   bindDevice(deviceType){
     this.setState({showList: false});
-    if(deviceType === 'temp') {
+    if(deviceType === 1) {
       console.log('temp_id:::', this.state.heat_user_device_temp_id)
       if(!this.state.heat_user_device_temp_id){
         this.props.navigator.push({
@@ -126,7 +140,7 @@ export default class HeatUserDetails extends React.Component {
         })
       }
     }else {
-      if(!this.state.heat_user_device_valves_id) {
+      if(!this.state.heat_user_device_valve_id) {
         this.props.navigator.push({
           name: 'Scan',
           component: Scan,
@@ -150,13 +164,14 @@ export default class HeatUserDetails extends React.Component {
     this.showAlert();
     let uri = `${Constants.serverSite1}/v1/device/relieve`;
     let heat_user_device_id = null;
-    if(this.state.deviceType === 'temp') {
-      heat_user_device_id = this.props.heat_user_device_temp_id;
+    if(this.state.deviceType === 1) {
+      heat_user_device_id = this.state.heat_user_device_temp_id;
     }
-    if(this.state.deviceType === 'valves') {
-      heat_user_device_id = this.props.heat_user_device_valves_id;
+    if(this.state.deviceType === 2) {
+      heat_user_device_id = this.state.heat_user_device_valve_id;
     }
     console.log(heat_user_device_id,this.props.heat_user_id, this.state.deviceType);
+    console.log(uri)
     fetch(uri,{
       method: 'POST',
       headers: {
@@ -178,11 +193,21 @@ export default class HeatUserDetails extends React.Component {
           });
           setTimeout(() => {
             this.setState({relieveAlert: false});
-          }, 5000);
-          if(this.state.deviceType === 'temp') {
-            this.setState({heat_user_device_temp_id: null});
-          }else {
-            this.setState({heat_user_device_valves_id: null});
+          }, 3000);
+          if(this.state.deviceType === 1) {
+            this.setState({
+              heat_user_device_temp_id: null,
+              temp_value: null
+            });
+            
+          }
+          if(this.state.deviceType === 2)  {
+            this.setState({
+              heat_user_device_valve_id: null,
+              valve_value: null,
+              valve_voltage: null,
+              valve_voltage_describe: ''
+            });
           }
         }
       })
@@ -196,10 +221,10 @@ export default class HeatUserDetails extends React.Component {
     this.setState({showAlert: false})
   }
   // 户内阀开度下发
-  async gateway(value) {
+  gateway(value) {
     AsyncStorage.getItem("access_token", (errs, result) => {
       if(!errs) {
-        console.log(this.state.valves_device_object_id, value, result);
+        console.log(this.state.valve_device_object_id, value, result);
         let uri = `${Constants.serverSite3}/v2/gateway`;
         fetch(uri, {
           method: 'POST',
@@ -208,7 +233,7 @@ export default class HeatUserDetails extends React.Component {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            device_object_id: this.state.valves_device_object_id,
+            device_object_id: this.state.valve_device_object_id,
             tap_open: value,
             access_token: result
           })
@@ -221,8 +246,8 @@ export default class HeatUserDetails extends React.Component {
               succText: '下发成功'
             });
             setTimeout(() => {
-              this.setState({relieveAlert: false, valves_opening: value});
-            }, 5000);
+              this.setState({relieveAlert: false, valve_value: value});
+            }, 3000);
           }
         })
         .catch((e) => {
@@ -242,6 +267,75 @@ export default class HeatUserDetails extends React.Component {
       }
     })
   }
+  // 获取设备历史数据
+  getDate(){
+    let d = new Date();
+    this.state.start_time = moment(d).format("YYYY-MM-DD HH:mm:ss");
+    let start_time_stamp = d.getTime();
+    let end_time_stamp = new Date(start_time_stamp - 24 * 3600 * 1000);
+    this.state.end_time = moment(end_time_stamp).format("YYYY-MM-DD HH:mm:ss");
+    console.log(this.state.start_time, this.state.end_time);
+  }
+  getDatas() {
+    let uri = `${Constants.serverSite1}/v1/datas/groupHistory?heat_user_id=${this.props.heat_user_id}&valve=1&temp=1&start_time=${this.state.start_time}&end_time=${this.state.end_time}`;
+    fetch(uri)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log(responseJson);
+        if(responseJson.code === 200) {
+          if(responseJson.result.temp && responseJson.result.temp.times.length > 0) {
+            this.setState({
+              xArrTemp: responseJson.result.temp.times,
+              yArrTemp: responseJson.result.temp.datas
+            });
+          }else {
+            this.setState({ promptTemp: "暂无历史数据" });
+          }
+          if(responseJson.result.valve && responseJson.result.valve.times.length > 0) {
+            this.setState({
+              xArrValve: responseJson.result.valve.times,
+              yArrValve: responseJson.result.valve.datas
+            });
+          }else {
+            this.setState({ promptValve: "暂无历史数据" });
+          }
+        } 
+      })
+      .catch((error) => {
+        console.error(error);
+        Alert.alert(
+          '提示',
+          '网络连接错误，获取设备历史数据失败',
+        );
+      })
+  }
+  // 获取用户设备
+  getDevice(type) {
+    console.log(this.props.heat_user_id, type)
+    const uri = `${Constants.serverSite1}/v1/device?heat_user_id=${this.props.heat_user_id}&device_type=${type}`;
+    fetch(uri)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log(responseJson);
+        if(responseJson.code === 200) {
+          if(type === 1) {
+            this.setState({heat_user_device_temp_id: responseJson.result.rows[0].heat_user_device_id});
+          }
+          if(type === 2) {
+            this.setState({
+              heat_user_device_valve_id: responseJson.result.rows[0].heat_user_device_id,
+              valve_device_object_id: responseJson.result.rows[0].device_object_id
+            });
+          }
+        } 
+      })
+      .catch((error) => {
+        Alert.alert(
+          '提示',
+          '网络连接错误，获取设备历史数据失败',
+        );
+      })
+  }
 
   render() {
     return (
@@ -254,7 +348,7 @@ export default class HeatUserDetails extends React.Component {
           <View style={{ width: 30 }} />
           <TouchableOpacity onPress={() =>this.setState({showList: !this.state.showList})}>
             {
-              this.state.heat_user_device_temp_id && this.state.heat_user_device_valves_id ?
+              this.state.heat_user_device_temp_id && this.state.heat_user_device_valve_id ?
                 <Image style={{ width: 25, height: 20, marginRight: 25, marginTop: 5 }} resizeMode="contain" source={require('../icons/all_bd.png')} /> :
                 <Image style={{ width: 25, height: 20, marginRight: 25, marginTop: 5 }} resizeMode="contain" source={require('../icons/bangding.png')} />
             }
@@ -266,7 +360,7 @@ export default class HeatUserDetails extends React.Component {
             <View style={styles.showList}>
               <View style={{width:0, height: 0, borderWidth: 5, borderStyle: 'solid', borderLeftColor: 'transparent',borderTopColor: 'transparent', borderRightColor: 'transparent', borderBottomColor:'#ffffff', position: 'absolute', top: -10, right: 20}}></View>
               <View>
-                <TouchableOpacity style={[styles.showItem, {borderBottomColor: '#eee', borderBottomWidth: 1}]} onPress={() =>this.bindDevice('temp')}>
+                <TouchableOpacity style={[styles.showItem, {borderBottomColor: '#eee', borderBottomWidth: 1}]} onPress={() =>this.bindDevice(1)}>
                 {
                     !this.state.heat_user_device_temp_id ? 
                       <View style={styles.showItem}>
@@ -282,9 +376,9 @@ export default class HeatUserDetails extends React.Component {
                 </TouchableOpacity>
               </View>
               <View>
-                <TouchableOpacity style={styles.showItem} onPress={() =>this.bindDevice('valves')}>
+                <TouchableOpacity style={styles.showItem} onPress={() =>this.bindDevice(2)}>
                 {
-                    !this.state.heat_user_device_valves_id ? 
+                    !this.state.heat_user_device_valve_id ? 
                       <View style={styles.showItem}>
                         <Image style={{ width: 13, height: 13, marginRight: 6}} resizeMode="contain" source={require('../icons/icon_fa.png')} />
                         <Text style={{fontSize: 12}}>绑定户内阀</Text>
@@ -308,7 +402,7 @@ export default class HeatUserDetails extends React.Component {
               <Text style={{ fontSize: 12, color: "#ffffffdd" }}>户主</Text>
             </View>
             <View style={{ marginRight: 41, alignItems: "center" }}>
-              <Text style={{ fontSize: 36, color: "#fff" }}>{this.state.value?this.state.value:"-"}<Text style={{ fontSize: 17 }}>℃</Text></Text>
+              <Text style={{ fontSize: 36, color: "#fff" }}>{this.state.temp_value ? this.state.temp_value : "-"}<Text style={{ fontSize: 17 }}>℃</Text></Text>
               <Text style={{ fontSize: 12, color: "#ffffffdd" }}>室内温度</Text>
             </View>
           </ImageBackground>
@@ -318,20 +412,18 @@ export default class HeatUserDetails extends React.Component {
               <View style={{ width: 3, height: 14, backgroundColor: "#2A9ADC", marginLeft: 12 }} />
               <Text style={{ fontSize: 14, color: "#333333", marginLeft: 9 }}>户内阀开度</Text>
             </View>
-            {
-              this.props.heat_user_device_valves_id ? 
-                <View style={{flexDirection: "row", alignItems:"center"}}>
-                  {
-                    this.state.valves_voltage === 0 ? 
-                      <Image style={{ width: 22, height: 15 }} resizeMode="contain" source={require('../icons/wudian.png')} /> :
-                      this.state.valves_voltage>0 && this.state.valves_voltage<=30 ?
-                        <Image style={{ width: 22, height: 15 }} resizeMode="contain" source={require('../icons/didian.png')} /> : 
-                        <Image style={{ width: 22, height: 15 }} resizeMode="contain" source={require('../icons/mandian.png')} />
-                  }
-                  <Text style={{fontSize: 12, color: '#999'}}> {this.state.voltage_describe}</Text>
-                </View> : <View></View>
-            }
-            
+            <View style={{flexDirection: "row", alignItems:"center"}}>
+              {
+                this.state.valve_voltage !== null && this.props.valve_voltage < 0.2 ?
+                  <Image style={{ width: 22, height: 15 }} resizeMode="contain" source={require('../icons/wudian.png')} /> :
+                  this.state.valve_voltage !== null && this.props.valve_voltage >= 0.2 && this.props.valve_voltage < 0.8 ?
+                    <Image style={{ width: 22, height: 15 }} resizeMode="contain" source={require('../icons/didian.png')} /> :
+                    this.state.valve_voltage !== null && this.props.valve_voltage >= 0.8 ?
+                      <Image style={{ width: 22, height: 15 }} resizeMode="contain" source={require('../icons/mandian.png')} /> :
+                      <Text></Text>
+              }
+              <Text style={{fontSize: 12, color: '#999'}}> {this.state.valve_voltage_describe}</Text>
+            </View>
             <View style={{marginRight: 15, alignItems:"center"}}>
               <TouchableOpacity style={{flexDirection: 'row', alignItems:"center"}} onPress={() => this.valvesHistory()}>
                 <Text style={{color: '#2A9ADC'}}>调控记录 </Text>
@@ -341,29 +433,29 @@ export default class HeatUserDetails extends React.Component {
           </View>
           <View style={{backgroundColor: "#fff", justifyContent: 'center', height: 80, paddingLeft: 25, paddingRight: 25}}>
             {
-              !this.props.heat_user_device_valves_id ?
+              this.state.valve_value === null ?
                 <View style={{flexDirection: "row", height: 30}}>
                   <View style={styles.valvesView}><Text style={styles.valvesTextColor}>关闭</Text></View>
                   <View style={styles.valvesView}><Text style={styles.valvesTextColor}>25%</Text></View>
                   <View style={styles.valvesView}><Text style={styles.valvesTextColor}>50%</Text></View>
                   <View style={styles.valvesView}><Text style={styles.valvesTextColor}>75%</Text></View>
                   <View style={[styles.valvesView, {borderRightWidth: 1}]}><Text style={styles.valvesTextColor}>100%</Text></View>
-                </View> : 
-                <View style={{flexDirection: "row", height: 30}}>
-                  <View style={[styles.valvesView, this.state.valves_opening==0 ? styles.styleView: {}]}>
-                    <TouchableOpacity onPress={() => this.gateway(0)}><Text style={this.state.valves_opening==0 ? {color: '#2A9ADC'}:{}}>关闭</Text></TouchableOpacity>
+              </View> :
+              <View style={{flexDirection: "row", height: 30}}>
+                <View style={[styles.valvesView, this.state.valve_value===0 ? styles.styleView: {}]}>
+                    <TouchableOpacity onPress={() => this.gateway(0)}><Text style={this.state.valve_value===0 ? {color: '#2A9ADC'}:{}}>关闭</Text></TouchableOpacity>
                   </View>
-                  <View style={[styles.valvesView, (this.state.valves_opening>0 && this.state.valves_opening<=25) ? styles.styleView: {}]}>
-                    <TouchableOpacity onPress={() => this.gateway(25)}><Text style={(this.state.valves_opening>0 && this.state.valves_opening<=25) ? {color: '#2A9ADC'} : {}}>25%</Text></TouchableOpacity>
+                  <View style={[styles.valvesView, (this.state.valve_value>0 && this.state.valve_value<=25) ? styles.styleView: {}]}>
+                    <TouchableOpacity onPress={() => this.gateway(25)}><Text style={(this.state.valve_value>0 && this.state.valve_value<=25) ? {color: '#2A9ADC'} : {}}>25%</Text></TouchableOpacity>
                   </View>
-                  <View style={[styles.valvesView, (this.state.valves_opening>25 && this.state.valves_opening<=50) ? styles.styleView: {}]}>
-                    <TouchableOpacity onPress={() => this.gateway(50)}><Text style={(this.state.valves_opening>25 && this.state.valves_opening<=50) ? {color: '#2A9ADC'} : {}}>50%</Text></TouchableOpacity>
+                  <View style={[styles.valvesView, (this.state.valve_value>25 && this.state.valve_value<=50) ? styles.styleView: {}]}>
+                    <TouchableOpacity onPress={() => this.gateway(50)}><Text style={(this.state.valve_value>25 && this.state.valve_value<=50) ? {color: '#2A9ADC'} : {}}>50%</Text></TouchableOpacity>
                   </View>
-                  <View style={[styles.valvesView, (this.state.valves_opening>50 && this.state.valves_opening<=75) ? styles.styleView: {}]}>
-                    <TouchableOpacity onPress={() => this.gateway(75)}><Text style={(this.state.valves_opening>50 && this.state.valves_opening<=75) ? {color: '#2A9ADC'} : {}}>75%</Text></TouchableOpacity>
+                  <View style={[styles.valvesView, (this.state.valve_value>50 && this.state.valve_value<=75) ? styles.styleView: {}]}>
+                    <TouchableOpacity onPress={() => this.gateway(75)}><Text style={(this.state.valve_value>50 && this.state.valve_value<=75) ? {color: '#2A9ADC'} : {}}>75%</Text></TouchableOpacity>
                   </View>
-                  <View style={[styles.valvesView, {borderRightWidth: 1}, (this.state.valves_opening>75 && this.state.valves_opening<=100) ? styles.styleView: {}]}>
-                    <TouchableOpacity onPress={() => this.gateway(100)}><Text style={(this.state.valves_opening>75 && this.state.valves_opening<=100) ? {color: '#2A9ADC'} : {}}>100%</Text></TouchableOpacity>
+                  <View style={[styles.valvesView, {borderRightWidth: 1}, (this.state.valve_value>75 && this.state.valve_value<=100) ? styles.styleView: {}]}>
+                    <TouchableOpacity onPress={() => this.gateway(100)}><Text style={(this.state.valve_value>75 && this.state.valve_value<=100) ? {color: '#2A9ADC'} : {}}>100%</Text></TouchableOpacity>
                   </View>
               </View>
             }
@@ -374,14 +466,14 @@ export default class HeatUserDetails extends React.Component {
             <Text style={{ fontSize: 14, color: "#333333", marginLeft: 9 }}>温度变化曲线</Text>
           </View>
           <View style={{ height: 243, width: width, backgroundColor: "#fff", marginBottom: 23}}>
-            <IndoorChart data_id={this.props.temp_data_id} ></IndoorChart>
+            <IndoorChart xArr={this.state.xArrTemp} yArr={this.state.yArrTemp} prompt={this.state.promptTemp}></IndoorChart>
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 13, marginTop: 0}}>
             <View style={{ width: 3, height: 14, backgroundColor: "#2A9ADC", marginLeft: 12}} />
             <Text style={{ fontSize: 14, color: "#333333", marginLeft: 9 }}>户内阀开度变化曲线</Text>
           </View>
           <View style={{ height: 243, width: width, backgroundColor: "#fff", marginBottom: 23}}>
-            <IndoorChart data_id={this.props.valves_data_id} ></IndoorChart>
+            <IndoorChart xArr={this.state.xArrValve} yArr={this.state.yArrValve} prompt={this.state.promptValve}></IndoorChart>
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 13 }}>
             <View style={{ width: 3, height: 14, backgroundColor: "#2A9ADC", marginLeft: 12 }} />
@@ -428,7 +520,7 @@ export default class HeatUserDetails extends React.Component {
           this.state.relieveAlert ?
             <View style={{backgroundColor: 'rgba(0, 0, 0, 0.3)', width: width, height: height, position: 'absolute'}}>
               <View style={{backgroundColor: '#fff', borderRadius: 4, height: 100, width: 120, flexDirection: 'column', alignSelf: 'center', justifyContent: 'space-evenly', alignItems: 'center', marginTop: height/2-50}}>
-                <Image style={{ width: 30, height: 30 }} resizeMode="contain" source={require('../icons/device_ok.png')} />
+                <Image style={{ width: 30, height: 30 }} resizeMode="contain" source={this.state.bindType ? require('../icons/su.png') : require('../icons/device_ok.png')} />
                 <Text>{this.state.succText}</Text>
               </View>
             </View> : <View></View>

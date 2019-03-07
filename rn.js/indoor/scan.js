@@ -42,7 +42,7 @@ var { width, height } = Dimensions.get('window');
     }
   };
   componentWillMount() {
-    if(this.props.device_type === 'temp') {
+    if(this.props.device_type === 1) {
         this.setState({alertText: '扫描失败,请扫描 绑定温度计设备 的二维码'});
     }else {
         this.setState({alertText: '扫描失败,请扫描 绑定户内阀设备 的二维码'})
@@ -59,7 +59,7 @@ var { width, height } = Dimensions.get('window');
             if(data.includes("type")&&data.includes("deviceId")){
                 const datas = JSON.parse(data);
                 console.log('-----------------:', datas);
-                if(this.props.device_type === 'temp') {
+                if(this.props.device_type === 1) {
                     if((datas.deviceType && datas.deviceType===1) || !datas.deviceType) {
                         this.props.navigator.replace({
                             name: 'DevicesBinding',
@@ -77,7 +77,7 @@ var { width, height } = Dimensions.get('window');
                         }}])
                     }
                 }
-                if(this.props.device_type === 'valves') {
+                if(this.props.device_type === 2) {
                     if(datas.deviceType ===2) {
                         this.props.navigator.replace({
                             name: 'DevicesBinding',

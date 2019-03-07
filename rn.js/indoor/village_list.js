@@ -110,6 +110,7 @@ export default class VillageList extends React.Component {
         }
       }
     goFloor(communityId,communityName,avg_temp,room_temperat,status,usertotal){
+        console.log(communityId,communityName,avg_temp,room_temperat,status,usertotal);
         console.log(status)
         this.props.navigator.push({
             component: Floor,

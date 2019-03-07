@@ -63,7 +63,7 @@ export default class WisdomHeating extends Component {
 
 
     getDataFromApi(text) {
-        // console.log(text)
+        // console.log('nnnn:', text)
         if (text) {
             this.setState({ searchValue: text })
         } else {
@@ -79,11 +79,12 @@ export default class WisdomHeating extends Component {
         console.log(data)
         AsyncStorage.setItem("history_search_village", data.join(","), function (errs) { });
         this.setState({ loadShow: true, });
-        var uri =`${Constants.indoorSite}/v2/community?access_token=${this.state.access_token}&company_code=${this.state.company_code}&user_total=1&keyword=${text}&avg_temperat=1` 
+        var uri =`${Constants.indoorSite}/v2/community?access_token=${this.state.access_token}&company_code=${this.state.company_code}&user_total=1&keyword=${text}&avg_temperat=1&room_temperat=1` 
+        console.log(uri)
         fetch(uri)
             .then((response) => response.json())
             .then((responseJson) => {
-                // console.log(responseJson)
+                console.log(responseJson)
                 if (responseJson.result.rows.length > 0) {
                     this.setState({
                         loadShow: false,
@@ -113,13 +114,28 @@ export default class WisdomHeating extends Component {
 
     }
 
-    goFloor(communityId,communityName,avg_temp){
+    // goFloor(communityId,communityName,avg_temperat){
+    //     console.log(communityId, communityName, avg_temperat);
+    //     this.props.navigator.push({
+    //         component: Floor,
+    //         passProps: {
+    //             communityId: communityId,
+    //             communityName: communityName,
+    //             avg_temp:avg_temperat
+    //         }
+    //     })
+    // }
+    goFloor(communityId,communityName,avg_temp,room_temperat,status,usertotal){
+        console.log(communityId,communityName,avg_temp,room_temperat,status,usertotal);
         this.props.navigator.push({
             component: Floor,
             passProps: {
                 communityId: communityId,
                 communityName: communityName,
-                avg_temp:avg_temp
+                avg_temp:avg_temp,
+                room_temperat:room_temperat,
+                status:status,
+                user_total:usertotal
             }
         })
     }
@@ -165,17 +181,17 @@ export default class WisdomHeating extends Component {
                             enableEmptySections={true}
                             dataSource={ds.cloneWithRows(this.state.dataSource)}
                             renderRow={data => (
-                                <TouchableOpacity onPress={()=>{this.goFloor(data.community_id,data.community_name,data.avg_temp)}}>
+                                <TouchableOpacity onPress={()=>{this.goFloor(data.community_id,data.community_name,data.avg_temperat,data.room_temperat,data.status,data.user_total)}}>
                                     <View style={[styles.listView, { height: 58, alignItems: "center",justifyContent:"space-between"}]}>
                                         <View style={{flexDirection:"row",alignItems:"center"}}>
-                                            <Image style={{ width: 25, height: 25, marginLeft: 10,marginRight:10 }} resizeMode="contain" source={data.status===1? require('../icons/icon_normal.png'):data.status===2?require('../icons/icon_low.png'):require('../icons/icon_high.png')}  />
+                                            <Image style={{ width: 25, height: 25, marginLeft: 10,marginRight:10 }} resizeMode="contain" source={data.status===1? require('../icons/icon_low.png'):data.status===2?require('../icons/icon_normal.png'):require('../icons/icon_high.png')}  />
                                             <Text style={{ fontSize: 15, color: "#333333" }}>{data.community_name}</Text>
                                         </View>
                                         {
                                             data.status ===1?
-                                            <Text style={{marginRight:40,color:"#FB9823"}}>{data.avg_temperat}℃</Text>:
-                                            data.status ===2? 
                                             <Text style={{marginRight:40,color:"#2E93DD"}}>{data.avg_temperat}℃</Text>:
+                                            data.status ===2? 
+                                            <Text style={{marginRight:40,color:"#FB9823"}}>{data.avg_temperat}℃</Text>:
                                             <Text style={{marginRight:40,color:"#D6243C"}}>{data.avg_temperat}℃</Text> 
                                         }
                                     
