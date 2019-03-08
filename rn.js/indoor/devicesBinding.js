@@ -35,7 +35,6 @@ export default class DevicesBinding extends React.Component {
   waitResponse(){
     // let uri = `http://114.215.46.56:17739/v1/device/add`;
     let uri = `${Constants.serverSite1}/v1/device/add`;
-    console.log(this.props.data.deviceId,this.props.heat_user_id,this.props.data.type, this.props.device_type);
     fetch(uri,{
         method: 'POST',
         headers: {
@@ -59,7 +58,7 @@ export default class DevicesBinding extends React.Component {
           }
         })
         .catch((e) => {
-          console.log(e)
+          // console.log(e)
           Alert.alert('提示', "网络连接错误,请检查您的的网络或联系我们")
         });
   }

@@ -46,6 +46,8 @@ export default class HeatUserDetails extends React.Component {
       relieveAlert: false,
       succText: '',
       bindType: null,
+      valveShow: false,
+      tap_open: null,
 
       xArrTemp: [],
       yArrTemp: [],
@@ -56,7 +58,7 @@ export default class HeatUserDetails extends React.Component {
       end_time:"",
       start_time:""
     };
-    console.log('this.props:', this.props)
+    // console.log('this.props:', this.props)
   }
   componentDidMount() {
     this.getInfo();
@@ -78,9 +80,9 @@ export default class HeatUserDetails extends React.Component {
     })
 
     if(this.state.valve_voltage !== null && this.state.valve_voltage < 0.2) {
-      this.setState({valve_voltage_describe: ''});
-    }else if(this.state.valve_voltage >= 0.2 && this.state.valve_voltage < 0.8) {
       this.setState({valve_voltage_describe: '低电量'});
+    }else if(this.state.valve_voltage >= 0.2 && this.state.valve_voltage < 0.8) {
+      this.setState({valve_voltage_describe: '电量正常'});
     }else if(this.state.valve_voltage >= 0.8) {
       this.setState({valve_voltage_describe: '电量充足'});
     }
@@ -94,11 +96,9 @@ export default class HeatUserDetails extends React.Component {
     AsyncStorage.getItem("access_token", function (errs, result) {
       if (!errs) {
         let uri = Constants.serverSite3+"/v2/community/building/unit/heatUser/"+_this.props.heat_user_id+"?access_token="+result;
-        console.log(uri)
         fetch(uri)
           .then((response) => response.json())
           .then((responseJson) => {
-            console.log(responseJson)
             if (responseJson.code == 200) { 
               let info=[];
               info.push({ name: "房间号", value: responseJson.result.user_number });
@@ -121,7 +121,6 @@ export default class HeatUserDetails extends React.Component {
   bindDevice(deviceType){
     this.setState({showList: false});
     if(deviceType === 1) {
-      console.log('temp_id:::', this.state.heat_user_device_temp_id)
       if(!this.state.heat_user_device_temp_id){
         this.props.navigator.push({
             name: 'Scan',
@@ -170,8 +169,6 @@ export default class HeatUserDetails extends React.Component {
     if(this.state.deviceType === 2) {
       heat_user_device_id = this.state.heat_user_device_valve_id;
     }
-    console.log(heat_user_device_id,this.props.heat_user_id, this.state.deviceType);
-    console.log(uri)
     fetch(uri,{
       method: 'POST',
       headers: {
@@ -184,7 +181,6 @@ export default class HeatUserDetails extends React.Component {
       })
     }).then((response) => response.json())
       .then((responseJson) => {
-        console.log(responseJson)
         if(responseJson.code===200){
           DeviceEventEmitter.emit('refresh');
           this.setState({
@@ -212,7 +208,7 @@ export default class HeatUserDetails extends React.Component {
         }
       })
       .catch((e) => {
-        console.log(e)
+        // console.log(e)
         Alert.alert('提示', "网络连接错误,请检查您的的网络或联系我们")
       });
   }
@@ -221,37 +217,50 @@ export default class HeatUserDetails extends React.Component {
     this.setState({showAlert: false})
   }
   // 户内阀开度下发
-  gateway(value) {
+  alertGateway(value) {
+    this.setState({
+      showAlert: true,
+      alertText: '确定下发户内阀开度么？',
+      valveShow: true,
+      tap_open: value
+    })
+  }
+  gateway() {
+    this.setState({
+      showAlert: false,
+      valveShow: false
+    })
     AsyncStorage.getItem("access_token", (errs, result) => {
       if(!errs) {
-        console.log(this.state.valve_device_object_id, value, result);
-        let uri = `${Constants.serverSite3}/v2/gateway`;
+        const bodyData ={
+          device_object_id: this.state.valve_device_object_id,
+          tap_open: this.state.tap_open
+        }
+        // console.log(bodyData);
+        let uri = `${Constants.serverSite3}/v2/gateway?access_token=${result}`;
         fetch(uri, {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            device_object_id: this.state.valve_device_object_id,
-            tap_open: value,
-            access_token: result
-          })
+          body: JSON.stringify(bodyData)
         }).then((response) => response.json())
         .then((responseJson) => {
-          console.log(responseJson);
+          // console.log(responseJson);
           if(responseJson.code === 200) {
             this.setState({
               relieveAlert: true,
               succText: '下发成功'
             });
             setTimeout(() => {
-              this.setState({relieveAlert: false, valve_value: value});
+              this.setState({relieveAlert: false, valve_value: this.state.tap_open});
             }, 3000);
+            DeviceEventEmitter.emit('refresh');
           }
         })
         .catch((e) => {
-          console.log(e)
+          // console.log(e)
           Alert.alert('提示', "网络连接错误,请检查您的的网络或联系我们")
         });
       }
@@ -270,18 +279,17 @@ export default class HeatUserDetails extends React.Component {
   // 获取设备历史数据
   getDate(){
     let d = new Date();
-    this.state.start_time = moment(d).format("YYYY-MM-DD HH:mm:ss");
-    let start_time_stamp = d.getTime();
-    let end_time_stamp = new Date(start_time_stamp - 24 * 3600 * 1000);
-    this.state.end_time = moment(end_time_stamp).format("YYYY-MM-DD HH:mm:ss");
-    console.log(this.state.start_time, this.state.end_time);
+    this.state.end_time = moment(d).format("YYYY-MM-DD HH:mm:ss");
+    let current_time_stamp = d.getTime();
+    let statrt_time_stamp = new Date(current_time_stamp - 24 * 3600 * 1000);
+    this.state.start_time = moment(statrt_time_stamp).format("YYYY-MM-DD HH:mm:ss");
   }
   getDatas() {
     let uri = `${Constants.serverSite1}/v1/datas/groupHistory?heat_user_id=${this.props.heat_user_id}&valve=1&temp=1&start_time=${this.state.start_time}&end_time=${this.state.end_time}`;
     fetch(uri)
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log(responseJson);
+        // console.log(responseJson);
         if(responseJson.code === 200) {
           if(responseJson.result.temp && responseJson.result.temp.times.length > 0) {
             this.setState({
@@ -302,7 +310,7 @@ export default class HeatUserDetails extends React.Component {
         } 
       })
       .catch((error) => {
-        console.error(error);
+        // console.error(error);
         Alert.alert(
           '提示',
           '网络连接错误，获取设备历史数据失败',
@@ -311,12 +319,10 @@ export default class HeatUserDetails extends React.Component {
   }
   // 获取用户设备
   getDevice(type) {
-    console.log(this.props.heat_user_id, type)
     const uri = `${Constants.serverSite1}/v1/device?heat_user_id=${this.props.heat_user_id}&device_type=${type}`;
     fetch(uri)
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log(responseJson);
         if(responseJson.code === 200) {
           if(type === 1) {
             this.setState({heat_user_device_temp_id: responseJson.result.rows[0].heat_user_device_id});
@@ -411,18 +417,22 @@ export default class HeatUserDetails extends React.Component {
             <View style={{flexDirection: "row", alignItems:"center"}}>
               <View style={{ width: 3, height: 14, backgroundColor: "#2A9ADC", marginLeft: 12 }} />
               <Text style={{ fontSize: 14, color: "#333333", marginLeft: 9 }}>户内阀开度</Text>
+              {
+                this.state.heat_user_device_valve_id === null ?
+                <Text style={{fontSize: 10, color: '#999'}}> (未绑定)</Text> : <Text></Text>
+              }
             </View>
-            <View style={{flexDirection: "row", alignItems:"center"}}>
+            <View style={{flexDirection: "row", alignItems:"center", justifyContent: 'center'}}>
               {
                 this.state.valve_voltage !== null && this.props.valve_voltage < 0.2 ?
-                  <Image style={{ width: 22, height: 15 }} resizeMode="contain" source={require('../icons/wudian.png')} /> :
+                  <Image style={{ width: 20, height: 13 }} resizeMode="contain" source={require('../icons/wudian.png')} /> :
                   this.state.valve_voltage !== null && this.props.valve_voltage >= 0.2 && this.props.valve_voltage < 0.8 ?
-                    <Image style={{ width: 22, height: 15 }} resizeMode="contain" source={require('../icons/didian.png')} /> :
+                    <Image style={{ width: 20, height: 13 }} resizeMode="contain" source={require('../icons/didian.png')} /> :
                     this.state.valve_voltage !== null && this.props.valve_voltage >= 0.8 ?
-                      <Image style={{ width: 22, height: 15 }} resizeMode="contain" source={require('../icons/mandian.png')} /> :
+                      <Image style={{ width: 20, height: 13 }} resizeMode="contain" source={require('../icons/mandian.png')} /> :
                       <Text></Text>
               }
-              <Text style={{fontSize: 12, color: '#999'}}> {this.state.valve_voltage_describe}</Text>
+              <Text style={this.state.valve_voltage !== null && this.state.valve_voltage < 0.2 ? {color: '#FA2C3A', fontSize: 12} : {color: '#666', fontSize: 12}}> {this.state.valve_voltage_describe}</Text>
             </View>
             <View style={{marginRight: 15, alignItems:"center"}}>
               <TouchableOpacity style={{flexDirection: 'row', alignItems:"center"}} onPress={() => this.valvesHistory()}>
@@ -433,7 +443,8 @@ export default class HeatUserDetails extends React.Component {
           </View>
           <View style={{backgroundColor: "#fff", justifyContent: 'center', height: 80, paddingLeft: 25, paddingRight: 25}}>
             {
-              this.state.valve_value === null ?
+              // this.state.valve_value === null ?
+              this.state.heat_user_device_valve_id === null ?
                 <View style={{flexDirection: "row", height: 30}}>
                   <View style={styles.valvesView}><Text style={styles.valvesTextColor}>关闭</Text></View>
                   <View style={styles.valvesView}><Text style={styles.valvesTextColor}>25%</Text></View>
@@ -443,19 +454,19 @@ export default class HeatUserDetails extends React.Component {
               </View> :
               <View style={{flexDirection: "row", height: 30}}>
                 <View style={[styles.valvesView, this.state.valve_value===0 ? styles.styleView: {}]}>
-                    <TouchableOpacity onPress={() => this.gateway(0)}><Text style={this.state.valve_value===0 ? {color: '#2A9ADC'}:{}}>关闭</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.alertGateway(0)}><Text style={this.state.valve_value===0 ? {color: '#2A9ADC'}:{}}>关闭</Text></TouchableOpacity>
                   </View>
                   <View style={[styles.valvesView, (this.state.valve_value>0 && this.state.valve_value<=25) ? styles.styleView: {}]}>
-                    <TouchableOpacity onPress={() => this.gateway(25)}><Text style={(this.state.valve_value>0 && this.state.valve_value<=25) ? {color: '#2A9ADC'} : {}}>25%</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.alertGateway(25)}><Text style={(this.state.valve_value>0 && this.state.valve_value<=25) ? {color: '#2A9ADC'} : {}}>25%</Text></TouchableOpacity>
                   </View>
                   <View style={[styles.valvesView, (this.state.valve_value>25 && this.state.valve_value<=50) ? styles.styleView: {}]}>
-                    <TouchableOpacity onPress={() => this.gateway(50)}><Text style={(this.state.valve_value>25 && this.state.valve_value<=50) ? {color: '#2A9ADC'} : {}}>50%</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.alertGateway(50)}><Text style={(this.state.valve_value>25 && this.state.valve_value<=50) ? {color: '#2A9ADC'} : {}}>50%</Text></TouchableOpacity>
                   </View>
                   <View style={[styles.valvesView, (this.state.valve_value>50 && this.state.valve_value<=75) ? styles.styleView: {}]}>
-                    <TouchableOpacity onPress={() => this.gateway(75)}><Text style={(this.state.valve_value>50 && this.state.valve_value<=75) ? {color: '#2A9ADC'} : {}}>75%</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.alertGateway(75)}><Text style={(this.state.valve_value>50 && this.state.valve_value<=75) ? {color: '#2A9ADC'} : {}}>75%</Text></TouchableOpacity>
                   </View>
                   <View style={[styles.valvesView, {borderRightWidth: 1}, (this.state.valve_value>75 && this.state.valve_value<=100) ? styles.styleView: {}]}>
-                    <TouchableOpacity onPress={() => this.gateway(100)}><Text style={(this.state.valve_value>75 && this.state.valve_value<=100) ? {color: '#2A9ADC'} : {}}>100%</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.alertGateway(100)}><Text style={(this.state.valve_value>75 && this.state.valve_value<=100) ? {color: '#2A9ADC'} : {}}>100%</Text></TouchableOpacity>
                   </View>
               </View>
             }
@@ -503,9 +514,16 @@ export default class HeatUserDetails extends React.Component {
                 </View>
                 <View style={{flexDirection: 'row', paddingLeft: 40, paddingRight: 40, justifyContent: 'space-between', marginTop: 30}}>
                   <View style={{backgroundColor: '#2A9ADC'}}>
-                    <TouchableOpacity style={{paddingLeft: 35, paddingRight: 35, paddingTop: 8, paddingBottom: 8}} onPress={() =>this.relieveDevice()}>
-                      <Text style={{color: '#fff'}}>确定</Text>
-                    </TouchableOpacity>
+                    {
+                      this.state.valveShow ?
+                        <TouchableOpacity style={{paddingLeft: 35, paddingRight: 35, paddingTop: 8, paddingBottom: 8}} onPress={() =>this.gateway()}>
+                          <Text style={{color: '#fff'}}>确定</Text>
+                        </TouchableOpacity> :
+                        <TouchableOpacity style={{paddingLeft: 35, paddingRight: 35, paddingTop: 8, paddingBottom: 8}} onPress={() =>this.relieveDevice()}>
+                          <Text style={{color: '#fff'}}>确定</Text>
+                        </TouchableOpacity>
+                    }
+                    
                   </View>
                   <View style={{borderColor: '#eee', borderWidth: 1}}>
                     <TouchableOpacity style={{paddingLeft: 35, paddingRight: 35, paddingTop: 8, paddingBottom: 8}} onPress={() =>this.showAlert()}>

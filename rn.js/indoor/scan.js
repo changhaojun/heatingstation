@@ -53,12 +53,10 @@ var { width, height } = Dimensions.get('window');
         if(this.state.show){
             this.state.show =false;
             const {data} = result; 
-            console.log('-sdagafdhran----------------:', data);
-            console.log(this.props.device_type)
+            // console.log('data:', data);
             
             if(data.includes("type")&&data.includes("deviceId")){
                 const datas = JSON.parse(data);
-                console.log('-----------------:', datas);
                 if(this.props.device_type === 1) {
                     if((datas.deviceType && datas.deviceType===1) || !datas.deviceType) {
                         this.props.navigator.replace({
@@ -95,22 +93,6 @@ var { width, height } = Dimensions.get('window');
                         }}])
                     }
                 }
-                // if(datas.device_type && (datas.device_type !== 1 || datas.device_type !== 2)) {
-                //     Alert.alert('提示', this.state.alertText, [{text: '确定', onPress: () => {
-                //         this.props.navigator.popN(1)
-                //     }}])
-                // }else {
-                    // this.props.navigator.replace({
-                    //     name: 'DevicesBinding',
-                    //     component: DevicesBinding,
-                    //     passProps:{
-                    //         data:datas,
-                    //         heat_user_id:this.props.heat_user_id,
-                    //         props:this.props.props,
-                    //         device_type: this.props.device_type
-                    //     }
-                    // })
-                // }
             }else {
                 Alert.alert('提示', this.state.alertText, [{text: '确定', onPress: () => {
                     this.props.navigator.popN(1)

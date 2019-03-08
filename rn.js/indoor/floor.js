@@ -158,9 +158,12 @@ export default class VillageList extends React.Component {
                             </View>
                         </View>
                     </View>
-                    <View style={{ width: 150, backgroundColor: "#777" }}>
-                        <Echarts option={option} height={150} backgroundColor="rgba(0,0,0,1)" />
+                    <View style={{ width: 150}}>
+                        <Echarts option={option} height={150}/>
                     </View>
+                    {/* <View style={{ width: 150, backgroundColor: "#777" }}>
+                        <Echarts option={option} height={150} backgroundColor="rgba(0,0,0,1)" />
+                    </View> */}
                 </View>
                 {this.state.floorList.length > 0 ?
                     <ListView

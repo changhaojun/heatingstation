@@ -30,7 +30,7 @@ export default class ValvesHistory extends React.Component {
             onEndReachedThreshold: 0,
             total: null,
             datas: [],
-            page_size: 10,
+            page_size: 15,
             page_number: 1
         }
     }
@@ -43,37 +43,19 @@ export default class ValvesHistory extends React.Component {
         this.setState({ refreshing: true });
         AsyncStorage.getItem("access_token", (errs, result) => {
             if(!errs) {
-                console.log(result, 1, this.props.heat_user_id, this.state.page_size, this.state.page_number);
                 let uri = `${Constants.serverSite3}/v2/gateway?valves=1&heat_user_id=${this.props.heat_user_id}&page_size=${this.state.page_size}&page_number=${this.state.page_number}&access_token=${result}`;
-                console.log(uri)
+                // console.log(uri)
                 fetch(uri)
                     .then((response) => response.json()) 
                     .then((responseJson) => {
                         console.log(responseJson);
                         if(responseJson.code === 200) {
-                            // responseJson.result.total = 10;
-                            this.setState({ refreshing: false, total: responseJson.result.total });
                             responseJson.result.rows.forEach(row => {
                                 rows.push(row);
                             });
-                            // arrs = [
-                            //     {modify_type: 2, value: 60, status: 1, send_time: "2019-03-01T03:32:43.000Z", fullname: "城区热力"},
-                            //     {modify_type: 2, value: 60, status: 1, send_time: "2019-03-01T03:32:44.000Z", fullname: "城区热力"},
-                            //     {modify_type: 2, value: 60, status: 1, send_time: "2019-03-01T03:32:45.000Z", fullname: "城区热力"},
-                            //     {modify_type: 2, value: 60, status: 1, send_time: "2019-03-01T03:32:46.000Z", fullname: "城区热力"},
-                            //     {modify_type: 2, value: 60, status: 1, send_time: "2019-03-01T03:32:47.000Z", fullname: "城区热力"},
-                            //     {modify_type: 2, value: 60, status: 1, send_time: "2019-03-01T03:32:48.000Z", fullname: "城区热力"},
-                            //     {modify_type: 2, value: 60, status: 1, send_time: "2019-03-01T03:32:49.000Z", fullname: "城区热力"},
-                            //     {modify_type: 2, value: 60, status: 1, send_time: "2019-03-01T03:32:50.000Z", fullname: "城区热力"},
-                            //     {modify_type: 2, value: 60, status: 1, send_time: "2019-03-01T03:32:51.000Z", fullname: "城区热力"},
-                            //     {modify_type: 2, value: 60, status: 1, send_time: "2019-03-01T03:32:52.000Z", fullname: "城区热力"}
-                            // ]
-                            // arrs.forEach(row => {
-                            //     rows.push(row);
-                            // });
                             this.setState({datas: rows, refreshing: false, total: responseJson.result.total});
+                            // console.log(this.state.datas)
                         }
-                        console.log(this.state.datas);
                     })
                     .catch((e) => {
                         console.log(e)
@@ -84,10 +66,13 @@ export default class ValvesHistory extends React.Component {
     }
     onRefresh() {
         rows = [];
+        this.setState({page_number: 1});
         this.getHistory();
     }
     onEndReached() {
-        if(this.state.total === this.state.page_size) {
+        this.setState({page_number: ++this.state.page_number});
+        const n = Math.ceil(this.state.total/this.state.page_size);
+        if(this.state.page_number <= n) {
             this.getHistory();
         }
     }
@@ -113,11 +98,20 @@ export default class ValvesHistory extends React.Component {
                             data={this.state.datas}
                             renderItem={({item}) => 
                                 <View style={styles.itemView}>
-                                    <View style={{flexDirection: 'row',}}>
-                                        <Text style={{color: '#666'}}>户内阀开度调整为</Text>
+                                    <View style={{flexDirection: 'row', flex: 1}}>
+                                        <Text style={{color: '#666'}}>开度调整为</Text>
                                         <Text style={{color: '#2A9ADC'}}> {item.value}%</Text>
                                     </View>
-                                    <Text style={{color: '#999'}}>{moment(item.send_time).format('YYYY-MM-DD HH:mm')}</Text>
+                                    <Text style={{color: '#999', width: 130}}>{moment(item.send_time).format('YYYY-MM-DD HH:mm')}</Text>
+                                    <View style={{width: 50, flexDirection: 'row', justifyContent: 'flex-end'}}>
+                                        {
+                                            item.status === 1 ?
+                                            <Text style={{color: '#1ab394'}}>成功</Text> :
+                                            item.status === 2 ?
+                                                <Text style={{color: '#999'}}>失败</Text> :
+                                                <Text style={{color: '#999'}}>下发中</Text>
+                                        }
+                                    </View>
                                 </View>
                         }
                         /> : <Text style={{alignSelf: 'center', marginTop: 10}}>暂无数据</Text>
@@ -150,7 +144,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent:"space-between",
         alignItems: 'center',
-        height: 60,
+        height: 50,
         paddingRight: 20,
         marginLeft: 15,
         borderBottomWidth: 1,
