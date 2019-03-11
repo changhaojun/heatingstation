@@ -18,7 +18,6 @@ import UnitList from "./unit_list"
 const { width, height } = Dimensions.get('window');
 
 export default class UnitDetails extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -28,30 +27,7 @@ export default class UnitDetails extends React.Component {
       { color: "#FEF5E6", text: "18℃~22℃" },
       { color: "#FDD597", text: "22℃~25℃" },
       { color: "#FA2C3A", text: "＞25℃" } ],
-      data: [
-        // {
-        //   title: { name: "一区", flow: 32 }, data: [
-        //     { layer: 1, heatUser: [ { id: 1, number: 101 }, { id: 1, number: 102 }, { id: 1, number: 103 }, { id: 1, number: 104 } ] },
-        //     { layer: 2, heatUser: [ { id: 1, number: 201 }, { id: 1, number: 202 }, { id: 1, number: 203 }, { id: 1, number: 204 } ] },
-        //     { layer: 3, heatUser: [ { id: 1, number: 301 }, { id: 1, number: 302 }, { id: 1, number: 303 }, { id: 1, number: 304 } ] },
-        //     { layer: 4, heatUser: [ { id: 1, number: 401 }, { id: 1, number: 402 }, { id: 1, number: 403 }, { id: 1, number: 404 } ] },
-        //     { layer: 5, heatUser: [ { id: 1, number: 501 }, { id: 1, number: 502 }, { id: 1, number: 503 }, { id: 1, number: 504 } ] },
-        //     { layer: 6, heatUser: [ { id: 1, number: 601 }, { id: 1, number: 602 }, { id: 1, number: 603 }, { id: 1, number: 604 } ] },
-        //     { layer: 7, heatUser: [ { id: 1, number: 701 }, { id: 1, number: 702 }, { id: 1, number: 703 }, { id: 1, number: 704 } ] },
-        //     { layer: 8, heatUser: [ { id: 1, number: 801 }, { id: 1, number: 802 }, { id: 1, number: 803 }, { id: 1, number: 804 } ] }, ]
-        // },
-        // {
-        //   title: { name: "二区", flow: 35 }, data: [
-        //     { layer: 9, heatUser: [ { id: 1, number: 101 }, { id: 1, number: 102 }, { id: 1, number: 103 }, { id: 1, number: 104 } ] },
-        //     { layer: 10, heatUser: [ { id: 1, number: 201 }, { id: 1, number: 202 }, { id: 1, number: 203 }, { id: 1, number: 204 } ] },
-        //     { layer: 11, heatUser: [ { id: 1, number: 301 }, { id: 1, number: 302 }, { id: 1, number: 303 }, { id: 1, number: 304 } ] },
-        //     { layer: 12, heatUser: [ { id: 1, number: 401 }, { id: 1, number: 402 }, { id: 1, number: 403 }, { id: 1, number: 404 } ] },
-        //     { layer: 13, heatUser: [ { id: 1, number: 501 }, { id: 1, number: 502 }, { id: 1, number: 503 }, { id: 1, number: 504 } ] },
-        //     { layer: 14, heatUser: [ { id: 1, number: 601 }, { id: 1, number: 602 }, { id: 1, number: 603 }, { id: 1, number: 604 } ] },
-        //     { layer: 15, heatUser: [ { id: 1, number: 701 }, { id: 1, number: 702 }, { id: 1, number: 703 }, { id: 1, number: 704 } ] },
-        //     { layer: 16, heatUser: [ { id: 1, number: 801 }, { id: 1, number: 802 }, { id: 1, number: 803 }, { id: 1, number: 804 } ] }, ]
-        // }
-      ],
+      data: []
     };
 
   }
@@ -60,26 +36,23 @@ export default class UnitDetails extends React.Component {
   }
   componentWillMount() {
     this.setTitle = DeviceEventEmitter.addListener('refresh', ()=>{
-      this.getHeatUserData()
-    });
+      this.getHeatUserData();
+    })
   }
   componentWillUnmount(){
     this.setTitle.remove();
   }
   getHeatUserData() {
-    console.log("进来了")
     this.setState({ refreshing: true })
     let unit_id = this.props.unitId ? this.props.unitId : 1;
     let _this = this;
     http://121.42.253.149:18859/app/mock/29/GET//v2/community/building/unit/:id
     AsyncStorage.getItem("access_token", function (errs, result) {
       if (!errs) {
-        let uri = Constants.indoorSite + "/v2/community/building/unit/" + unit_id + "?access_token=" + result;
-        console.log(uri)
+        let uri = Constants.serverSite3 + "/v2/community/building/unit/" + unit_id + "?access_token=" + result;
         fetch(uri)
           .then((response) => response.json())
           .then((responseJson) => {
-            console.log(responseJson)
             if (responseJson.code == 200) {
               let flow = {}
               for (const key in responseJson.result) {
@@ -91,8 +64,7 @@ export default class UnitDetails extends React.Component {
                   }
                 }
               }
-              let uri = Constants.indoorSite + "/v2/community/building/unit/" + unit_id + "/house?allHouse=1&access_token=" + result;
-              console.log(uri)
+              let uri = Constants.serverSite3 + "/v2/community/building/unit/" + unit_id + "/house?allHouse=1&access_token=" + result;
               fetch(uri)
                 .then((response) => response.json())
                 .then((responseJson) => {
@@ -109,6 +81,7 @@ export default class UnitDetails extends React.Component {
                       stateData.push({ title: { name: "低区", flow: flow.low }, data: _this.arrangeData(data.low) });
                     }
                     _this.setState({ data: stateData, refreshing: false, });
+                    // console.log('data:::', _this.state.data);
                   }
                 })
                 .catch((error) => {
@@ -117,19 +90,9 @@ export default class UnitDetails extends React.Component {
             }
           })
       }
-    }
-    );
+    })
   }
   arrangeData(data) {
-    data.sort((a, b) => {
-      if (Number.parseInt(a.user_number) > Number.parseInt(b.user_number)) {
-        return 1;
-      } else if (Number.parseInt(a.user_number) < Number.parseInt(b.user_number)) {
-        return -1
-      } else {
-        return 0;
-      }
-    });
     let reData = [];
     let dataOne = null;
     for (let index = 0; index < data.length; index++) {
@@ -144,63 +107,118 @@ export default class UnitDetails extends React.Component {
     }
     return reData;
   }
-  // [ { color: "#3C8CED", text: "＜16℃" },
-  // { color: "#FFFAF3", text: "16℃~18℃" },
-  // { color: "#FEF5E6", text: "18℃~22℃" },
-  // { color: "#FDD597", text: "22℃~25℃" },
-  // { color: "#FA2C3A", text: "＞25℃" } ],
+
   getHeatUserBox(data) {
     let layout = [];
     for (let index = 0; index < data.length; index++) {
+      let params = {
+        props:this.props,
+        heat_user_id: data[index].heat_user_id,
+        user_number: data[index].user_number,
+        addr: this.props.communityName + this.props.buildName + this.props.unitName + "单元",
+        temp_value: null,
+        temp_voltage: null,
+        heat_user_device_temp_id: null,
+        valve_value: null,
+        valve_voltage: null,
+        heat_user_device_valve_id: null,
+        valve_device_object_id: ''
+      }
+      if(data[index].temp) {
+        params.heat_user_device_temp_id = data[index].temp.heat_user_device_id;
+        let datas = data[index].temp.datas;
+        datas.forEach(data => {
+          if('data_value' in data) {
+            if(data.tag_name.includes('室内温度')) {
+              params.temp_value = data.data_value;
+            }
+            if(data.tag_name.includes('温度计电压')) {
+              params.temp_voltage = data.data_value;
+            }
+          }
+        })
+      }
+      if(data[index].valves) {
+        params.heat_user_device_valve_id = data[index].valves.heat_user_device_id;
+        params.valve_device_object_id = data[index].valves.device_object_id;
+        let datas = data[index].valves.datas;
+        datas.forEach(data => {
+          if('data_value' in data) {
+            if(data.tag_name.includes('电动阀开度')) {
+              params.valve_value = data.data_value;
+            }
+            if(data.tag_name.includes('电动阀电压')) {
+              params.valve_voltage = data.data_value;
+            }
+          }
+        })
+      }
+
       let bgColor = "";
-      if (!data[ index ].data_value) {
+      if(!params.temp_value) {
         bgColor = "#eee";
-      } else if (data[ index ].data_value < 16) {
+      }else if(params.temp_value < 16) {
         bgColor = "#3C8CED";
-      } else if (16 <= data[ index ].data_value && 18 > data[ index ].data_value) {
+      }else if(16 <= params.temp_value && params.temp_value < 18) {
         bgColor = "#FFFAF3";
-      } else if (18 <= data[ index ].data_value && 22 > data[ index ].data_value) {
+      }else if(18 <= params.temp_value && params.temp_value < 22) {
         bgColor = "#FEF5E6";
-      } else if (22 <= data[ index ].data_value && 25 > data[ index ].data_value) {
+      }else if(22 <= params.temp_value && params.temp_value < 25) {
         bgColor = "#FDD597";
-      } else {
+      }else {
         bgColor = "#FA2C3A";
       }
-      layout.push(<TouchableOpacity
+      
+      layout.push(<TouchableOpacity key={index}
         onPress={() => this.props.navigator.push({
-          component: HeatUserDetails, passProps: {
-            heat_user_id: data[ index ].heat_user_id,
-            user_number: data[ index ].user_number,
-            value: data[ index ].data_value,
-            addr: this.props.communityName + this.props.buildName + this.props.unitName + "单元",
-            data_id: data[ index ].data_id,
-            props:this.props,
-            heat_user_device_id:data[ index ].heat_user_device_id
-            // callback:this.getHeatUserData,
-          },
-          
+          component: HeatUserDetails, 
+          passProps: params
         })}
         style={{
           width: data.length < 5 ? (width - 65) / data.length : (width - 65) / 4 - 5, height: 40, borderColor: "#E0E2EA55",
           borderRightWidth: index == data.length - 1 ? 0 : 1, backgroundColor: bgColor,
         }}>
-        <Image style={{ width: 13, height: 13, marginLeft: 6, marginTop: 6, }} resizeMode="contain"
-          source={data[ index ].heat_user_device_id ? require('../icons/indoor_thermometer.png') : require('../icons/nav_flag.png')} />
-        <Text style={{ color: "#555555", fontSize: 14, textAlign: "center", marginTop: -8, }}>{data[ index ].user_number}</Text>
+        <View style={{flexDirection: 'column'}}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
+            <Image style={{ width: 13, height: 13, marginLeft: 6, marginTop: 6, }} resizeMode="contain"
+              source={data[index].valves ? (params.temp_value >= 25 ? require('../icons/icon_fa_.png') : require('../icons/icon_fa.png')) : require('../icons/nav_flag.png')} />
+            {
+              data[index].temp && params.temp_value >= 25 ? 
+                <Text style={{ color: "#ffffff", fontSize: 14, textAlign: "center", marginTop: 10, }}>{data[index].user_number}</Text> : 
+                <Text style={{ color: "#555555", fontSize: 14, textAlign: "center", marginTop: 10, }}>{data[index].user_number}</Text>
+            }
+            <Image style={{width: 13, height: 13, marginRight: 6, marginTop: 6}} resizeMode="contain"
+              source={data[index].temp ? (params.temp_value >= 25 ? require('../icons/icon_wendu_.png') : require('../icons/icon_wendu.png')) : require('../icons/nav_flag.png')} />
+          </View>
+          <View style={{marginTop: -8}}>
+            <Image style={{ width: 13, height: 10, marginLeft: 6, marginTop: 6, }} resizeMode="contain"
+              source={
+                params.valve_voltage !== null && params.valve_voltage < 0.2 && params.temp_value >=25 ?
+                  require('../icons/wudian_.png') :
+                  params.valve_voltage !== null && params.valve_voltage < 0.2 ?
+                    require('../icons/wudian.png') :
+                    params.valve_voltage !== null && params.valve_voltage >= 0.2 && params.valve_voltage < 0.8 && params.temp_value >= 22 && params.temp_value < 25 ?
+                      require('../icons/didian.png') :
+                      params.valve_voltage !== null && params.valve_voltage >= 0.2 && params.valve_voltage < 0.8 ?
+                        require('../icons/didian.png') :
+                        params.valve_voltage !== null && params.valve_voltage >= 0.8 ?
+                          require('../icons/mandian.png') :
+                          require('../icons/nav_flag.png')
+              } />
+          </View>
+        </View>
       </TouchableOpacity>)
     }
     return layout;
   }
   popUnitList(){
-    console.log(this.props.buildId)
     this.props.navigator.push({
       name: 'UnitList',
       component: UnitList,
       passProps: {
         buildName: this.props.buildName,
         buildId: this.props.buildId,
-        communityName:this.props.communityName,
-       
+        communityName:this.props.communityName
     }
     })
   }
@@ -208,7 +226,7 @@ export default class UnitDetails extends React.Component {
     return (
       <View style={styles.all}>
         <View style={styles.navView}>
-          <TouchableOpacity onPress={() => this.props.navigator.pop()}>
+          <TouchableOpacity onPress={() => {this.props.navigator.pop();DeviceEventEmitter.emit('refreshUnit')}}>
             <Image style={{ width: 25, height: 20, marginLeft: 15 }} resizeMode="contain" source={require('../icons/nav_back_icon.png')} />
           </TouchableOpacity>
           <Text style={styles.topNameText}>{this.props.unitName}单元</Text>
@@ -221,7 +239,7 @@ export default class UnitDetails extends React.Component {
           showsHorizontalScrollIndicator={false}
           data={this.state.legend}
           renderItem={({ item }) =>
-            <View style={{ flexDirection: "row", margin: 13,marginRight:7, alignItems: "center" }}>
+            <View style={{ flexDirection: "row", margin: 13,marginRight:3, alignItems: "center" }}>
               <View style={{ width: 12, height: 12, backgroundColor: item.color, marginRight: 5, borderRadius: 2 }} />
               <Text style={{ color: "#666666", fontSize: 12 }}>{item.text}</Text>
             </View>}
@@ -244,7 +262,8 @@ export default class UnitDetails extends React.Component {
                 </View>
                 <View style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent:"flex-end",paddingRight:12 }}>
                   <Text style={{ color: "#333333" }}>瞬时热量   </Text>
-                  <Text style={{ color: "#2E94DD" }}>{title.flow}GJ/h</Text>
+                  <Text style={{ color: "#2E94DD" }}>-- GJ/h</Text>
+                  {/* <Text style={{ color: "#2E94DD" }}>{title.flow}GJ/h</Text> */}
                 </View>
               </View>
             )}
@@ -254,7 +273,6 @@ export default class UnitDetails extends React.Component {
           />
         </ScrollView>
       </View>
-
     )
   }
 }

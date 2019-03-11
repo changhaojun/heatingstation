@@ -39,7 +39,7 @@ export default class VillageList extends React.Component {
         })
         AsyncStorage.getItem("access_token", (errs, result)=> {
             if (!errs) {
-                var uri =`${Constants.indoorSite}/v2/community?access_token=${result}&company_code=${this.state.company_code}&user_total=1&avg_temperat=1&room_temperat=1`  
+                var uri =`${Constants.indoorSite}/v2/community?access_token=${result}&company_code=${this.props.company_code}&user_total=1&avg_temperat=1&room_temperat=1`  
                 console.log(uri)              
                 fetch(uri)
                   .then((response) => response.json())
@@ -58,7 +58,6 @@ export default class VillageList extends React.Component {
                         '暂无数据'
                       )
                     }
-        
                   })
                   .catch((error) => {
                     console.error(error);
@@ -110,7 +109,8 @@ export default class VillageList extends React.Component {
           }
         }
       }
-    goFloor(communityId,communityName,avg_temp,room_temperat,status){
+    goFloor(communityId,communityName,avg_temp,room_temperat,status,usertotal){
+        console.log(communityId,communityName,avg_temp,room_temperat,status,usertotal);
         console.log(status)
         this.props.navigator.push({
             component: Floor,
@@ -119,7 +119,8 @@ export default class VillageList extends React.Component {
                 communityName: communityName,
                 avg_temp:avg_temp,
                 room_temperat:room_temperat,
-                status:status
+                status:status,
+                user_total:usertotal
             }
         })
     }
@@ -152,17 +153,17 @@ export default class VillageList extends React.Component {
                         showsVerticalScrollIndicator={false}
                         dataSource={this.state.dataSource}
                         renderRow={data => (
-                            <TouchableOpacity onPress={()=>{this.goFloor(data.community_id,data.community_name,data.avg_temperat,data.room_temperat,data.status)}}>
+                            <TouchableOpacity onPress={()=>{this.goFloor(data.community_id,data.community_name,data.avg_temperat,data.room_temperat,data.status,data.user_total)}}>
                                 <View style={[styles.listView, { height: 58, alignItems: "center",justifyContent:"space-between"}]}>
                                     <View style={{flexDirection:"row",alignItems:"center"}}>
-                                        <Image style={{ width: 25, height: 25, marginLeft: 10,marginRight:10 }} resizeMode="contain" source={data.status===1? require('../icons/icon_normal.png'):data.status===2?require('../icons/icon_low.png'):require('../icons/icon_high.png')}  />
+                                        <Image style={{ width: 25, height: 25, marginLeft: 10,marginRight:10 }} resizeMode="contain" source={data.status===1? require('../icons/icon_low.png'):data.status===2?require('../icons/icon_normal.png'):require('../icons/icon_high.png')}  />
                                         <Text style={{ fontSize: 15, color: "#333333" }}>{data.community_name}</Text>
                                     </View>
                                     {
                                         data.status ===1?
-                                         <Text style={{marginRight:40,color:"#FB9823"}}>{data.avg_temperat}℃</Text>:
+                                         <Text style={{marginRight:40,color:"#2E93DD"}}>{data.avg_temperat}℃</Text>:
                                         data.status ===2? 
-                                        <Text style={{marginRight:40,color:"#2E93DD"}}>{data.avg_temperat}℃</Text>:
+                                        <Text style={{marginRight:40,color:"#FB9823"}}>{data.avg_temperat}℃</Text>:
                                         <Text style={{marginRight:40,color:"#D6243C"}}>{data.avg_temperat}℃</Text> 
                                     }
                                    

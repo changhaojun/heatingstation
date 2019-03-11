@@ -21,7 +21,7 @@ import {
 } from 'react-native';
 import Echarts from 'native-echarts';
 import Constants from './../constants';
-import moment from 'moment';
+// import moment from 'moment';
 // const Alert = Platform.select({
 //   ios: () => require('AlertIOS'),
 //   android: () => require('Alert'),
@@ -29,60 +29,66 @@ import moment from 'moment';
 
 const { width, height } = Dimensions.get('window');
 
-
-var d = new Date();
-var start_time = moment(d).format("YYYY-MM-DD HH:mm:ss");
-var start_time_stamp = d.getTime();
-var end_time_stamp = new Date(start_time_stamp - 24 * 3600 * 1000);
-var end_time = moment(end_time_stamp).format("YYYY-MM-DD HH:mm:ss");
-
 export default class DataList extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
-      xArr: [],
-      yArr: [],
-      yLabel: '',
-      prompt: "加载中……"
+      // xArr: [],
+      // yArr: [],
+      // yLabel: '',
+      // prompt: "加载中……",
+      // end_time:"",
+      // start_time:""
     };
-    this.getData();
   }
-  getData() {
-    const _this = this;
-    AsyncStorage.getItem("access_token", function (errs, result) {
-      if (!errs) {
-        var uri = Constants.indoorSite+"/v2/historyData/"+_this.props.data_id+"?access_token="+result+"&start="+end_time+"&end="+start_time;
-        console.log(uri);
-        fetch(uri)
-          .then((response) => response.json())
-          .then((responseJson) => {
-            console.log(responseJson);
-            if (responseJson.result.times.length > 0) {
-              for (let index = 0; index < responseJson.result.times.length; index++) {
-                responseJson.result.times[index]=moment(responseJson.result.times[index]).format("HH:mm");
-              }
-              _this.setState({
-                xArr: responseJson.result.times,
-                yArr: responseJson.result.datas,
-                yUnit: "",
-              });
-            }
-            else {
-              _this.setState({ prompt: "暂无数据" });
-            }
+  componentWillMount(){
+    // this.getData(); 
+    // this.getDate();
+  }
+  // getDate(){
+  //   var d = new Date();
+  //   this.state.start_time = moment(d).format("YYYY-MM-DD HH:mm:ss");
+  //   var start_time_stamp = d.getTime();
+  //   var end_time_stamp = new Date(start_time_stamp - 24 * 3600 * 1000);
+  //   this.state.end_time = moment(end_time_stamp).format("YYYY-MM-DD HH:mm:ss");
+  //   console.log(this.state.start_time, this.state.end_time);
+  // }
+  // getData() {
+  //   console.log('获取历史数据')
+  //   const _this = this;
+  //   AsyncStorage.getItem("access_token", function (errs, result) {
+  //     if (!errs) {
+  //       var uri = `${Constants.serverSite1}/v1/datas/groupHistory?heat_user_id=${this.props.heat_user_id}&valve=1&temp=1&start_time=${this.state.start_time}&end_time=${this.state.end_time}`;
+  //       console.log(uri);
+  //       fetch(uri)
+  //         .then((response) => response.json())
+  //         .then((responseJson) => {
+  //           console.log(responseJson);
+  //           if (responseJson.result.times.length > 0) {
+  //             for (let index = 0; index < responseJson.result.times.length; index++) {
+  //               responseJson.result.times[index]=moment(responseJson.result.times[index]).format("HH:mm");
+  //             }
+  //             _this.setState({
+  //               xArr: responseJson.result.times,
+  //               yArr: responseJson.result.datas,
+  //               yUnit: "",
+  //             });
+  //           }
+  //           else {
+  //             _this.setState({ prompt: "暂无历史数据" });
+  //           }
             
-          })
-          .catch((error) => {
-            console.error(error);
-            Alert.alert(
-              '提示',
-              '网络连接错误，获取列表数据失败',
-            );
-          });
-      }
-    });
-  }
+  //         })
+  //         .catch((error) => {
+  //           console.error(error);
+  //           Alert.alert(
+  //             '提示',
+  //             '网络连接错误，获取列表数据失败',
+  //           );
+  //         });
+  //     }
+  //   });
+  // }
   render() {
     var option = {
       backgroundColor: '#FFF',//背景色
@@ -101,7 +107,8 @@ export default class DataList extends React.Component {
         borderColor: "#998cbf"
       },
       xAxis: {
-        data: this.state.xArr,
+        // data: this.state.xArr,
+        data: this.props.xArr,
         boundaryGap: false,
         axisLine: { show: false,lineStyle: { color: "#fff" } },
         nameTextStyle: { color: "#000" },
@@ -128,7 +135,8 @@ export default class DataList extends React.Component {
         //smooth: true,
         symbol: 'none',
         areaStyle: { normal: { color: "#bbe4f8" } }, //曲线下方的面积的颜色
-        data: this.state.yArr,
+        // data: this.state.yArr,
+        data: this.props.yArr,
         itemStyle: { normal: { label: { show: false } } },
         markPoint: {
           symbol: "circle",
@@ -150,11 +158,11 @@ export default class DataList extends React.Component {
 
       } ]
     };
-console.log(option)
+    // console.log(option)
     return (
       <View>
         <View style={styles.chartView}>
-          {this.state.xArr.length ? <Echarts option={option} height={225} /> : <Text style={{ color: "#000" }}>{this.state.prompt}</Text>}
+          {this.props.xArr.length ? <Echarts option={option} height={205} /> : <Text style={{ color: "#000" }}>{this.props.prompt}</Text>}
         </View>
       </View>
     )
