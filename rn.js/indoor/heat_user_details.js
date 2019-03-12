@@ -22,6 +22,7 @@ import Dimensions from 'Dimensions';
 import Scan from './scan';
 import ValvesHitory from './valves_history';
 import moment from 'moment';
+import UnitDetails from './unit_details';
 const { width, height } = Dimensions.get('window');
 
 export default class HeatUserDetails extends React.Component {
@@ -58,7 +59,7 @@ export default class HeatUserDetails extends React.Component {
       end_time:"",
       start_time:""
     };
-    // console.log('this.props:', this.props)
+    console.log('this.props:', this.props.props.unitId)
   }
   componentDidMount() {
     this.getInfo();
@@ -251,7 +252,7 @@ export default class HeatUserDetails extends React.Component {
           if(responseJson.code === 200) {
             this.setState({
               relieveAlert: true,
-              succText: '下发成功'
+              succText: '调控记录查看下发结果'
             });
             setTimeout(() => {
               this.setState({relieveAlert: false, valve_value: this.state.tap_open});
@@ -342,12 +343,16 @@ export default class HeatUserDetails extends React.Component {
         );
       })
   }
+  skip() {
+    this.props.navigator.pop();
+    DeviceEventEmitter.emit('refresh');
+  }
 
   render() {
     return (
       <View style={styles.all}>
         <View style={styles.navView}>
-          <TouchableOpacity onPress={() => this.props.navigator.pop()}>
+          <TouchableOpacity onPress={() => this.skip()}>
             <Image style={{ width: 25, height: 20, marginLeft: 15, }} resizeMode="contain" source={require('../icons/nav_back_icon.png')} />
           </TouchableOpacity>
           <Text style={styles.topNameText}>{this.props.user_number}</Text>
@@ -537,7 +542,7 @@ export default class HeatUserDetails extends React.Component {
         {
           this.state.relieveAlert ?
             <View style={{backgroundColor: 'rgba(0, 0, 0, 0.3)', width: width, height: height, position: 'absolute'}}>
-              <View style={{backgroundColor: '#fff', borderRadius: 4, height: 100, width: 120, flexDirection: 'column', alignSelf: 'center', justifyContent: 'space-evenly', alignItems: 'center', marginTop: height/2-50}}>
+              <View style={{backgroundColor: '#fff', borderRadius: 4, height: 100, width: 160, flexDirection: 'column', alignSelf: 'center', justifyContent: 'space-evenly', alignItems: 'center', marginTop: height/2-50}}>
                 <Image style={{ width: 30, height: 30 }} resizeMode="contain" source={this.state.bindType ? require('../icons/su.png') : require('../icons/device_ok.png')} />
                 <Text>{this.state.succText}</Text>
               </View>
