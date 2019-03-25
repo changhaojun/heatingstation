@@ -81,7 +81,7 @@ export default class UnitDetails extends React.Component {
                       stateData.push({ title: { name: "低区", flow: flow.low }, data: _this.arrangeData(data.low) });
                     }
                     _this.setState({ data: stateData, refreshing: false, });
-                    // console.log('data:::', _this.state.data);
+                    console.log('data:::', _this.state.data);
                   }
                 })
                 .catch((error) => {

@@ -38,6 +38,7 @@ export default class HeatUserDetails extends React.Component {
 
       showList: false,
       temp_value: this.props.temp_value,
+      temp_voltage: this.props.temp_voltage,
       valve_value: this.props.valve_value,
       valve_voltage: this.props.valve_voltage,
       valve_voltage_describe: '',
@@ -406,15 +407,26 @@ export default class HeatUserDetails extends React.Component {
         }
         
         <ScrollView onTouchEnd={() => this.hideList()}>
-          <ImageBackground style={{ width: width, height: width * 0.42, marginTop: 15, flexDirection: "row", alignItems: "center", paddingBottom: 35 }} resizeMode="contain" source={require('../icons/indoor_bg.png')}>
-            <Image style={{ width: 51, height: 51, marginLeft: 50 }} resizeMode="contain" source={require('../icons/indoor_portrait.png')} />
-            <View style={{ marginLeft: 13, flex: 1 }}>
+          <ImageBackground style={{ width: width, height: width * 0.42, marginTop: 15, paddingBottom: 35, flexDirection: "row", alignItems: "center"}} resizeMode="contain" source={require('../icons/indoor_bg.png')}>
+            <Image style={{ width: 51, height: 51, marginLeft: 50, marginTop: 5 }} resizeMode="contain" source={require('../icons/indoor_portrait.png')} />
+            <View style={{ marginLeft: 13, flex: 1, marginTop: 5}}>
               <Text style={{ fontSize: 15, color: "#fff" }}>{this.state.user_name}</Text>
               <Text style={{ fontSize: 12, color: "#ffffffdd" }}>户主</Text>
             </View>
-            <View style={{ marginRight: 41, alignItems: "center" }}>
-              <Text style={{ fontSize: 36, color: "#fff" }}>{this.state.temp_value ? this.state.temp_value : "-"}<Text style={{ fontSize: 17 }}>℃</Text></Text>
-              <Text style={{ fontSize: 12, color: "#ffffffdd" }}>室内温度</Text>
+            <View style={{flexDirection: "column", justifyContent: 'flex-start', height: '100%', marginTop: 15, marginRight: 30}}>
+              {
+                this.state.temp_voltage !== null ?
+                  <View style={{flexDirection: "row", alignItems: 'center', marginBottom: 10}}>
+                    <Text style={{fontSize: 12, color: '#ffffffdd', marginRight: 5}}>温度计电量</Text>
+                    <Image style={{ width: 20, height: 13, marginTop: 2 }} resizeMode="contain" 
+                      source={this.state.temp_voltage < '65%' ? require('../icons/wudian.png') : this.props.temp_voltage >= '65%' && this.props.temp_voltage < '95%' ? require('../icons/didian_2.png') : this.props.temp_voltage >= '95%' ? require('../icons/mandian.png') : require('../icons/nav_flag.png')} />
+                  </View> : <Text></Text>
+              }
+              
+              <View>
+                <Text style={{ fontSize: 36, color: "#fff" }}>{this.state.temp_value ? this.state.temp_value : "-"}<Text style={{ fontSize: 17 }}>℃</Text></Text>
+                <Text style={{ fontSize: 12, color: "#ffffffdd", marginLeft: 5, marginTop: -5}}>室内温度</Text>
+              </View>
             </View>
           </ImageBackground>
 
@@ -430,11 +442,11 @@ export default class HeatUserDetails extends React.Component {
             <View style={{flexDirection: "row", alignItems:"center", justifyContent: 'center'}}>
               {
                 this.state.valve_voltage !== null && this.props.valve_voltage < 0.2 ?
-                  <Image style={{ width: 20, height: 13 }} resizeMode="contain" source={require('../icons/wudian.png')} /> :
+                  <Image style={{ width: 20, height: 13, marginTop: 2 }} resizeMode="contain" source={require('../icons/wudian.png')} /> :
                   this.state.valve_voltage !== null && this.props.valve_voltage >= 0.2 && this.props.valve_voltage < 0.8 ?
-                    <Image style={{ width: 20, height: 13 }} resizeMode="contain" source={require('../icons/didian.png')} /> :
+                    <Image style={{ width: 20, height: 13, marginTop: 2 }} resizeMode="contain" source={require('../icons/didian.png')} /> :
                     this.state.valve_voltage !== null && this.props.valve_voltage >= 0.8 ?
-                      <Image style={{ width: 20, height: 13 }} resizeMode="contain" source={require('../icons/mandian.png')} /> :
+                      <Image style={{ width: 20, height: 13, marginTop: 2 }} resizeMode="contain" source={require('../icons/mandian.png')} /> :
                       <Text></Text>
               }
               <Text style={this.state.valve_voltage !== null && this.state.valve_voltage < 0.2 ? {color: '#FA2C3A', fontSize: 12} : {color: '#666', fontSize: 12}}> {this.state.valve_voltage_describe}</Text>

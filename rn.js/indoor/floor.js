@@ -10,6 +10,7 @@ import Echarts from 'native-echarts';
 var { width, height } = Dimensions.get('window');
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 import Unit from './unit_list';
+import BatteryLow from './battery_low';
 export default class VillageList extends React.Component {
     constructor(props) {
         super(props);
@@ -75,20 +76,25 @@ export default class VillageList extends React.Component {
             }
         })
     }
+    batteryLowDetails() {
+        this.props.navigator.push({
+            component: BatteryLow
+        })
+    }
     componentWillMount() {
         this.setTitle = DeviceEventEmitter.addListener('refreshFloor', ()=>{
             this.getFloor()
         });
       }
-      componentWillUnmount(){
+    componentWillUnmount(){
         this.setTitle.remove();
-      }
+    }
     render() {
         var option = {
             tooltip: {
                 trigger: 'item',
                 formatter: "{c}户 <br/>{d}%",
-                extraCssText: 'width:50px;height:40px;'
+                extraCssText: 'width:50px;'
             },
             color: ['#2DBAE4', '#FD8F38', '#D6243C'],
             series: [
@@ -114,7 +120,6 @@ export default class VillageList extends React.Component {
                             show: true,
                             textStyle: {
                                 fontSize: '12',
-                                // fontWeight: 'bold'
                             }
                         }
                     },
@@ -146,24 +151,29 @@ export default class VillageList extends React.Component {
                     </TouchableOpacity>
                 </View>
                 <View style={{ backgroundColor: "#fff", height: 150, width: width, flexDirection: "row", alignItems: "center" }}>
-                    <View style={{ width: width - 150 }}>
-                        <View style={{ flexDirection: "row", marginLeft: 10 }}>
-                            <View>
-                                <Text style={this.props.status === 1 ? { fontSize: 26, color: "#2E93DD" } : this.props.status === 2 ? { fontSize: 26, color: "#FB9823" } : this.props.status === 3 ? { fontSize: 26, color: "#D6243C" } : { fontSize: 26, color: "#333" }}>{this.props.avg_temp}<Text style={{ fontSize: 20 }}>℃</Text></Text>
-                                <Text style={{ color: "#999999", fontSize: 12, marginLeft: 5 }}>平均温度</Text>
+                    <View style={{ width: width - 160 }}>
+                        <View style={{flex: 1, flexDirection: "column", justifyContent: 'space-around'}}>
+                            <View style={{ flexDirection: "row", alignItems: 'flex-end', marginLeft: 15}}>
+                                <View style={{width: 100}}>
+                                    <Text style={this.props.status === 1 ? { fontSize: 24, color: "#2E93DD" } : this.props.status === 2 ? { fontSize: 24, color: "#FB9823" } : this.props.status === 3 ? { fontSize: 24, color: "#D6243C" } : { fontSize: 24, color: "#333" }}>{this.props.avg_temp}<Text style={{ fontSize: 20 }}>℃</Text></Text>
+                                    <Text style={{ color: "#999999", fontSize: 12}}>平均温度</Text>
+                                </View>
+                                <View style={{marginTop: 7 }}>
+                                    <Text><Text style={{ fontSize: 18 }}>{this.props.user_total}</Text> 户</Text>
+                                    <Text style={{ color: "#999999", fontSize: 12 }}>小区住户数量</Text>
+                                </View>
                             </View>
-                            <View style={{ marginLeft: 30, marginTop: 7 }}>
-                                <Text><Text style={{ fontSize: 20 }}>{this.props.user_total}</Text>户</Text>
-                                <Text style={{ color: "#999999", fontSize: 12 }}>小区住户</Text>
+                            <View style={{flexDirection: "row", alignItems: 'center', marginLeft: 15}}>
+                                <Text style={{width: 100, color: "#999999", fontSize: 12}}>低电量用户</Text>
+                                <View>
+                                    <Text style={{color: "#999999", fontSize: 20, color: '#D6243C'}} onPress={() => this.props.navigator.push({component: BatteryLow, passProps: {communityId: this.props.communityId}})}>36<Text style={{fontSize: 12, color: '#D6243C'}}> 户</Text></Text>
+                                </View>
                             </View>
                         </View>
                     </View>
-                    <View style={{ width: 150}}>
+                    <View style={{ width: 160}}>
                         <Echarts option={option} height={150}/>
                     </View>
-                    {/* <View style={{ width: 150, backgroundColor: "#777" }}>
-                        <Echarts option={option} height={150} backgroundColor="rgba(0,0,0,1)" />
-                    </View> */}
                 </View>
                 {this.state.floorList.length > 0 ?
                     <ListView

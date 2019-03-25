@@ -44,11 +44,10 @@ export default class ValvesHistory extends React.Component {
         AsyncStorage.getItem("access_token", (errs, result) => {
             if(!errs) {
                 let uri = `${Constants.serverSite3}/v2/gateway?valves=1&heat_user_id=${this.props.heat_user_id}&page_size=${this.state.page_size}&page_number=${this.state.page_number}&access_token=${result}`;
-                // console.log(uri)
                 fetch(uri)
                     .then((response) => response.json()) 
                     .then((responseJson) => {
-                        console.log(responseJson);
+                        // console.log(responseJson);
                         if(responseJson.code === 200) {
                             responseJson.result.rows.forEach(row => {
                                 rows.push(row);
