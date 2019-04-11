@@ -360,7 +360,7 @@ export default class HeatUserDetails extends React.Component {
           <View style={{ width: 30 }} />
           <TouchableOpacity onPress={() =>this.setState({showList: !this.state.showList})}>
             {
-              this.state.heat_user_device_temp_id && this.state.heat_user_device_valve_id ?
+              this.state.heat_user_device_temp_id || this.state.heat_user_device_valve_id ?
                 <Image style={{ width: 25, height: 20, marginRight: 25, marginTop: 5 }} resizeMode="contain" source={require('../icons/all_bd.png')} /> :
                 <Image style={{ width: 25, height: 20, marginRight: 25, marginTop: 5 }} resizeMode="contain" source={require('../icons/bangding.png')} />
             }
