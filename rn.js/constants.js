@@ -12,7 +12,7 @@ export default {
   cameraSite: "http://114.215.46.56:17719",
   // indoorSite: "http://192.168.1.133:7001",
   indoorSite:"http://114.215.46.56:17741",
-  version: 1.18,
+  version: 1.19,
   alarmSum: 0,
   login(userName, passWord, success, fail) {
     AsyncStorage.setItem("userName", userName);
