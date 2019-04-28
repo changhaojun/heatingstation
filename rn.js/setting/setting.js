@@ -105,7 +105,7 @@ export default class Setting extends React.Component {
                         </View>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.lineView}  onPress={()=>this.props.checkUpdate()}>
+                    <TouchableOpacity style={styles.lineView}  onPress={()=>{}}>
                         <Image style={styles.imageItem} source={require('../icons/version_icon.png')} />
                         <Text style={styles.textItem} >检查更新（当前版本 V{Constants.version}）</Text>
                     </TouchableOpacity>

@@ -111,9 +111,10 @@ export default class Warn extends React.Component {
   getCameraData() {
     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     const _this = this;
+    console.log(_this.props.station_id)
     AsyncStorage.getItem("access_token", function (errs, result) {
       if (!errs) {
-        var uri = Constants.cameraSite+"/v2/alarmCarame?access_token="+result+"&pageSize=15&pageNumber=" + page;
+        var uri = Constants.cameraSite+"/v2/alarmCarame?access_token=5caeb34715bbd80006f3158e&pageSize=15&pageNumber=" + page;
         console.log(uri)
         fetch(uri)
           .then((response) => response.json())

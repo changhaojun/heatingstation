@@ -72,7 +72,7 @@ export default class WarnDetails extends React.Component {
     const _this = this;
     AsyncStorage.getItem("access_token", function (errs, result) {
       if (!errs) {
-        var uri = Constants.cameraSite + "/v2/alarmCarame/" + _this.props.data.alarm_camera_id + "?access_token=" + result;
+        var uri = Constants.cameraSite + "/v2/alarmCarame/" + _this.props.data.alarm_camera_id + "?access_token=5caeb34715bbd80006f3158e";
         fetch(uri)
           .then((response) => response.json())
           .then((responseJson) => {
@@ -144,7 +144,7 @@ export default class WarnDetails extends React.Component {
     console.log(width, height)
   }
   render() {
-    let imgUrl = Constants.cameraSite + "/public/alarm_image/" + this.props.data.img_url;
+    let imgUrl = "http://121.42.253.149:8888/" + this.props.data.img_url;
     return (
       <View style={styles.all}>
         <View style={styles.navView}>
@@ -156,7 +156,7 @@ export default class WarnDetails extends React.Component {
         </View>
         <View style={{ height: 20, backgroundColor: "#434b59", }}><Text style={styles.topText}>{this.props.data.alarm_time}  {this.props.data.camera_name}</Text></View>
         {/* 以下写在布局中的样式不能写在StyleSheet中 */}
-        <View style={{ height: width * 9 / 16, width: width }}>
+        {/* <View style={{ height: width * 9 / 16, width: width }}>
           <Video source={{ uri: "http://121.42.253.149:8099/59dc9da9f25ae817946efb359-2018082811.mp4" }}   // Can be a URL or a local file.
             ref={(ref) => { this.player = ref }}
             onFullscreenPlayerWillPresent={() => { console.log("WillPresent"); }}
@@ -195,6 +195,9 @@ export default class WarnDetails extends React.Component {
               </View>
             </TouchableWithoutFeedback>
           </ImageBackground>
+        </View> */}
+        <View style={{ height: width * 9 / 16, width: width }}>
+          <ImageBackground style={{ flex: 1, marginTop: -width * 9 / 16 }} source={{ uri: imgUrl }} ></ImageBackground>
         </View>
         {/* 以上写在布局中的样式不能写在StyleSheet中 */}
         <View style={styles.topView}>

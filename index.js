@@ -39,7 +39,7 @@ export default class WisdomHeating extends Component {
   }
   componentDidMount() {
     if (Platform.OS !== 'ios') {
-      this.checkUpdate(true);
+      // this.checkUpdate(true);
       const _this = this;
       JPushModule.initPush();
       JPushModule.notifyJSDidLoad((resultCode) => { });
@@ -78,48 +78,7 @@ export default class WisdomHeating extends Component {
   }
   // noUpdateShow为true时不显示无更新提示
   checkUpdate(noUpdateShow) {
-    var uri = Constants.serverSite + "/v1_0_0/appVersion";
-    fetch(uri)
-      .then((response) => response.json())
-      .then((responseJson) => {
-        if (Constants.version != responseJson.version_number) {
-          const appUpdate = new AppUpdate({
-            apkUrl: responseJson.download_address,
-            downloadApkStart: () => { this.setState({ updateModal: true }) },
-            downloadApkProgress: (progress) => { this.setState({ downloaded: progress }) },
-            downloadApkEnd: () => { this.setState({ updateModal: false }) },
-            onError: () => { console.log("downloadApkError") }
-          });
-          NetInfo.getConnectionInfo().then((connectionInfo) => {
-            let net = connectionInfo.type == 'wifi' ? 'wifi' : '流量';
-            Alert.alert(
-              responseJson.force ? "重要更新" : "更新提示" + '（当前处于' + net + '环境）',
-              responseJson.version_introduce,
-              [
-                { text: '下次再说', onPress: () => { } },
-                { text: '立即更新', onPress: () => appUpdate.downloadApk() }
-              ],
-              { cancelable: false }
-            );
-          });
-
-        } else {
-          if (!noUpdateShow) {
-            Alert.alert(
-              '提示',
-              "当前已是最新版本",
-            );
-          }
-        }
-
-      })
-      .catch((error) => {
-        console.error(error)
-        Alert.alert(
-          '提示',
-          '网络连接错误，请检查网络，或联系客服人员',
-        );
-      });
+    
   }
   saveLog(router) {
     AsyncStorage.getItem("user_id", (errs, user_id) => {

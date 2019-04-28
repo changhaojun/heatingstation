@@ -100,7 +100,7 @@ export default class Login extends React.Component {
       <View style={styles.all}>
         {/*顶部放置Logo的View*/}
         <View style={styles.topView}>
-          <Image source={require('./images/login_logo.png')} style={styles.logo} />
+          <Image source={require('./images/login_logo.png')} resizeMode="contain" style={styles.logo} />
           <Text style={styles.logoTitle}>智慧供热系统</Text>
         </View>
 
@@ -164,7 +164,7 @@ export default class Login extends React.Component {
           <TouchableOpacity activeOpacity={0.7} onPress={this.login.bind(this)} style={styles.buttonView}>
             <Text style={styles.buttonText}>登录</Text>
           </TouchableOpacity>
-          <Text style={styles.companyInfoText}>北京智信远景软件技术有限公司</Text>
+          {/* <Text style={styles.companyInfoText}>北京智信远景软件技术有限公司</Text> */}
         </View>
       </View>
     )
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 80,
-    height: 53,
+    height: 80,
 
   },
   logoTitle: {
