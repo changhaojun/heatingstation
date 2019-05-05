@@ -71,12 +71,12 @@ export default class Launch extends React.Component {
       <View style={styles.all}>
         {/*顶部放置Logo的View*/}
         <View style={styles.topView}>
-          <Image source={require('./images/login_logo.png')} style={styles.logo} />
+          <Image source={require('./images/login_logo.png')} style={styles.logo} resizeMode="contain" />
           <Text style={styles.logoTitle}>智慧供热系统</Text>
         </View>
 
         {/*底部是放置登录按钮和公司信息的View*/}
-        <Text style={styles.companyInfoText}>北京智信远景软件技术有限公司</Text>
+        <Text style={styles.companyInfoText}>福建亿林节能设备股份有限公司</Text>
       </View>
     )
   }
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 80,
-    height: 53,
+    height: 80,
 
   },
   logoTitle: {
