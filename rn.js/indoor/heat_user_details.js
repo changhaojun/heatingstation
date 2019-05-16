@@ -461,7 +461,7 @@ export default class HeatUserDetails extends React.Component {
               </TouchableOpacity>
             </View>
           </View>
-          {/* <View style={{backgroundColor: "#fff", justifyContent: 'center', height: 80, paddingLeft: 25, paddingRight: 25, borderColor: '#000', borderWidth: 2}}>
+          <View style={{backgroundColor: "#fff", justifyContent: 'center', height: 80, paddingLeft: 25, paddingRight: 25, borderColor: '#000', borderWidth: 2}}>
             {
               this.state.heat_user_device_valve_id === null ?
                 <View style={{flexDirection: "row", height: 30}}>
@@ -489,8 +489,8 @@ export default class HeatUserDetails extends React.Component {
                 </View>
               </View>
             }
-          </View> */}
-          {
+          </View>
+          {/* {
             <View style={{backgroundColor: "#fff", paddingLeft: 25, paddingRight: 25, paddingBottom: 20, paddingTop: 20, flexDirection: "row", justifyContent: 'space-between', alignItems:"center"}}>
               <View style={{flexDirection: "row"}}><Text>供水温度</Text><Text> 50</Text></View>
               <View style={{flexDirection: "row"}}><Text>回水温度</Text><Text> 20</Text></View>
@@ -502,8 +502,8 @@ export default class HeatUserDetails extends React.Component {
                 style={[this.state.valve_value || this.state.valve_value == '0' ? {color: '#2A9ADC'} : {color: '#666'},{height: 30, borderColor: '#ccc', borderWidth: 1, padding: 0, paddingLeft: 10, paddingRight: 10, width: '80%'}]}
                 onChangeText={(valve_value) => this.setState({valve_value})}
                 keyboardType='numeric'
-                editable={this.state.heat_user_device_valve_id == null ? false : true}
-                value={this.state.heat_user_device_valve_id !== null ? this.state.valve_value.toString(): ''}
+                editable={this.state.heat_user_device_valve_id == 'null' ? false : true}
+                value={this.state.heat_user_device_valve_id !== 'null' ? this.state.valve_value.toString(): ''}
               />
               <Text style={[this.state.valve_value || this.state.valve_value == '0' ? {color: '#2A9ADC'} : {color: '#cccccc'}, {marginRight: 20}]}> %</Text>
               {
@@ -512,7 +512,7 @@ export default class HeatUserDetails extends React.Component {
                   <Text style={{color: '#cccccc'}}>下发</Text>
               }
             </View>
-          }
+          } */}
           
 
           <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 13, marginTop: 20}}>
