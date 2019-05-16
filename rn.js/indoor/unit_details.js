@@ -85,7 +85,7 @@ export default class UnitDetails extends React.Component {
                   }
                 })
                 .catch((error) => {
-                  console.error(error);
+                  // console.error(error);
                 });
             }
           })
