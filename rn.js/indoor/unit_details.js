@@ -116,13 +116,13 @@ export default class UnitDetails extends React.Component {
         heat_user_id: data[index].heat_user_id,
         user_number: data[index].user_number,
         addr: this.props.communityName + this.props.buildName + this.props.unitName + "单元",
-        temp_value: null,
-        temp_voltage: null,
-        heat_user_device_temp_id: null,
-        valve_value: null,
-        valve_voltage: null,
-        heat_user_device_valve_id: null,
-        valve_device_object_id: ''
+        // temp_value: null,
+        // temp_voltage: null,
+        // heat_user_device_temp_id: null,
+        // valve_value: null,
+        // valve_voltage: null,
+        // heat_user_device_valve_id: null,
+        // valve_device_object_id: ''
       }
       if(data[index].temp) {
         params.heat_user_device_temp_id = data[index].temp.heat_user_device_id;

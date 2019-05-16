@@ -33,15 +33,15 @@ export default class HeatUserDetails extends React.Component {
       modal: false,
       user_name:"",
       info: [],
-      heat_user_device_temp_id:this.props.heat_user_device_temp_id,
-      heat_user_device_valve_id: this.props.heat_user_device_valve_id,
-      valve_device_object_id: this.props.valve_device_object_id,
+      heat_user_device_temp_id: null,
+      heat_user_device_valve_id: null,
+      valve_device_object_id: null,
 
       showList: false,
-      temp_value: this.props.temp_value,
-      temp_voltage: this.props.temp_voltage,
-      valve_value: this.props.valve_value,
-      valve_voltage: this.props.valve_voltage,
+      temp_value: null,
+      temp_voltage: null,
+      valve_value: null,
+      valve_voltage: null,
       valve_voltage_describe: '',
       showAlert: false,
       alertText: '',
@@ -59,15 +59,19 @@ export default class HeatUserDetails extends React.Component {
       promptTemp: '加载中……',
       promptValve: '加载中……',
       end_time:"",
-      start_time:""
+      start_time:"",
+
+      supplyTemp: null,
+      returnTemp: null,
+      temp: []
     };
-    console.log('this.props:', this.props.props.unitId)
-    console.log('this.valve_value:', typeof this.props.valve_value)
+    // console.log('this.props:', this.props.props.unitId)
   }
   componentDidMount() {
     this.getInfo();
     this.getDate();
     this.getDatas();
+    this.getDeviceData();
   }
   componentWillMount() {
     this.setTitle = DeviceEventEmitter.addListener('refresh_', (value)=>{
@@ -212,7 +216,6 @@ export default class HeatUserDetails extends React.Component {
         }
       })
       .catch((e) => {
-        // console.log(e)
         Alert.alert('提示', "网络连接错误,请检查您的的网络或联系我们")
       });
   }
@@ -222,7 +225,6 @@ export default class HeatUserDetails extends React.Component {
   }
   // 户内阀开度下发
   alertGateway(value) {
-    console.log(value)
     this.setState({
       showAlert: true,
       alertText: '确定下发户内阀开度么？',
@@ -241,7 +243,6 @@ export default class HeatUserDetails extends React.Component {
           device_object_id: this.state.valve_device_object_id,
           tap_open: this.state.tap_open
         }
-        // console.log(bodyData);
         let uri = `${Constants.serverSite3}/v2/gateway?access_token=${result}`;
         fetch(uri, {
           method: 'POST',
@@ -350,6 +351,66 @@ export default class HeatUserDetails extends React.Component {
   skip() {
     this.props.navigator.pop();
     DeviceEventEmitter.emit('refresh');
+  }
+
+  // 获取设备数据
+  getDeviceData() {
+    const uri = `${Constants.serverSite1}/v1/device?heat_user_id=${this.props.heat_user_id}`;
+    console.log(uri);
+    fetch(uri)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        if(responseJson.code === 200) {
+          const {rows} = responseJson.result;
+          rows.forEach(item => {
+            if(item.device_type === 1) {
+              this.setState({heat_user_device_temp_id: item.heat_user_device_id});
+              item.dataList.forEach(data => {
+                if('data_value' in data) {
+                  if(data.tag_name.includes('室内温度')) {
+                    this.setState({temp_value: data.data_value});
+                  }
+                  if(data.tag_name.includes('温度计电压')) {
+                    this.setState({temp_voltage: data.data_value});
+                  }
+                }
+              })
+            }
+            if(item.device_type === 2) {
+              const temp = [];
+              this.setState({
+                heat_user_device_valve_id: item.heat_user_device_id,
+                valve_device_object_id: item.device_object_id
+              });
+              item.dataList.forEach(data => {
+                if('data_value' in data) {
+                  if(data.tag_name.includes('电动阀开度')) {
+                    this.setState({valve_value: data.data_value});
+                  }
+                  if(data.tag_name.includes('电动阀电压')) {
+                    this.setState({valve_voltage: data.data_value});
+                  }
+                  if(data.tag_name.includes('供水温度')) {
+                    this.setState({supplyTemp: data.data_value});
+                    temp.push(data);
+                  }
+                  if(data.tag_name.includes('回水温度')) {
+                    this.setState({returnTemp: data.data_value});
+                    temp.push(data);
+                  }
+                  this.setState({temp})
+                }
+              })
+            }
+          })
+        } 
+      })
+      .catch((error) => {
+        Alert.alert(
+          '提示',
+          '网络连接错误，获取设备历史数据失败',
+        );
+      })
   }
 
   render() {
@@ -491,28 +552,32 @@ export default class HeatUserDetails extends React.Component {
             }
           </View> */}
           {
-            <View style={{backgroundColor: "#fff", paddingLeft: 25, paddingRight: 25, paddingBottom: 20, paddingTop: 20, flexDirection: "row", justifyContent: 'space-between', alignItems:"center"}}>
-              <View style={{flexDirection: "row"}}><Text>供水温度</Text><Text> 50</Text></View>
-              <View style={{flexDirection: "row"}}><Text>回水温度</Text><Text> 20</Text></View>
-            </View>
+            this.state.temp.length > 0 ? 
+              <View style={{backgroundColor: "#fff", paddingLeft: 25, paddingRight: 25, paddingTop: 20, flexDirection: "row", justifyContent: 'space-between', alignItems:"center"}}>
+                <View style={{flexDirection: "row"}}><Text>供水温度</Text><Text style={{marginLeft: 5}}> {this.state.supplyTemp === null ? '-' : this.state.supplyTemp}℃</Text></View>
+                <View style={{flexDirection: "row"}}><Text>回水温度</Text><Text style={{marginLeft: 5}}> {this.state.returnTemp === null ? '-' : this.state.returnTemp}℃</Text></View>
+              </View> : <View></View>
           }
-          {
-            <View style={{backgroundColor: "#fff", paddingLeft: 25, paddingRight: 25, paddingBottom: 20, paddingTop: 20, flexDirection: "row", alignItems:"center"}}>
-              <TextInput
-                style={[this.state.valve_value || this.state.valve_value == '0' ? {color: '#2A9ADC'} : {color: '#666'},{height: 30, borderColor: '#ccc', borderWidth: 1, padding: 0, paddingLeft: 10, paddingRight: 10, width: '80%'}]}
-                onChangeText={(valve_value) => this.setState({valve_value})}
-                keyboardType='numeric'
-                editable={this.state.heat_user_device_valve_id == null ? false : true}
-                value={this.state.heat_user_device_valve_id !== null ? this.state.valve_value.toString(): ''}
-              />
-              <Text style={[this.state.valve_value || this.state.valve_value == '0' ? {color: '#2A9ADC'} : {color: '#cccccc'}, {marginRight: 20}]}> %</Text>
-              {
-                this.state.valve_value || this.state.valve_value == '0' ?
-                  <TouchableOpacity onPress={() => this.alertGateway(this.state.valve_value)}><Text>下发</Text></TouchableOpacity>: 
-                  <Text style={{color: '#cccccc'}}>下发</Text>
-              }
-            </View>
-          }
+          
+          <View style={{backgroundColor: "#fff", paddingLeft: 25, paddingRight: 25, paddingBottom: 20, paddingTop: 20, flexDirection: "row", alignItems:"center"}}>
+            <TextInput
+              ref='valveInput'
+              style={[this.state.valve_value || this.state.valve_value == '0' ? {color: '#2A9ADC'} : {color: '#666'},{height: 30, borderColor: '#ccc', borderWidth: 1, padding: 0, paddingLeft: 10, width: width - 130}]}
+              onChangeText={(valve_value) => this.setState({valve_value})}
+              keyboardType='numeric'
+              editable={this.state.heat_user_device_valve_id === null ? false : true}
+              value={this.state.heat_user_device_valve_id !== null && this.state.valve_value ? this.state.valve_value.toString() : ''}
+            />
+            <Text style={[this.state.valve_value || this.state.valve_value == '0' ? {color: '#2A9ADC'} : {color: '#cccccc'}, {marginRight: 15}]}> %</Text>
+            {
+              this.state.valve_value || this.state.valve_value == '0' ?
+                <TouchableOpacity onPress={() => this.alertGateway(this.state.valve_value)}>
+                  <Text style={{width: 50, textAlign: 'center'}}>下发</Text>
+                </TouchableOpacity>: 
+                <Text style={{color: '#cccccc', width: 50, textAlign: 'center'}}>下发</Text>
+            }
+          </View>
+          
           
 
           <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 13, marginTop: 20}}>
