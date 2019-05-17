@@ -562,20 +562,33 @@ export default class HeatUserDetails extends React.Component {
           <View style={{backgroundColor: "#fff", paddingLeft: 25, paddingRight: 25, paddingBottom: 20, paddingTop: 20, flexDirection: "row", alignItems:"center"}}>
             <TextInput
               ref='valveInput'
-              style={[this.state.valve_value || this.state.valve_value == '0' ? {color: '#2A9ADC'} : {color: '#666'},{height: 30, borderColor: '#ccc', borderWidth: 1, padding: 0, paddingLeft: 10, width: width - 130}]}
-              onChangeText={(valve_value) => this.setState({valve_value})}
+              style={[this.state.valve_value || this.state.valve_value == '0' ? {color: '#2A9ADC'} : {color: '#666'},{height: 30, borderColor: '#ccc', borderWidth: 1, padding: 0, paddingLeft: 10, width: width - 200}]}
+              onChangeText={(value) => {
+                  this.setState({valve_value: value})
+                }
+              }
+              onBlur={() => {
+                const val = Number(this.state.valve_value)
+                if(val >= 0 && val<=100) {
+                }else {
+                  Alert.alert('提示', '请输入0-100之间的数字')
+                }
+              }}
+              maxLength={3}
               keyboardType='numeric'
               editable={this.state.heat_user_device_valve_id === null ? false : true}
               value={this.state.valve_value || this.state.valve_value == '0' ? this.state.valve_value.toString() : ''}
             />
-            <Text style={[this.state.valve_value || this.state.valve_value == '0' ? {color: '#2A9ADC'} : {color: '#cccccc'}, {marginRight: 15}]}> %</Text>
-            {
-              this.state.valve_value || this.state.valve_value == '0' ?
-                <TouchableOpacity onPress={() => this.alertGateway(this.state.valve_value)}>
-                  <Text style={{width: 50, textAlign: 'center'}}>下发</Text>
-                </TouchableOpacity>: 
-                <Text style={{color: '#cccccc', width: 50, textAlign: 'center'}}>下发</Text>
-            }
+            <Text style={[this.state.valve_value || this.state.valve_value == '0' ? {color: '#2A9ADC'} : {color: '#cccccc'}, {marginRight: 35}]}> %</Text>
+            <View style={{width: 100,  height: 30, backgroundColor: '#2A9ADC', color: '#fff', justifyContent: 'center', borderRadius: 15}}>
+              {
+                this.state.valve_value || this.state.valve_value == '0' ?
+                  <TouchableOpacity onPress={() => this.alertGateway(this.state.valve_value)}>
+                    <Text style={{color: '#fff', textAlign: 'center'}}>下发</Text>
+                  </TouchableOpacity>: 
+                  <Text style={{color: '#fff', textAlign: 'center'}}>下发</Text>
+              }
+            </View>
           </View>
           
           
