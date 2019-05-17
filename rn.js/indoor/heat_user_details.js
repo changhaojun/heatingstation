@@ -580,7 +580,7 @@ export default class HeatUserDetails extends React.Component {
               value={this.state.valve_value || this.state.valve_value == '0' ? this.state.valve_value.toString() : ''}
             />
             <Text style={[this.state.valve_value || this.state.valve_value == '0' ? {color: '#2A9ADC'} : {color: '#cccccc'}, {marginRight: 35}]}> %</Text>
-            <View style={{width: 100,  height: 30, backgroundColor: '#2A9ADC', color: '#fff', justifyContent: 'center', borderRadius: 15}}>
+            <View style={[this.state.valve_value || this.state.valve_value == '0' ? {backgroundColor: '#2A9ADC'} : {backgroundColor: '#cccccc'},{width: 100,  height: 30,color: '#fff', justifyContent: 'center', borderRadius: 15}]}>
               {
                 this.state.valve_value || this.state.valve_value == '0' ?
                   <TouchableOpacity onPress={() => this.alertGateway(this.state.valve_value)}>
