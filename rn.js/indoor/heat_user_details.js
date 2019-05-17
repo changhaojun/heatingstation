@@ -356,7 +356,7 @@ export default class HeatUserDetails extends React.Component {
   // 获取设备数据
   getDeviceData() {
     const uri = `${Constants.serverSite1}/v1/device?heat_user_id=${this.props.heat_user_id}`;
-    console.log(uri);
+    // console.log(uri);
     fetch(uri)
       .then((response) => response.json())
       .then((responseJson) => {
@@ -566,7 +566,7 @@ export default class HeatUserDetails extends React.Component {
               onChangeText={(valve_value) => this.setState({valve_value})}
               keyboardType='numeric'
               editable={this.state.heat_user_device_valve_id === null ? false : true}
-              value={this.state.heat_user_device_valve_id !== null && this.state.valve_value ? this.state.valve_value.toString() : ''}
+              value={this.state.valve_value || this.state.valve_value == '0' ? this.state.valve_value.toString() : ''}
             />
             <Text style={[this.state.valve_value || this.state.valve_value == '0' ? {color: '#2A9ADC'} : {color: '#cccccc'}, {marginRight: 15}]}> %</Text>
             {
