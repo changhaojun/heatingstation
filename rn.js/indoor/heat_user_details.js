@@ -522,35 +522,6 @@ export default class HeatUserDetails extends React.Component {
               </TouchableOpacity>
             </View>
           </View>
-          {/* <View style={{backgroundColor: "#fff", justifyContent: 'center', height: 80, paddingLeft: 25, paddingRight: 25, borderColor: '#000', borderWidth: 2}}>
-            {
-              this.state.heat_user_device_valve_id === null ?
-                <View style={{flexDirection: "row", height: 30}}>
-                  <View style={styles.valvesView}><Text style={styles.valvesTextColor}>关闭</Text></View>
-                  <View style={styles.valvesView}><Text style={styles.valvesTextColor}>25%</Text></View>
-                  <View style={styles.valvesView}><Text style={styles.valvesTextColor}>50%</Text></View>
-                  <View style={styles.valvesView}><Text style={styles.valvesTextColor}>75%</Text></View>
-                  <View style={[styles.valvesView, {borderRightWidth: 1}]}><Text style={styles.valvesTextColor}>100%</Text></View>
-              </View> :
-              <View style={{flexDirection: "row", height: 30}}>
-                <View style={[styles.valvesView, this.state.valve_value===0 ? styles.styleView: {}]}>
-                  <TouchableOpacity onPress={() => this.alertGateway(0)}><Text style={this.state.valve_value===0 ? {color: '#2A9ADC'}:{}}>关闭</Text></TouchableOpacity>
-                </View>
-                <View style={[styles.valvesView, (this.state.valve_value>0 && this.state.valve_value<=25) ? styles.styleView: {}]}>
-                  <TouchableOpacity onPress={() => this.alertGateway(25)}><Text style={(this.state.valve_value>0 && this.state.valve_value<=25) ? {color: '#2A9ADC'} : {}}>25%</Text></TouchableOpacity>
-                </View>
-                <View style={[styles.valvesView, (this.state.valve_value>25 && this.state.valve_value<=50) ? styles.styleView: {}]}>
-                  <TouchableOpacity onPress={() => this.alertGateway(50)}><Text style={(this.state.valve_value>25 && this.state.valve_value<=50) ? {color: '#2A9ADC'} : {}}>50%</Text></TouchableOpacity>
-                </View>
-                <View style={[styles.valvesView, (this.state.valve_value>50 && this.state.valve_value<=75) ? styles.styleView: {}]}>
-                  <TouchableOpacity onPress={() => this.alertGateway(75)}><Text style={(this.state.valve_value>50 && this.state.valve_value<=75) ? {color: '#2A9ADC'} : {}}>75%</Text></TouchableOpacity>
-                </View>
-                <View style={[styles.valvesView, {borderRightWidth: 1}, (this.state.valve_value>75 && this.state.valve_value<=100) ? styles.styleView: {}]}>
-                  <TouchableOpacity onPress={() => this.alertGateway(100)}><Text style={(this.state.valve_value>75 && this.state.valve_value<=100) ? {color: '#2A9ADC'} : {}}>100%</Text></TouchableOpacity>
-                </View>
-              </View>
-            }
-          </View> */}
           {
             this.state.temp.length > 0 ? 
               <View style={{backgroundColor: "#fff", paddingLeft: 25, paddingRight: 25, paddingTop: 20, flexDirection: "row", justifyContent: 'space-between', alignItems:"center"}}>
@@ -558,7 +529,6 @@ export default class HeatUserDetails extends React.Component {
                 <View style={{flexDirection: "row"}}><Text>回水温度</Text><Text style={{marginLeft: 5}}> {this.state.returnTemp === null ? '-' : this.state.returnTemp}℃</Text></View>
               </View> : <View></View>
           }
-          
           <View style={{backgroundColor: "#fff", paddingLeft: 25, paddingRight: 25, paddingBottom: 20, paddingTop: 20, flexDirection: "row", alignItems:"center"}}>
             <TextInput
               ref='valveInput'
