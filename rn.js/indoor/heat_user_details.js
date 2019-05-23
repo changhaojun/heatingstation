@@ -15,7 +15,8 @@ import {
   ImageBackground,
   ScrollView,
   TextInput,
-  DeviceEventEmitter
+  DeviceEventEmitter,
+  Slider
 } from 'react-native';
 import IndoorChart from './indoor_chart'
 import Constants from './../constants';
@@ -41,6 +42,7 @@ export default class HeatUserDetails extends React.Component {
       temp_value: null,
       temp_voltage: null,
       valve_value: null,
+      copy_valve_value:null,
       valve_voltage: null,
       valve_voltage_describe: '',
       showAlert: false,
@@ -72,6 +74,9 @@ export default class HeatUserDetails extends React.Component {
     this.getDate();
     this.getDatas();
     this.getDeviceData();
+    this.setState({
+      copy_valve_value:this.state.valve_value
+    })
   }
   componentWillMount() {
     this.setTitle = DeviceEventEmitter.addListener('refresh_', (value)=>{
@@ -221,7 +226,8 @@ export default class HeatUserDetails extends React.Component {
   }
   
   showAlert() {
-    this.setState({showAlert: false})
+    this.setState({showAlert: false,valve_value:this.state.copy_valve_value})
+
   }
   // 户内阀开度下发
   alertGateway(value) {
@@ -260,7 +266,7 @@ export default class HeatUserDetails extends React.Component {
               succText: '调控记录查看下发结果'
             });
             setTimeout(() => {
-              this.setState({relieveAlert: false, valve_value: this.state.tap_open});
+              this.setState({relieveAlert: false, valve_value: this.state.tap_open,copy_valve_value:this.state.tap_open});
             }, 3000);
             DeviceEventEmitter.emit('refresh');
           }
@@ -385,7 +391,7 @@ export default class HeatUserDetails extends React.Component {
               item.dataList.forEach(data => {
                 if('data_value' in data) {
                   if(data.tag_name.includes('电动阀开度')) {
-                    this.setState({valve_value: data.data_value});
+                    this.setState({valve_value: data.data_value,copy_valve_value:data.data_value});
                   }
                   if(data.tag_name.includes('电动阀电压')) {
                     this.setState({valve_voltage: data.data_value});
@@ -529,8 +535,53 @@ export default class HeatUserDetails extends React.Component {
                 <View style={{flexDirection: "row"}}><Text>回水温度</Text><Text style={{marginLeft: 5}}> {this.state.returnTemp === null ? '-' : this.state.returnTemp}℃</Text></View>
               </View> : <View></View>
           }
-          <View style={{backgroundColor: "#fff", paddingLeft: 25, paddingRight: 25, paddingBottom: 20, paddingTop: 20, flexDirection: "row", alignItems:"center"}}>
+          <View style={{backgroundColor: "#fff", paddingRight: 25, paddingBottom: 20, paddingTop: 10, flexDirection: "row", alignItems:"center"}}>
+          <ImageBackground style={{ width: width, height: width * 0.42, paddingBottom: 15,paddingLeft:25,paddingRight:40,paddingTop:15}} resizeMode="contain" source={require('../icons/value-bg.png')}>
+            <View style={{width:width-60,height:40,flexDirection:"row",justifyContent:'space-between'}}>
+              <Text>户内阀开度</Text> 
+              {
+                this.state.valve_value || this.state.valve_value == '0' ?
+                  <TouchableOpacity onPress={() => this.alertGateway(this.state.valve_value)}>
+                    <Text style={{color: '#2A9ADC', textAlign: 'center'}}>下发</Text>
+                  </TouchableOpacity>: 
+                  <Text style={{color: '#2A9ADC', textAlign: 'center'}}>下发</Text>
+              }
+            </View>
+            <View>
             <TextInput
+              ref='valveInput'
+              style={[this.state.heat_user_device_valve_id === null ?{borderColor: '#aaa',color: '#aaa'}:{borderColor: '#fc9c24',color: '#fc9c24'},{height: 30,textAlign:'center',borderWidth: 1, padding: 0,width:100,borderRadius:20,alignSelf:"center",flexDirection:"row"}]}
+              onChangeText={(value) => {
+                  this.setState({valve_value: Number(value)})
+                }
+              }
+              onBlur={() => {
+                const val = Number(this.state.valve_value)
+                if(val >= 0 && val<=100) {
+                }else {
+                  Alert.alert('提示', '请输入0-100之间的数字')
+                }
+              }}
+              maxLength={3}
+              keyboardType='numeric'
+              editable={this.state.heat_user_device_valve_id === null ? false : true}
+              value={this.state.heat_user_device_valve_id === null ?'未绑定' :this.state.valve_value||this.state.valve_value=='0'?  this.state.valve_value.toString():''}
+            />
+            <Slider
+                style={{width: width-60, height:20,marginTop:10}}
+                minimumValue={0}
+                maximumValue={100}
+                thumbTintColor="#ff9f54"
+                minimumTrackTintColor="#fc9c24"
+                maximumTrackTintColor="#aaa"
+                value={this.state.valve_value}
+                step={1}
+                disabled={this.state.heat_user_device_valve_id === null ? true : false}
+                onValueChange={(value)=>{this.setState({valve_value:value})}}
+              />
+            </View>
+          </ImageBackground>
+            {/* <TextInput
               ref='valveInput'
               style={[this.state.valve_value || this.state.valve_value == '0' ? {color: '#2A9ADC'} : {color: '#666'},{height: 30, borderColor: '#ccc', borderWidth: 1, padding: 0, paddingLeft: 10, width: width - 200}]}
               onChangeText={(value) => {
@@ -558,7 +609,7 @@ export default class HeatUserDetails extends React.Component {
                   </TouchableOpacity>: 
                   <Text style={{color: '#fff', textAlign: 'center'}}>下发</Text>
               }
-            </View>
+            </View> */}
           </View>
           
           
