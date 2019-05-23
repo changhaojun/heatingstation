@@ -74,9 +74,6 @@ export default class HeatUserDetails extends React.Component {
     this.getDate();
     this.getDatas();
     this.getDeviceData();
-    this.setState({
-      copy_valve_value:this.state.valve_value
-    })
   }
   componentWillMount() {
     this.setTitle = DeviceEventEmitter.addListener('refresh_', (value)=>{
@@ -391,6 +388,7 @@ export default class HeatUserDetails extends React.Component {
               item.dataList.forEach(data => {
                 if('data_value' in data) {
                   if(data.tag_name.includes('电动阀开度')) {
+                    console.log( data)
                     this.setState({valve_value: data.data_value,copy_valve_value:data.data_value});
                   }
                   if(data.tag_name.includes('电动阀电压')) {
@@ -548,25 +546,33 @@ export default class HeatUserDetails extends React.Component {
               }
             </View>
             <View>
-            <TextInput
-              ref='valveInput'
-              style={[this.state.heat_user_device_valve_id === null ?{borderColor: '#aaa',color: '#aaa'}:{borderColor: '#fc9c24',color: '#fc9c24'},{height: 30,textAlign:'center',borderWidth: 1, padding: 0,width:100,borderRadius:20,alignSelf:"center",flexDirection:"row"}]}
-              onChangeText={(value) => {
-                  this.setState({valve_value: Number(value)})
-                }
-              }
-              onBlur={() => {
-                const val = Number(this.state.valve_value)
-                if(val >= 0 && val<=100) {
-                }else {
-                  Alert.alert('提示', '请输入0-100之间的数字')
-                }
-              }}
-              maxLength={3}
-              keyboardType='numeric'
-              editable={this.state.heat_user_device_valve_id === null ? false : true}
-              value={this.state.heat_user_device_valve_id === null ?'未绑定' :this.state.valve_value||this.state.valve_value=='0'?  this.state.valve_value.toString():''}
-            />
+              <View style={{flexDirection:'row',justifyContent:"center"}}>
+                  <TextInput
+                    ref='valveInput'
+                    style={[this.state.heat_user_device_valve_id === null ?{borderColor: '#aaa',color: '#aaa'}:{borderColor: '#fc9c24',color: '#fc9c24'},{height: 30,textAlign:'center',borderWidth: 1, padding: 0,width:100,borderRadius:20,alignSelf:"center",flexDirection:"row"}]}
+                    onChangeText={(value) => {
+                        this.setState({valve_value: Number(value)})
+                      }
+                    }
+                    onBlur={() => {
+                      const val = Number(this.state.valve_value)
+                      if(val >= 0 && val<=100) {
+                      }else {
+                        Alert.alert('提示', '请输入0-100之间的数字')
+                        this.setState({valve_value:this.state.copy_valve_value})
+                      }
+                    }}
+                    maxLength={3}
+                    keyboardType='numeric'
+                    placeholder={this.state.heat_user_device_valve_id === null ?'未绑定' :this.state.valve_value||this.state.valve_value=='0'?  this.state.valve_value.toString():'-'}
+                    editable={this.state.heat_user_device_valve_id === null ? false : true}
+                    value={this.state.heat_user_device_valve_id === null ?'未绑定' :this.state.valve_value||this.state.valve_value=='0'?  this.state.valve_value.toString():''}
+                  />
+                  {
+                      this.state.heat_user_device_valve_id === null ?
+                      null:<Text style={[ {color: '#fc9c24',fontSize:18,marginTop:5}]}> %</Text>
+                  }
+              </View>
             <Slider
                 style={{width: width-60, height:20,marginTop:10}}
                 minimumValue={0}
