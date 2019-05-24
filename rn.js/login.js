@@ -164,7 +164,7 @@ export default class Login extends React.Component {
           <TouchableOpacity activeOpacity={0.7} onPress={this.login.bind(this)} style={styles.buttonView}>
             <Text style={styles.buttonText}>登录</Text>
           </TouchableOpacity>
-          <Text style={styles.companyInfoText}>福建亿林节能设备股份有限公司</Text>
+          <Text style={styles.companyInfoText}>北京智信远景软件技术有限公司</Text>
         </View>
       </View>
     )

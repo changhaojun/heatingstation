@@ -76,7 +76,7 @@ export default class Launch extends React.Component {
         </View>
 
         {/*底部是放置登录按钮和公司信息的View*/}
-        <Text style={styles.companyInfoText}>福建亿林节能设备股份有限公司</Text>
+        <Text style={styles.companyInfoText}>北京智信远景软件技术有限公司</Text>
       </View>
     )
   }
