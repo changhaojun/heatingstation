@@ -501,7 +501,7 @@ export default class HeatUserDetails extends React.Component {
           <View style={{ flexDirection: "row",flex: 1, justifyContent: 'space-between', alignItems:"center", marginBottom: 13 }}>
             <View style={{flexDirection: "row", alignItems:"center"}}>
               <View style={{ width: 3, height: 14, backgroundColor: "#2A9ADC", marginLeft: 12 }} />
-              <Text style={{ fontSize: 14, color: "#333333", marginLeft: 9 }}>户内阀开度</Text>
+              <Text style={{ fontSize: 14, color: "#333333", marginLeft: 9 }}>户内阀</Text>
               {
                 this.state.heat_user_device_valve_id === null ?
                 <Text style={{fontSize: 10, color: '#999'}}> (未绑定)</Text> : <Text></Text>
