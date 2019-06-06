@@ -93,7 +93,7 @@ export default class Home extends React.Component {
                         <Image style={{ width: 22, height: 22, marginLeft: 15, }} source={require('../icons/nav_flag.png')} />
                     </View>
                     <Text style={styles.topNameText}>首页</Text>
-                    <TouchableOpacity style={styles.topImage} onPress={()=>this.props.navigator.push({component: ScanningQR})}>
+                    <TouchableOpacity style={styles.topImage} onPress={()=>this.props.navigator.push({component: ScanningQR,name:"ScanningQR"})}>
                         <Image style={{ width: 22, height: 22, marginRight: 15, }} source={require('../icons/icon_scanning.png')} />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.topImage} onPress={this.openWarn.bind(this)}>

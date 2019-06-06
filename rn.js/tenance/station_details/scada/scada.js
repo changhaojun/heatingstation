@@ -54,7 +54,9 @@ export default class Scada extends React.Component {
                 AsyncStorage.getItem("access_token", function (errs, result) {
                     if (!errs) {
                         _this.setState({ access_token: result });
-                        _this.webview.postMessage("{type:'token',value:'" + result + "'}");
+                        if(_this.webview){
+                          _this.webview.postMessage("{type:'token',value:'" + result + "'}");
+                        }
                         _this.updateData();
                     }
                 });

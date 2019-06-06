@@ -15,6 +15,7 @@ import {
   Easing
 } from 'react-native';
 import StationDevice from '../tenance/station_details/archives/station_device_details'
+import StationDetails from './../tenance/station_details/station_tab';
 import Constants from '../constants';
 import { RNCamera } from 'react-native-camera';
 
@@ -41,29 +42,41 @@ export default class ScanningQR extends React.Component {
     });
   }
   scanning(e) {
-    if (!e.data.match("SD#")) {
-      if(!this.state.scanned){
-        Alert.alert("提示", "这不是设备二维码", [
-          { text: 'OK', onPress: () => this.setState({ scanned: false }) },
-        ]);
+    const currentRoutes = this.props.navigator.getCurrentRoutes();
+    if (currentRoutes[ currentRoutes.length - 1 ].name == "ScanningQR") {
+      if (!e.data.match("SD#") && !e.data.match("HS#")) {
+        if (!this.state.scanned) {
+          Alert.alert("提示", "不能识别该二维码", [
+            { text: 'OK', onPress: () => this.setState({ scanned: false }) },
+          ]);
+        }
+        this.setState({
+          scanned: true,
+        });
+        return;
       }
       this.setState({
         scanned: true,
+        torch: RNCamera.Constants.FlashMode.off,
       });
-      return;
-    }
-    this.setState({
-      scanned: true,
-      torch: RNCamera.Constants.FlashMode.off,
-    });
-    this.props.navigator.replace({
-      name: "StationDevice",
-      component: StationDevice,
-      passProps: {
-        device_id: e.data.split("#")[ 1 ]
+      if (e.data.match("HS#")) {
+        this.props.navigator.push({
+          component: StationDetails,
+          passProps: {
+            station_name: decodeURIComponent(e.data.split("#")[ 2 ]),
+            station_id: e.data.split("#")[ 1 ],
+          }
+        })
+      } else {
+        this.props.navigator.replace({
+          name: "StationDevice",
+          component: StationDevice,
+          passProps: {
+            device_id: e.data.split("#")[ 1 ]
+          }
+        })
       }
-    })
-    // }
+    }
   }
   switchTorch() {
     let torch = this.state.torch === RNCamera.Constants.FlashMode.off ? RNCamera.Constants.FlashMode.torch : RNCamera.Constants.FlashMode.off;
